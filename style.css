@@ -131,6 +131,7 @@ h1 { font-size: 1.8rem; line-height: 1.2; margin: 0 0 16px; letter-spacing: -.01
 .groupe-visuels { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin: 26px 0 10px; }
 .groupe-visuels:first-of-type { margin-top: 0; }
 .groupe-visuels h2 { margin: 0; font-size: .8rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--rouille); }
+.pdfs { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 6px; }
 .groupe-visuels .pdf { font-size: .88rem; font-weight: 700; text-decoration: none; padding: 3px 10px; border: 1px solid var(--bord); border-radius: 8px; background: var(--surface); white-space: nowrap; }
 .lb-nav {
   position: absolute; top: 50%; transform: translateY(-50%);
@@ -146,12 +147,18 @@ h1 { font-size: 1.8rem; line-height: 1.2; margin: 0 0 16px; letter-spacing: -.01
 .lecteur:focus-visible .lecteur-scene { box-shadow: 0 0 0 3px var(--or); }
 .lecteur-scene { position: relative; border-radius: 12px; overflow: hidden; border: 1px solid var(--bord); background: var(--nuit); }
 .lecteur-piste {
-  display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scroll-behavior: smooth;
+  display: flex; overflow-x: auto; scroll-snap-type: x mandatory;
   scrollbar-width: none; -webkit-overflow-scrolling: touch; overscroll-behavior-x: contain;
+  cursor: grab; user-select: none; -webkit-user-select: none;
 }
 .lecteur-piste::-webkit-scrollbar { display: none; }
-.diapo { flex: 0 0 100%; margin: 0; scroll-snap-align: center; aspect-ratio: 16 / 9; display: flex; align-items: center; justify-content: center; }
-.diapo img { display: block; width: 100%; height: 100%; object-fit: contain; }
+.lecteur-piste.glisse { scroll-snap-type: none; cursor: grabbing; }
+.diapo {
+  flex: 0 0 100%; margin: 0; aspect-ratio: 16 / 9; display: flex; align-items: center; justify-content: center;
+  scroll-snap-align: center; scroll-snap-stop: always; /* une diapo à la fois, comme PowerPoint */
+  contain: paint;
+}
+.diapo img { display: block; width: 100%; height: 100%; object-fit: contain; pointer-events: none; }
 .lecteur-nav {
   position: absolute; top: 50%; transform: translateY(-50%);
   width: 40px; height: 56px; border: 0; border-radius: 8px; cursor: pointer;

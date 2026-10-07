@@ -85,7 +85,7 @@
       corps = visuels.length
         ? groupes.map(function (g) {
             return (g.nom ? '<div class="groupe-visuels"><h2>' + esc(g.nom) + '</h2>' +
-                (g.pdf ? '<a class="pdf" href="' + esc(g.pdf) + '" target="_blank" rel="noopener">PDF ↓</a>' : '') + '</div>' : '') +
+                liensPdf(g.pdf) + '</div>' : '') +
               lecteur(g.items);
           }).join('')
         : '<p class="vide">Pas encore de visuel pour cette matière.</p>';
@@ -108,6 +108,14 @@
     activerLecteurs();
   }
 
+  function liensPdf(pdf) {
+    if (!pdf) return '';
+    var liste = typeof pdf === 'string' ? [['PDF', pdf]] : pdf;
+    return '<span class="pdfs">' + liste.map(function (p) {
+      return '<a class="pdf" href="' + esc(p[1]) + '" target="_blank" rel="noopener">' + esc(p[0]) + ' ↓</a>';
+    }).join('') + '</span>';
+  }
+
   // ---------- Lecteur de diapos (défilement horizontal, comme un diaporama) ----------
 
   var lecteurs = [];
@@ -116,7 +124,7 @@
     return '<div class="lecteur" tabindex="0" data-k="' + k + '" aria-label="Diaporama, flèches gauche et droite pour défiler">' +
       '<div class="lecteur-scene">' +
         '<div class="lecteur-piste">' + items.map(function (v, i) {
-          return '<figure class="diapo"><img src="' + esc(v.src) + '" alt="' + esc(v.legende || '') + '"' + (i > 1 ? ' loading="lazy"' : '') + '></figure>';
+          return '<figure class="diapo"><img src="' + esc(v.src) + '" alt="' + esc(v.legende || '') + '" decoding="async" draggable="false"' + (i > 1 ? ' loading="lazy"' : '') + '></figure>';
         }).join('') + '</div>' +
         '<button class="lecteur-nav prec" type="button" data-pas="-1" aria-label="Diapo précédente">‹</button>' +
         '<button class="lecteur-nav suiv" type="button" data-pas="1" aria-label="Diapo suivante">›</button>' +
@@ -133,11 +141,17 @@
     Array.prototype.forEach.call(app.querySelectorAll('.lecteur'), function (L) {
       var items = lecteurs[+L.dataset.k];
       var piste = $('.lecteur-piste', L), minis = $('.lecteur-miniatures', L), cur = -1;
+      var imgs = piste.querySelectorAll('img'), cible = null, cadre = 0;
       function index() { return Math.round(piste.scrollLeft / piste.clientWidth) || 0; }
       function aller(i) {
         i = Math.max(0, Math.min(items.length - 1, i));
+        cible = i; // pendant l'animation, on ne recalcule pas la diapo à chaque pixel
         piste.scrollTo({ left: i * piste.clientWidth, behavior: 'smooth' });
         maj(i);
+      }
+      // Charge à l'avance les diapos voisines pour qu'elles soient prêtes quand on arrive dessus.
+      function precharger(i) {
+        for (var j = i - 1; j <= i + 2; j++) if (imgs[j] && imgs[j].loading === 'lazy') imgs[j].loading = 'eager';
       }
       function maj(i) {
         if (i === cur) return;
@@ -147,14 +161,51 @@
         $('.lecteur-compteur', L).textContent = (i + 1) + ' / ' + items.length;
         $('.prec', L).disabled = i === 0;
         $('.suiv', L).disabled = i === items.length - 1;
+        precharger(i);
         if (minis) {
           Array.prototype.forEach.call(minis.children, function (b, j) { b.classList.toggle('active', j === i); });
           var b = minis.children[i];
           minis.scrollTo({ left: b.offsetLeft - (minis.clientWidth - b.offsetWidth) / 2, behavior: 'smooth' });
         }
       }
-      var t;
-      piste.addEventListener('scroll', function () { clearTimeout(t); t = setTimeout(function () { maj(index()); }, 60); }, { passive: true });
+      // Au doigt, le compteur suit en direct (une fois par image affichée).
+      piste.addEventListener('scroll', function () {
+        if (cadre) return;
+        cadre = requestAnimationFrame(function () {
+          cadre = 0;
+          if (cible !== null) {
+            if (Math.abs(piste.scrollLeft - cible * piste.clientWidth) < 2) cible = null;
+            return;
+          }
+          maj(index());
+        });
+      }, { passive: true });
+      piste.addEventListener('scrollend', function () { cible = null; maj(index()); });
+      piste.addEventListener('touchstart', function () { cible = null; }, { passive: true });
+
+      // À la souris : on attrape la diapo et on la fait glisser, comme sur Canva.
+      var drag = null;
+      piste.addEventListener('pointerdown', function (e) {
+        if (e.pointerType !== 'mouse' || e.button !== 0) return;
+        drag = { x: e.clientX, left: piste.scrollLeft, bouge: false };
+        piste.setPointerCapture(e.pointerId);
+      });
+      piste.addEventListener('pointermove', function (e) {
+        if (!drag) return;
+        var dx = e.clientX - drag.x;
+        if (!drag.bouge && Math.abs(dx) > 4) { drag.bouge = true; piste.classList.add('glisse'); }
+        if (drag.bouge) piste.scrollLeft = drag.left - dx;
+      });
+      function lacher(e) {
+        if (!drag) return;
+        var dx = e.clientX - drag.x, depart = Math.round(drag.left / piste.clientWidth);
+        piste.classList.remove('glisse');
+        if (drag.bouge) aller(Math.abs(dx) > piste.clientWidth * 0.12 ? depart + (dx < 0 ? 1 : -1) : depart);
+        drag = null;
+      }
+      piste.addEventListener('pointerup', lacher);
+      piste.addEventListener('pointercancel', lacher);
+
       L.addEventListener('click', function (e) {
         var n = e.target.closest('[data-pas]'), m = e.target.closest('[data-i]');
         if (n) aller(cur + +n.dataset.pas);

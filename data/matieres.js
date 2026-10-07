@@ -13,13 +13,15 @@ var R = {
   fiche: function (f) { this.fiches.push(f); },
   visuel: function (v) { this.visuels.push(v); },
   // Un PDF découpé en images : visuels/<matiere>/<prefixe>-01.jpg, -02.jpg…
-  // pages : [légende, id de fiche (facultatif)] dans l'ordre du PDF.
+  // pages : [légende, id de fiche (facultatif), image (facultatif, ex. 'fmr-03')] dans l'ordre d'affichage.
+  // Sans image, la page prend le numéro de sa position. pdf : un lien, ou une liste de [libellé, lien].
   diaporama: function (d) {
     var self = this;
     d.pages.forEach(function (p, i) {
+      var nom = p[2] || d.prefixe + '-' + (i < 9 ? '0' : '') + (i + 1);
       self.visuels.push({
         matiere: d.matiere, groupe: d.groupe, pdf: d.pdf,
-        src: 'visuels/' + d.matiere + '/' + d.prefixe + '-' + (i < 9 ? '0' : '') + (i + 1) + '.jpg',
+        src: 'visuels/' + d.matiere + '/' + nom + '.jpg',
         legende: p[0], fiche: p[1]
       });
     });

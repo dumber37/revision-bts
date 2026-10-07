@@ -143,17 +143,39 @@ R.fiche({
   `
 });
 
+// Les deux PDF fusionnés, classés par thème : fmr-XX = « Formation, motivation, rémunération » (17 p.),
+// management-XX = « Management de l'équipe commerciale » (9 p., sa page de garde est en double et n'est pas reprise).
 R.diaporama({
-  matiere: 'management', groupe: 'Management de l’équipe commerciale', prefixe: 'management', pdf: 'visuels/management/management-equipe.pdf',
+  matiere: 'management', groupe: 'Formation, motivation, rémunération',
+  pdf: [['PDF 17 p.', 'visuels/management/formation-motivation-remuneration.pdf'], ['PDF 9 p.', 'visuels/management/management-equipe.pdf']],
   pages: [
-    ['Management de l’équipe : sommaire'],
-    ['La formation des salariés', 'formation'],
-    ['Évaluer la motivation de l’équipe', 'evaluer-motivation'],
-    ['Facteurs internes et externes', 'facteurs-motivation'],
-    ['Stimuler l’équipe', 'stimuler-animer'],
-    ['Animer l’équipe', 'stimuler-animer'],
-    ['Les composantes de la rémunération', 'remuneration'],
-    ['Contraintes légales : temps de travail', 'remuneration'],
-    ['Brut, net et coût employeur', 'remuneration']
+    ['Formation, motivation, rémunération : sommaire', null, 'fmr-01'],
+
+    ['La formation : une obligation en 4 étapes', 'formation', 'fmr-02'],
+    ['La formation des salariés', 'formation', 'management-02'],
+    ['Repérer et hiérarchiser les besoins', 'formation', 'fmr-03'],
+    ['Interne, externe ou à distance', 'formation', 'fmr-04'],
+    ['Le plan de formation et son coût', 'formation', 'fmr-05'],
+    ['Évaluer : à chaud puis à froid', 'formation', 'fmr-06'],
+
+    ['Mesurer la motivation de l’équipe', 'evaluer-motivation', 'fmr-07'],
+    ['Évaluer la motivation de l’équipe', 'evaluer-motivation', 'management-03'],
+    ['Facteurs internes et externes (Herzberg, Maslow)', 'facteurs-motivation', 'fmr-08'],
+    ['Facteurs internes et externes', 'facteurs-motivation', 'management-04'],
+    ['Stimuler par la rémunération', 'stimuler-animer', 'fmr-09'],
+    ['Stimuler l’équipe', 'stimuler-animer', 'management-05'],
+    ['Challenge, concours et récompenses', 'stimuler-animer', 'fmr-10'],
+    ['Animer l’équipe commerciale', 'stimuler-animer', 'fmr-11'],
+    ['Animer l’équipe', 'stimuler-animer', 'management-06'],
+
+    ['Les 6 qualités d’un bon système', 'remuneration', 'fmr-12'],
+    ['Les composantes de la rémunération', 'remuneration', 'management-07'],
+    ['Fixe, commission, prime', 'remuneration', 'fmr-13'],
+    ['Avantages et éléments périphériques', 'remuneration', 'fmr-14'],
+    ['SMIC et heures supplémentaires', 'remuneration', 'fmr-15'],
+    ['Contraintes légales : temps de travail', 'remuneration', 'management-08'],
+    ['Du salaire brut au salaire net', 'remuneration', 'fmr-16'],
+    ['Brut, net et coût employeur', 'remuneration', 'management-09'],
+    ['Cotisations et bulletin de salaire', 'remuneration', 'fmr-17']
   ]
 });
