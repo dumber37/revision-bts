@@ -22,6 +22,7 @@ var R = {
       self.visuels.push({
         matiere: d.matiere, groupe: d.groupe, pdf: d.pdf,
         src: 'visuels/' + d.matiere + '/' + nom + '.jpg',
+        mini: 'visuels/' + d.matiere + '/mini/' + nom + '.jpg', // miniature 400 px
         legende: p[0], fiche: p[1]
       });
     });

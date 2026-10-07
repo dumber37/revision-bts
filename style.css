@@ -120,14 +120,7 @@ h1 { font-size: 1.8rem; line-height: 1.2; margin: 0 0 16px; letter-spacing: -.01
 .carte-fiche .resume { color: var(--doux); font-size: .92rem; }
 .vide { color: var(--doux); padding: 24px 0; }
 
-/* Galerie */
-.galerie { display: grid; gap: 12px; grid-template-columns: repeat(auto-fill, minmax(min(100%, 200px), 1fr)); }
-.vignette { margin: 0; }
-.vignette button {
-  display: block; width: 100%; padding: 0; border: 1px solid var(--bord); border-radius: 10px;
-  overflow: hidden; background: var(--surface); cursor: zoom-in;
-}
-.vignette img { display: block; width: 100%; aspect-ratio: 16 / 9; object-fit: cover; }
+/* Visuels */
 .groupe-visuels { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin: 26px 0 10px; }
 .groupe-visuels:first-of-type { margin-top: 0; }
 .groupe-visuels h2 { margin: 0; font-size: .8rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--rouille); }
@@ -192,7 +185,26 @@ h1 { font-size: 1.8rem; line-height: 1.2; margin: 0 0 16px; letter-spacing: -.01
   .lecteur-nav { width: 32px; height: 44px; font-size: 1.4rem; }
   .lecteur-miniatures button { flex-basis: 72px; }
 }
-.vignette figcaption { font-size: .85rem; color: var(--doux); margin-top: 4px; }
+
+/* Question à Claude */
+.ia {
+  margin-top: 16px; padding: 16px; border-radius: 12px;
+  background: var(--nuit); color: var(--nuit-texte);
+}
+.ia-titre { display: block; font-weight: 700; margin-bottom: 8px; }
+.ia-titre::before { content: "✦ "; color: var(--or); }
+.ia textarea {
+  width: 100%; font: inherit; padding: 9px 11px; resize: vertical; min-height: 64px;
+  border: 1px solid rgba(255, 255, 255, .2); border-radius: 8px; background: rgba(255, 255, 255, .06); color: inherit;
+}
+.ia textarea::placeholder { color: rgba(245, 242, 236, .55); }
+.ia textarea.ia-vide { border-color: var(--or); }
+.ia-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; margin-top: 10px; }
+.ia-btn {
+  border: 0; border-radius: 8px; padding: 8px 16px; cursor: pointer; font-weight: 700;
+  background: var(--or); color: #172340;
+}
+.ia-note { font-size: .82rem; opacity: .75; }
 
 .lightbox {
   position: fixed; inset: 0; z-index: 50;
@@ -333,8 +345,12 @@ h1 { font-size: 1.8rem; line-height: 1.2; margin: 0 0 16px; letter-spacing: -.01
 .suite a:hover { color: var(--texte); }
 
 @media print {
-  .topbar, .fil, .suite, .theme-btn, .cartes-outils, .etapes-nav { display: none; }
+  .topbar, .fil, .suite, .theme-btn, .cartes-outils, .etapes-nav, .ia, .lecteur, .calc-champs { display: none; }
   body { background: #fff; }
   .fiche { border: 0; box-shadow: none; padding: 0; }
-  .carte .verso { transform: none; position: static; }
+  /* Cartes : recto et verso l'un sous l'autre, sans retournement */
+  .carte-in, .carte.retournee .carte-in { display: block; transform: none; }
+  .face, .verso { display: block; transform: none; backface-visibility: visible; -webkit-backface-visibility: visible; }
+  .recto { background: none; color: inherit; padding-bottom: 0; text-align: left; }
+  .verso { border: 0; padding-top: 0; text-align: left; }
 }

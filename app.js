@@ -18,11 +18,29 @@
     return p[2] + '/' + p[1] + '/' + p[0];
   }
   function pluriel(n, mot) { return n + ' ' + mot + (n > 1 ? 's' : ''); }
-  function texte(html) {
+
+  // Texte brut d'une fiche, lisible (listes, tableaux) : sert à la recherche et à la question posée à Claude.
+  function enTexte(html) {
     var d = document.createElement('div');
     d.innerHTML = html;
-    return d.textContent.toLowerCase();
+    var out = '';
+    (function parcourir(n) {
+      if (n.nodeType === 3) { out += n.nodeValue.replace(/\s+/g, ' '); return; }
+      if (n.nodeType !== 1) return;
+      var t = n.tagName;
+      if (t === 'H2' || t === 'H3') out += '\n\n## ';
+      else if (t === 'LI') out += '\n- ';
+      else if (t === 'TR') out += '\n';
+      else if (t === 'TD' || t === 'TH') out += ' | ';
+      else if (t === 'BR') out += '\n';
+      else if (/^(P|DIV|TABLE|UL|OL)$/.test(t)) out += '\n';
+      Array.prototype.forEach.call(n.childNodes, parcourir);
+      if (n.className === 'cartes' || (n.parentNode && n.parentNode.className === 'cartes')) out += '\n';
+    })(d);
+    return out.replace(/[ \t]+\n/g, '\n').replace(/\n[ \t]+/g, '\n').replace(/\n{3,}/g, '\n\n').trim();
   }
+  var texteCache = {};
+  function texteFiche(f) { return texteCache[f.id] || (texteCache[f.id] = enTexte(f.contenu)); }
 
   // ---------- Pages ----------
 
@@ -53,7 +71,7 @@
     var out = $('#resultats');
     if (q.length < 2) { out.innerHTML = ''; return; }
     var res = R.fiches.filter(function (f) {
-      return (f.titre + ' ' + (f.resume || '')).toLowerCase().indexOf(q) >= 0 || texte(f.contenu).indexOf(q) >= 0;
+      return (f.titre + ' ' + (f.resume || '') + ' ' + texteFiche(f)).toLowerCase().indexOf(q) >= 0;
     });
     out.innerHTML = res.length
       ? '<div class="liste-fiches">' + res.map(carteFiche).join('') + '</div>'
@@ -132,7 +150,8 @@
       '<div class="lecteur-barre"><span class="lecteur-legende"></span><span class="lecteur-compteur"></span>' +
         '<button class="lecteur-plein" type="button">⛶ Plein écran</button></div>' +
       (items.length > 1 ? '<div class="lecteur-miniatures">' + items.map(function (v, i) {
-          return '<button type="button" data-i="' + i + '" aria-label="' + esc(v.legende || 'Diapo ' + (i + 1)) + '"><img src="' + esc(v.src) + '" alt="" loading="lazy"><span>' + (i + 1) + '</span></button>';
+          return '<button type="button" data-i="' + i + '" aria-label="' + esc(v.legende || 'Diapo ' + (i + 1)) + '">' +
+            '<img src="' + esc(v.mini || v.src) + '" alt="" loading="lazy" decoding="async"><span>' + (i + 1) + '</span></button>';
         }).join('') + '</div>' : '') +
       '</div>';
   }
@@ -213,15 +232,20 @@
         else if (e.target.closest('.lecteur-plein')) pleinEcran(L, items, cur);
       });
       L.addEventListener('keydown', function (e) {
+        if (!lb.hidden) return; // la visionneuse ouverte a la main sur les flèches
         if (e.key === 'ArrowRight') { aller(cur + 1); e.preventDefault(); }
         else if (e.key === 'ArrowLeft') { aller(cur - 1); e.preventDefault(); }
       });
       maj(0);
     });
   }
-  // Après un changement de taille (rotation du téléphone, plein écran), rester sur la même diapo.
+  // Rotation du téléphone, plein écran : rester sur la même diapo. On ignore les changements de hauteur seuls
+  // (barre d'adresse du téléphone qui apparaît ou disparaît), qui feraient sauter le diaporama pendant un glissé.
+  var largeur = window.innerWidth;
   window.addEventListener('resize', function () {
-    Array.prototype.forEach.call(app.querySelectorAll('.lecteur'), function (L) {
+    if (window.innerWidth === largeur && !document.fullscreenElement) return;
+    largeur = window.innerWidth;
+    Array.prototype.forEach.call(document.querySelectorAll('.lecteur'), function (L) {
       var p = $('.lecteur-piste', L);
       p.scrollLeft = (+L.dataset.cur || 0) * p.clientWidth;
     });
@@ -236,11 +260,51 @@
     }
   }
 
+  // ---------- Poser une question à Claude ----------
+  // Ouvre claude.ai dans un nouvel onglet avec la fiche et la question déjà écrites : aucune clé d'API sur le site.
+
+  var MAX_URL = 7000; // au-delà, certains navigateurs ou serveurs refusent l'adresse
+
+  function boiteClaude() {
+    return '<section class="ia">' +
+      '<label class="ia-titre" for="iaQ">Une question sur cette fiche ?</label>' +
+      '<textarea id="iaQ" rows="2" placeholder="Ex. Tu peux me réexpliquer avec un exemple concret ?"></textarea>' +
+      '<div class="ia-actions"><button type="button" class="ia-btn">Demander à Claude ↗</button>' +
+      '<span class="ia-note">Claude s’ouvre dans un nouvel onglet avec la fiche. Il faut être connecté à ton compte.</span></div>' +
+      '</section>';
+  }
+
+  function activerClaude(titre, contexte, texte) {
+    var zone = $('#iaQ'), btn = $('.ia-btn');
+    if (!zone) return;
+    function envoyer() {
+      var question = zone.value.trim();
+      if (!question) { zone.focus(); zone.classList.add('ia-vide'); return; }
+      zone.classList.remove('ia-vide');
+      var corps = texte, url;
+      // On raccourcit la fiche jusqu'à ce que l'adresse passe.
+      for (var n = 0; n < 12; n++) {
+        url = 'https://claude.ai/new?q=' + encodeURIComponent(
+          'Je révise le BTS MCO (2e année). ' + contexte + '\n' +
+          'Voici ma fiche de révision « ' + titre + ' » :\n\n' + corps + '\n\n' +
+          'Réponds en français, simplement et brièvement, en t’appuyant sur cette fiche. ' +
+          'Si tu ajoutes une notion qui n’y est pas, dis-le.\n\nMa question : ' + question);
+        if (url.length <= MAX_URL) break;
+        corps = corps.slice(0, Math.floor(corps.length * 0.75)).replace(/\s+\S*$/, '') + ' […]';
+      }
+      window.open(url, '_blank', 'noopener');
+    }
+    btn.addEventListener('click', envoyer);
+    zone.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); envoyer(); }
+    });
+  }
+
   function pageFiche(m, f) {
     document.title = f.titre + ' · Révisions BTS MCO';
     var liste = fichesDe(m.id), i = liste.indexOf(f);
     var prec = liste[i - 1], suiv = liste[i + 1];
-    var visuels = R.visuels.filter(function (v) { return v.fiche === f.id; });
+    var visuels = R.visuels.filter(function (v) { return v.matiere === m.id && v.fiche === f.id; });
 
     app.innerHTML =
       '<nav class="fil"><a href="#/">Matières</a> › <a href="#/' + m.id + '">' + esc(m.nom) + '</a></nav>' +
@@ -250,17 +314,19 @@
         '<div class="contenu">' + f.contenu + '</div>' +
         (visuels.length ? '<h2>Les diapos de la fiche</h2>' + lecteur(visuels) : '') +
       '</article>' +
+      boiteClaude() +
       '<nav class="suite">' +
         (prec ? '<a href="#/' + m.id + '/' + prec.id + '">‹ ' + esc(prec.titre) + '</a>' : '<span></span>') +
         (suiv ? '<a href="#/' + m.id + '/' + suiv.id + '">' + esc(suiv.titre) + ' ›</a>' : '<span></span>') +
       '</nav>';
-    envelopperTableaux();
+    preparerContenu();
     activerLecteurs();
+    activerClaude(f.titre, 'Matière : ' + m.code + ' ' + m.long + '.', texteFiche(f));
   }
 
   // Les tableaux larges défilent dans leur cadre plutôt que la page entière,
   // puis les composants interactifs (étapes, cartes, calculatrices…) sont activés.
-  function envelopperTableaux() {
+  function preparerContenu() {
     Array.prototype.forEach.call(app.querySelectorAll('.contenu table'), function (t) {
       var w = document.createElement('div');
       w.className = 'table-wrap';
@@ -274,9 +340,11 @@
     document.title = 'Formules à retenir · Révisions BTS MCO';
     app.innerHTML =
       '<nav class="fil"><a href="#/">Matières</a> › Formules</nav>' +
-      '<article class="fiche" style="--c:#c2410c"><h1>Formules à retenir</h1>' +
-      '<div class="contenu">' + R.formules + '</div></article>';
-    envelopperTableaux();
+      '<article class="fiche" style="--c:var(--rouille)"><h1>Formules à retenir</h1>' +
+      '<div class="contenu">' + R.formules + '</div></article>' +
+      boiteClaude();
+    preparerContenu();
+    activerClaude('Formules à retenir', 'Ce sont les formules de calcul pour l’examen.', enTexte(R.formules));
   }
 
   function introuvable() {
@@ -288,6 +356,8 @@
   function route() {
     var parts = location.hash.replace(/^#\/?/, '').split('/').filter(Boolean);
     lecteurs = [];
+    lb.hidden = true; // bouton retour du téléphone : on ne garde pas la visionneuse ouverte
+    if (document.fullscreenElement) document.exitFullscreen();
     if (!parts.length) accueil();
     else if (parts[0] === 'formules' && R.formules) pageFormules();
     else {
@@ -302,8 +372,6 @@
     }
     window.scrollTo(0, 0);
   }
-  window.addEventListener('hashchange', route);
-  route();
 
   // ---------- Visionneuse d'images ----------
 
@@ -342,10 +410,9 @@
     x0 = null;
   });
 
-  // ---------- Thème clair / sombre ----------
+  // ---------- Thème clair / sombre (le thème enregistré est déjà appliqué dans le <head>) ----------
 
   var root = document.documentElement;
-  try { var t = localStorage.getItem('theme'); if (t) root.dataset.theme = t; } catch (e) {}
   document.getElementById('themeBtn').addEventListener('click', function () {
     var sombre = root.dataset.theme
       ? root.dataset.theme === 'dark'
@@ -353,4 +420,7 @@
     root.dataset.theme = sombre ? 'light' : 'dark';
     try { localStorage.setItem('theme', root.dataset.theme); } catch (e) {}
   });
+
+  window.addEventListener('hashchange', route);
+  route();
 })();
