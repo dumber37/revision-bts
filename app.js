@@ -86,7 +86,7 @@
         ? groupes.map(function (g) {
             return (g.nom ? '<div class="groupe-visuels"><h2>' + esc(g.nom) + '</h2>' +
                 (g.pdf ? '<a class="pdf" href="' + esc(g.pdf) + '" target="_blank" rel="noopener">PDF ↓</a>' : '') + '</div>' : '') +
-              '<div class="galerie">' + g.items.map(vignette).join('') + '</div>';
+              lecteur(g.items);
           }).join('')
         : '<p class="vide">Pas encore de visuel pour cette matière.</p>';
     } else {
@@ -105,12 +105,84 @@
         '<a href="#/' + m.id + '"' + (onglet !== 'visuels' ? ' class="actif"' : '') + '>Fiches (' + fiches.length + ')</a>' +
         '<a href="#/' + m.id + '/visuels"' + (onglet === 'visuels' ? ' class="actif"' : '') + '>Visuels (' + visuels.length + ')</a>' +
       '</div>' + corps;
+    activerLecteurs();
   }
 
-  function vignette(v) {
-    return '<figure class="vignette"><button type="button" data-src="' + esc(v.src) + '" data-legende="' + esc(v.legende || '') + '">' +
-      '<img src="' + esc(v.src) + '" alt="' + esc(v.legende || '') + '" loading="lazy"></button>' +
-      (v.legende ? '<figcaption>' + esc(v.legende) + '</figcaption>' : '') + '</figure>';
+  // ---------- Lecteur de diapos (défilement horizontal, comme un diaporama) ----------
+
+  var lecteurs = [];
+  function lecteur(items) {
+    var k = lecteurs.push(items) - 1;
+    return '<div class="lecteur" tabindex="0" data-k="' + k + '" aria-label="Diaporama, flèches gauche et droite pour défiler">' +
+      '<div class="lecteur-scene">' +
+        '<div class="lecteur-piste">' + items.map(function (v, i) {
+          return '<figure class="diapo"><img src="' + esc(v.src) + '" alt="' + esc(v.legende || '') + '"' + (i > 1 ? ' loading="lazy"' : '') + '></figure>';
+        }).join('') + '</div>' +
+        '<button class="lecteur-nav prec" type="button" data-pas="-1" aria-label="Diapo précédente">‹</button>' +
+        '<button class="lecteur-nav suiv" type="button" data-pas="1" aria-label="Diapo suivante">›</button>' +
+      '</div>' +
+      '<div class="lecteur-barre"><span class="lecteur-legende"></span><span class="lecteur-compteur"></span>' +
+        '<button class="lecteur-plein" type="button">⛶ Plein écran</button></div>' +
+      (items.length > 1 ? '<div class="lecteur-miniatures">' + items.map(function (v, i) {
+          return '<button type="button" data-i="' + i + '" aria-label="' + esc(v.legende || 'Diapo ' + (i + 1)) + '"><img src="' + esc(v.src) + '" alt="" loading="lazy"><span>' + (i + 1) + '</span></button>';
+        }).join('') + '</div>' : '') +
+      '</div>';
+  }
+
+  function activerLecteurs() {
+    Array.prototype.forEach.call(app.querySelectorAll('.lecteur'), function (L) {
+      var items = lecteurs[+L.dataset.k];
+      var piste = $('.lecteur-piste', L), minis = $('.lecteur-miniatures', L), cur = -1;
+      function index() { return Math.round(piste.scrollLeft / piste.clientWidth) || 0; }
+      function aller(i) {
+        i = Math.max(0, Math.min(items.length - 1, i));
+        piste.scrollTo({ left: i * piste.clientWidth, behavior: 'smooth' });
+        maj(i);
+      }
+      function maj(i) {
+        if (i === cur) return;
+        cur = i;
+        L.dataset.cur = i;
+        $('.lecteur-legende', L).textContent = items[i].legende || '';
+        $('.lecteur-compteur', L).textContent = (i + 1) + ' / ' + items.length;
+        $('.prec', L).disabled = i === 0;
+        $('.suiv', L).disabled = i === items.length - 1;
+        if (minis) {
+          Array.prototype.forEach.call(minis.children, function (b, j) { b.classList.toggle('active', j === i); });
+          var b = minis.children[i];
+          minis.scrollTo({ left: b.offsetLeft - (minis.clientWidth - b.offsetWidth) / 2, behavior: 'smooth' });
+        }
+      }
+      var t;
+      piste.addEventListener('scroll', function () { clearTimeout(t); t = setTimeout(function () { maj(index()); }, 60); }, { passive: true });
+      L.addEventListener('click', function (e) {
+        var n = e.target.closest('[data-pas]'), m = e.target.closest('[data-i]');
+        if (n) aller(cur + +n.dataset.pas);
+        else if (m) aller(+m.dataset.i);
+        else if (e.target.closest('.lecteur-plein')) pleinEcran(L, items, cur);
+      });
+      L.addEventListener('keydown', function (e) {
+        if (e.key === 'ArrowRight') { aller(cur + 1); e.preventDefault(); }
+        else if (e.key === 'ArrowLeft') { aller(cur - 1); e.preventDefault(); }
+      });
+      maj(0);
+    });
+  }
+  // Après un changement de taille (rotation du téléphone, plein écran), rester sur la même diapo.
+  window.addEventListener('resize', function () {
+    Array.prototype.forEach.call(app.querySelectorAll('.lecteur'), function (L) {
+      var p = $('.lecteur-piste', L);
+      p.scrollLeft = (+L.dataset.cur || 0) * p.clientWidth;
+    });
+  });
+
+  function pleinEcran(L, items, i) {
+    if (L.requestFullscreen && document.fullscreenEnabled) {
+      if (document.fullscreenElement) document.exitFullscreen();
+      else L.requestFullscreen().then(function () { $('.lecteur-piste', L).scrollLeft = i * $('.lecteur-piste', L).clientWidth; });
+    } else {
+      ouvrirVisionneuse(items, i); // iPhone : pas de plein écran sur un élément, on prend la visionneuse
+    }
   }
 
   function pageFiche(m, f) {
@@ -125,13 +197,14 @@
         '<h1>' + esc(f.titre) + '</h1>' +
         (f.date ? '<p class="meta">' + dateFr(f.date) + '</p>' : '') +
         '<div class="contenu">' + f.contenu + '</div>' +
-        (visuels.length ? '<h2>Les diapos de la fiche</h2><div class="galerie">' + visuels.map(vignette).join('') + '</div>' : '') +
+        (visuels.length ? '<h2>Les diapos de la fiche</h2>' + lecteur(visuels) : '') +
       '</article>' +
       '<nav class="suite">' +
         (prec ? '<a href="#/' + m.id + '/' + prec.id + '">‹ ' + esc(prec.titre) + '</a>' : '<span></span>') +
         (suiv ? '<a href="#/' + m.id + '/' + suiv.id + '">' + esc(suiv.titre) + ' ›</a>' : '<span></span>') +
       '</nav>';
     envelopperTableaux();
+    activerLecteurs();
   }
 
   // Les tableaux larges défilent dans leur cadre plutôt que la page entière,
@@ -163,6 +236,7 @@
 
   function route() {
     var parts = location.hash.replace(/^#\/?/, '').split('/').filter(Boolean);
+    lecteurs = [];
     if (!parts.length) accueil();
     else if (parts[0] === 'formules' && R.formules) pageFormules();
     else {
@@ -182,23 +256,21 @@
 
   // ---------- Visionneuse d'images ----------
 
-  // Les flèches (clavier, boutons, glisser du doigt) parcourent toutes les images de la page.
+  // Plein écran de secours (iPhone) : flèches, clavier et glisser du doigt.
   var lb = document.getElementById('lightbox'), lbListe = [], lbI = 0;
   function lbMontrer(i) {
     lbI = (i + lbListe.length) % lbListe.length;
-    var b = lbListe[lbI];
-    $('img', lb).src = b.dataset.src;
-    $('img', lb).alt = b.dataset.legende;
-    $('.lb-caption', lb).textContent = b.dataset.legende + (lbListe.length > 1 ? '  ·  ' + (lbI + 1) + '/' + lbListe.length : '');
+    var v = lbListe[lbI];
+    $('img', lb).src = v.src;
+    $('img', lb).alt = v.legende || '';
+    $('.lb-caption', lb).textContent = (v.legende || '') + (lbListe.length > 1 ? '  ·  ' + (lbI + 1) + '/' + lbListe.length : '');
     lb.classList.toggle('seule', lbListe.length < 2);
   }
-  app.addEventListener('click', function (e) {
-    var b = e.target.closest('.vignette button');
-    if (!b) return;
-    lbListe = Array.prototype.slice.call(app.querySelectorAll('.vignette button'));
-    lbMontrer(lbListe.indexOf(b));
+  function ouvrirVisionneuse(items, i) {
+    lbListe = items;
+    lbMontrer(i);
     lb.hidden = false;
-  });
+  }
   lb.addEventListener('click', function (e) {
     var nav = e.target.closest('[data-pas]');
     if (nav) lbMontrer(lbI + +nav.dataset.pas);

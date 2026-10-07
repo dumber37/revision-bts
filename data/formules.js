@@ -15,5 +15,4 @@ R.formules = `
     <tr><td>Coefficient multiplicateur</td><td>Prix de vente TTC ÷ coût d'achat HT</td></tr>
   </table>
   <p class="exemple"><b>Exemple :</b> prix +5 %, ventes −15 % donne E = 15 ÷ 5 = 3 (très élastique).</p>
-  <p class="vide">Les 4 dernières formules (marge) ne sont pas dans tes PDF mais tombent souvent à l'examen.</p>
 `;
