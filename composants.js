@@ -248,6 +248,72 @@ var Composants = (function () {
     }
   };
 
+  // ---------- QCM ----------
+  // banque : [énoncé, [bonne, fausse…], explication]. Tire n questions au hasard et mélange les réponses,
+  // à chaque affichage et à chaque clic sur « Nouveau QCM ».
+  function melanger(t) {
+    t = t.slice();
+    for (var i = t.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1)), x = t[i];
+      t[i] = t[j]; t[j] = x;
+    }
+    return t;
+  }
+  function qcm(div, banque, n) {
+    function tirer() {
+      var qs = melanger(banque).slice(0, Math.min(n, banque.length));
+      var faites = 0, bonnes = 0;
+      div.className = 'qcm';
+      div.innerHTML =
+        '<div class="qcm-tete"><span class="qcm-titre">QCM · ' + qs.length + ' questions</span>' +
+        '<span class="qcm-score" aria-live="polite"></span>' +
+        '<button type="button" class="qcm-nouveau">↻ Nouveau QCM</button></div>' +
+        qs.map(function (q, i) {
+          var reps = melanger(q[1].map(function (r, k) { return { txt: r, ok: k === 0 }; }));
+          return '<fieldset class="qcm-q"><legend><span class="num">' + (i + 1) + '.</span> ' + q[0] + '</legend>' +
+            '<div class="qcm-reps">' + reps.map(function (r, k) {
+              return '<button type="button" data-ok="' + (r.ok ? 1 : 0) + '"><span class="qcm-lettre">' + 'ABCD'[k] + '</span>' + r.txt + '</button>';
+            }).join('') + '</div>' +
+            '<p class="qcm-expl" hidden>' + (q[2] || '') + '</p></fieldset>';
+        }).join('') +
+        '<div class="qcm-fin" hidden></div>';
+
+      Array.prototype.forEach.call(div.querySelectorAll('.qcm-q'), function (fs) {
+        fs.addEventListener('click', function (e) {
+          var b = e.target.closest('button[data-ok]');
+          if (!b || fs.classList.contains('repondue')) return;
+          fs.classList.add('repondue');
+          var juste = b.dataset.ok === '1';
+          b.classList.add(juste ? 'bonne' : 'fausse');
+          Array.prototype.forEach.call(fs.querySelectorAll('button[data-ok]'), function (x) {
+            x.disabled = true;
+            if (x.dataset.ok === '1') x.classList.add('bonne');
+          });
+          var ex = fs.querySelector('.qcm-expl');
+          ex.innerHTML = (juste ? '<b>Bonne réponse.</b> ' : '<b>Raté.</b> ') + ex.innerHTML;
+          ex.hidden = false;
+          faites++;
+          if (juste) bonnes++;
+          div.querySelector('.qcm-score').textContent = bonnes + ' / ' + faites;
+          if (faites === qs.length) {
+            var fin = div.querySelector('.qcm-fin'), r = bonnes / qs.length;
+            fin.innerHTML = '<b>' + bonnes + ' / ' + qs.length + '</b> · ' +
+              (r === 1 ? 'Parfait, tout est su !' : r >= 0.7 ? 'Bien joué, encore un petit effort.' : r >= 0.4 ? 'C’est un début : relis la fiche et retente.' : 'Relis la fiche, puis relance un QCM.') +
+              ' <button type="button" class="qcm-nouveau">↻ Nouveau QCM</button>';
+            fin.hidden = false;
+          }
+        });
+      });
+    }
+    // Un seul écouteur pour les deux boutons « Nouveau QCM » (en haut et dans le bilan, créé après coup).
+    div.addEventListener('click', function (e) {
+      if (!e.target.closest('.qcm-nouveau')) return;
+      tirer();
+      div.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+    tirer();
+  }
+
   function activer(root) {
     Array.prototype.forEach.call(root.querySelectorAll('ol.etapes'), etapes);
     Array.prototype.forEach.call(root.querySelectorAll('ol.pyramide'), pyramide);
@@ -258,5 +324,5 @@ var Composants = (function () {
     });
   }
 
-  return { activer: activer };
+  return { activer: activer, qcm: qcm };
 })();

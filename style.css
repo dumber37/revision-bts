@@ -186,6 +186,36 @@ h1 { font-size: 1.8rem; line-height: 1.2; margin: 0 0 16px; letter-spacing: -.01
   .lecteur-miniatures button { flex-basis: 72px; }
 }
 
+/* QCM */
+.qcm {
+  margin-top: 16px; padding: 18px 18px 8px; border-radius: 12px;
+  background: var(--surface); border: 1px solid var(--bord); border-top: 5px solid var(--or); box-shadow: var(--ombre);
+}
+.qcm-tete { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; margin-bottom: 6px; }
+.qcm-titre { font-size: .8rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--rouille); flex: 1; }
+.qcm-score { font-weight: 700; font-variant-numeric: tabular-nums; }
+.qcm-nouveau { border: 1px solid var(--bord); background: var(--surface); border-radius: 8px; padding: 4px 12px; cursor: pointer; font-size: .85rem; }
+.qcm-q { border: 0; padding: 0; margin: 16px 0; min-width: 0; }
+.qcm-q legend { font-weight: 700; padding: 0; margin-bottom: 8px; line-height: 1.4; }
+.qcm-q legend .num { color: var(--rouille); }
+.qcm-reps { display: grid; gap: 6px; }
+.qcm-reps button {
+  display: flex; gap: 10px; align-items: baseline; text-align: left; width: 100%;
+  padding: 9px 12px; border: 1px solid var(--bord); border-radius: 8px; background: var(--bg); cursor: pointer;
+  line-height: 1.35; transition: border-color .12s, background .12s;
+}
+.qcm-reps button:not(:disabled):hover { border-color: var(--or); }
+.qcm-lettre { font-weight: 700; color: var(--doux); flex: 0 0 auto; }
+.qcm-reps button.bonne { background: #e3f3ec; border-color: #1d8a5a; color: #0f4d32; }
+.qcm-reps button.fausse { background: #fbe7e2; border-color: #c4462b; color: #7a2412; }
+.qcm-reps button.bonne .qcm-lettre, .qcm-reps button.fausse .qcm-lettre { color: inherit; }
+.qcm-reps button:disabled { cursor: default; }
+.qcm-reps button:disabled:not(.bonne):not(.fausse) { opacity: .55; }
+.qcm-expl { margin: 8px 0 0; padding: 8px 12px; border-radius: 8px; background: var(--retenir); font-size: .92rem; }
+.qcm-fin { margin: 8px 0 12px; padding: 12px 14px; border-radius: 10px; background: var(--nuit); color: var(--nuit-texte); }
+.qcm-fin b { color: var(--or); font-size: 1.1rem; }
+.qcm-fin .qcm-nouveau { margin-left: 6px; background: var(--or); color: #172340; border: 0; font-weight: 700; }
+
 /* Question à Claude */
 .ia {
   margin-top: 16px; padding: 16px; border-radius: 12px;

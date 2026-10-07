@@ -107,6 +107,8 @@
               lecteur(g.items);
           }).join('')
         : '<p class="vide">Pas encore de visuel pour cette matière.</p>';
+      // QCM de fin : questions de toutes les fiches de la matière, mélangées.
+      if (banqueMatiere(m.id).length) corps += '<div id="qcm"></div>';
     } else {
       corps = fiches.length
         ? '<div class="liste-fiches">' + fiches.map(carteFiche).join('') + '</div>'
@@ -124,6 +126,11 @@
         '<a href="#/' + m.id + '/visuels"' + (onglet === 'visuels' ? ' class="actif"' : '') + '>Visuels (' + visuels.length + ')</a>' +
       '</div>' + corps;
     activerLecteurs();
+    if ($('#qcm')) Composants.qcm($('#qcm'), banqueMatiere(m.id), 8);
+  }
+
+  function banqueMatiere(id) {
+    return fichesDe(id).reduce(function (t, f) { return t.concat((R.qcm && R.qcm[f.id]) || []); }, []);
   }
 
   function liensPdf(pdf) {
@@ -314,6 +321,7 @@
         '<div class="contenu">' + f.contenu + '</div>' +
         (visuels.length ? '<h2>Les diapos de la fiche</h2>' + lecteur(visuels) : '') +
       '</article>' +
+      (R.qcm && R.qcm[f.id] ? '<div id="qcm"></div>' : '') +
       boiteClaude() +
       '<nav class="suite">' +
         (prec ? '<a href="#/' + m.id + '/' + prec.id + '">‹ ' + esc(prec.titre) + '</a>' : '<span></span>') +
@@ -321,6 +329,7 @@
       '</nav>';
     preparerContenu();
     activerLecteurs();
+    if ($('#qcm')) Composants.qcm($('#qcm'), R.qcm[f.id], 5);
     activerClaude(f.titre, 'Matière : ' + m.code + ' ' + m.long + '.', texteFiche(f));
   }
 
