@@ -123,7 +123,8 @@
     envelopperTableaux();
   }
 
-  // Les tableaux larges défilent dans leur cadre plutôt que la page entière.
+  // Les tableaux larges défilent dans leur cadre plutôt que la page entière,
+  // puis les composants interactifs (étapes, cartes, calculatrices…) sont activés.
   function envelopperTableaux() {
     Array.prototype.forEach.call(app.querySelectorAll('.contenu table'), function (t) {
       var w = document.createElement('div');
@@ -131,6 +132,7 @@
       t.parentNode.insertBefore(w, t);
       w.appendChild(t);
     });
+    Composants.activer(app);
   }
 
   function pageFormules() {
