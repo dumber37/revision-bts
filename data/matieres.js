@@ -11,5 +11,17 @@ var R = {
   fiches: [],
   visuels: [],
   fiche: function (f) { this.fiches.push(f); },
-  visuel: function (v) { this.visuels.push(v); }
+  visuel: function (v) { this.visuels.push(v); },
+  // Un PDF découpé en images : visuels/<matiere>/<prefixe>-01.jpg, -02.jpg…
+  // pages : [légende, id de fiche (facultatif)] dans l'ordre du PDF.
+  diaporama: function (d) {
+    var self = this;
+    d.pages.forEach(function (p, i) {
+      self.visuels.push({
+        matiere: d.matiere, groupe: d.groupe, pdf: d.pdf,
+        src: 'visuels/' + d.matiere + '/' + d.prefixe + '-' + (i < 9 ? '0' : '') + (i + 1) + '.jpg',
+        legende: p[0], fiche: p[1]
+      });
+    });
+  }
 };

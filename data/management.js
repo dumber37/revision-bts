@@ -142,3 +142,18 @@ R.fiche({
     <div data-calc="paie"></div>
   `
 });
+
+R.diaporama({
+  matiere: 'management', groupe: 'Management de l’équipe commerciale', prefixe: 'management', pdf: 'visuels/management/management-equipe.pdf',
+  pages: [
+    ['Management de l’équipe : sommaire'],
+    ['La formation des salariés', 'formation'],
+    ['Évaluer la motivation de l’équipe', 'evaluer-motivation'],
+    ['Facteurs internes et externes', 'facteurs-motivation'],
+    ['Stimuler l’équipe', 'stimuler-animer'],
+    ['Animer l’équipe', 'stimuler-animer'],
+    ['Les composantes de la rémunération', 'remuneration'],
+    ['Contraintes légales : temps de travail', 'remuneration'],
+    ['Brut, net et coût employeur', 'remuneration']
+  ]
+});

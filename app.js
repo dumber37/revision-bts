@@ -75,8 +75,19 @@
 
     var corps;
     if (onglet === 'visuels') {
+      // Regroupés par document d'origine, dans l'ordre d'ajout.
+      var groupes = [];
+      visuels.forEach(function (v) {
+        var g = groupes.filter(function (x) { return x.nom === (v.groupe || ''); })[0];
+        if (!g) groupes.push(g = { nom: v.groupe || '', pdf: v.pdf, items: [] });
+        g.items.push(v);
+      });
       corps = visuels.length
-        ? '<div class="galerie">' + visuels.map(vignette).join('') + '</div>'
+        ? groupes.map(function (g) {
+            return (g.nom ? '<div class="groupe-visuels"><h2>' + esc(g.nom) + '</h2>' +
+                (g.pdf ? '<a class="pdf" href="' + esc(g.pdf) + '" target="_blank" rel="noopener">PDF ↓</a>' : '') + '</div>' : '') +
+              '<div class="galerie">' + g.items.map(vignette).join('') + '</div>';
+          }).join('')
         : '<p class="vide">Pas encore de visuel pour cette matière.</p>';
     } else {
       corps = fiches.length
@@ -114,7 +125,7 @@
         '<h1>' + esc(f.titre) + '</h1>' +
         (f.date ? '<p class="meta">' + dateFr(f.date) + '</p>' : '') +
         '<div class="contenu">' + f.contenu + '</div>' +
-        (visuels.length ? '<h2>Visuels</h2><div class="galerie">' + visuels.map(vignette).join('') + '</div>' : '') +
+        (visuels.length ? '<h2>Les diapos de la fiche</h2><div class="galerie">' + visuels.map(vignette).join('') + '</div>' : '') +
       '</article>' +
       '<nav class="suite">' +
         (prec ? '<a href="#/' + m.id + '/' + prec.id + '">‹ ' + esc(prec.titre) + '</a>' : '<span></span>') +
@@ -171,17 +182,42 @@
 
   // ---------- Visionneuse d'images ----------
 
-  var lb = document.getElementById('lightbox');
+  // Les flèches (clavier, boutons, glisser du doigt) parcourent toutes les images de la page.
+  var lb = document.getElementById('lightbox'), lbListe = [], lbI = 0;
+  function lbMontrer(i) {
+    lbI = (i + lbListe.length) % lbListe.length;
+    var b = lbListe[lbI];
+    $('img', lb).src = b.dataset.src;
+    $('img', lb).alt = b.dataset.legende;
+    $('.lb-caption', lb).textContent = b.dataset.legende + (lbListe.length > 1 ? '  ·  ' + (lbI + 1) + '/' + lbListe.length : '');
+    lb.classList.toggle('seule', lbListe.length < 2);
+  }
   app.addEventListener('click', function (e) {
     var b = e.target.closest('.vignette button');
     if (!b) return;
-    $('img', lb).src = b.dataset.src;
-    $('img', lb).alt = b.dataset.legende;
-    $('.lb-caption', lb).textContent = b.dataset.legende;
+    lbListe = Array.prototype.slice.call(app.querySelectorAll('.vignette button'));
+    lbMontrer(lbListe.indexOf(b));
     lb.hidden = false;
   });
-  lb.addEventListener('click', function (e) { if (e.target.tagName !== 'IMG') lb.hidden = true; });
-  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') lb.hidden = true; });
+  lb.addEventListener('click', function (e) {
+    var nav = e.target.closest('[data-pas]');
+    if (nav) lbMontrer(lbI + +nav.dataset.pas);
+    else if (e.target.tagName !== 'IMG') lb.hidden = true;
+  });
+  document.addEventListener('keydown', function (e) {
+    if (lb.hidden) return;
+    if (e.key === 'Escape') lb.hidden = true;
+    else if (e.key === 'ArrowRight') lbMontrer(lbI + 1);
+    else if (e.key === 'ArrowLeft') lbMontrer(lbI - 1);
+  });
+  var x0 = null;
+  lb.addEventListener('touchstart', function (e) { x0 = e.touches[0].clientX; }, { passive: true });
+  lb.addEventListener('touchend', function (e) {
+    if (x0 === null) return;
+    var dx = e.changedTouches[0].clientX - x0;
+    if (Math.abs(dx) > 40) lbMontrer(lbI + (dx < 0 ? 1 : -1));
+    x0 = null;
+  });
 
   // ---------- Thème clair / sombre ----------
 

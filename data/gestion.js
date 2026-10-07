@@ -134,3 +134,20 @@ R.fiche({
     </div>
   `
 });
+
+R.diaporama({
+  matiere: 'gestion', groupe: 'Offre commerciale', prefixe: 'offre', pdf: 'visuels/gestion/offre-commerciale.pdf',
+  pages: [
+    ['Offre commerciale : sommaire'],
+    ['Le prix, critère de choix', 'fixation-prix'],
+    ['Les contraintes légales', 'fixation-prix'],
+    ['Les méthodes de fixation du prix', 'fixation-prix'],
+    ['Stratégies face à la concurrence', 'fixation-prix'],
+    ['Les modulations de prix du distributeur', 'fixation-prix'],
+    ['Sélectionner un fournisseur en 8 étapes', 'fournisseurs'],
+    ['Le scoring : choisir avec une note pondérée', 'fournisseurs'],
+    ['Les enjeux de la négociation', 'fournisseurs'],
+    ['Le cadre juridique des négociations', 'fournisseurs'],
+    ['La coopération commerciale', 'fournisseurs']
+  ]
+});

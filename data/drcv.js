@@ -141,3 +141,14 @@ R.fiche({
     <p class="exemple"><b>Exemple Nespresso :</b> le Club Nespresso est son atout de fidélisation, à analyser avec ces 4 tendances.</p>
   `
 });
+
+R.visuel({ matiere: 'drcv', groupe: 'Relation client et vente', src: 'visuels/drcv/relation-client-01.webp', legende: 'Relation client et vente : sommaire' });
+
+R.diaporama({
+  matiere: 'drcv', groupe: 'CEJM et expérience d’achat', prefixe: 'cejm', pdf: 'visuels/drcv/cejm-experience-achat.pdf',
+  pages: [
+    ['CEJM et expérience d’achat : sommaire'],
+    ['Les définitions à connaître', 'numerique'],
+    ['Les 4 tendances de l’expérience d’achat', 'experience-achat']
+  ]
+});

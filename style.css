@@ -127,7 +127,19 @@ h1 { font-size: 1.8rem; line-height: 1.2; margin: 0 0 16px; letter-spacing: -.01
   display: block; width: 100%; padding: 0; border: 1px solid var(--bord); border-radius: 10px;
   overflow: hidden; background: var(--surface); cursor: zoom-in;
 }
-.vignette img { display: block; width: 100%; aspect-ratio: 4 / 3; object-fit: cover; }
+.vignette img { display: block; width: 100%; aspect-ratio: 16 / 9; object-fit: cover; }
+.groupe-visuels { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin: 26px 0 10px; }
+.groupe-visuels:first-of-type { margin-top: 0; }
+.groupe-visuels h2 { margin: 0; font-size: .8rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--rouille); }
+.groupe-visuels .pdf { font-size: .88rem; font-weight: 700; text-decoration: none; padding: 3px 10px; border: 1px solid var(--bord); border-radius: 8px; background: var(--surface); white-space: nowrap; }
+.lb-nav {
+  position: absolute; top: 50%; transform: translateY(-50%);
+  width: 44px; height: 64px; border: 0; border-radius: 8px; cursor: pointer;
+  background: rgba(255, 255, 255, .12); color: #fff; font-size: 2rem; line-height: 1;
+}
+.lb-prec { left: 8px; }
+.lb-suiv { right: 8px; }
+.lightbox.seule .lb-nav { display: none; }
 .vignette figcaption { font-size: .85rem; color: var(--doux); margin-top: 4px; }
 
 .lightbox {
