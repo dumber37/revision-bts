@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Révisions BTS MCO</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="topbar">
+    <a class="logo" href="#/">Révisions <span>BTS MCO</span></a>
+    <button class="theme-btn" id="themeBtn" type="button" aria-label="Changer de thème">◐</button>
+  </header>
+
+  <main id="app" class="page"></main>
+
+  <div class="lightbox" id="lightbox" hidden>
+    <button class="lb-close" type="button" aria-label="Fermer">×</button>
+    <img alt="">
+    <p class="lb-caption"></p>
+  </div>
+
+  <!-- Données : une matière par fichier. Ajouter une fiche = modifier le fichier de la matière. -->
+  <script src="data/matieres.js"></script>
+  <script src="data/drcv.js"></script>
+  <script src="data/adoc.js"></script>
+  <script src="data/management.js"></script>
+  <script src="data/gestion.js"></script>
+  <script src="data/formules.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
