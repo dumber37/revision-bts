@@ -181,7 +181,7 @@ var Composants = (function () {
     },
     paie: function (div) {
       calculatrice(div, 'Calculatrice : paie de la semaine',
-        [['taux', 'Taux horaire brut (€)', '12'], ['h', 'Heures travaillées', '46'], ['ca', 'CA réalisé (€)', '8000'],
+        [['taux', 'Taux horaire brut (€)', '12'], ['h', 'Heures travaillées', '46'], ['ca', 'CA réalisé (€)', '2000'],
          ['com', 'Commission (%)', '2'], ['prime', 'Prime (€)', '0'], ['cs', 'Cotisations salariales (%)', '22'], ['cp', 'Cotisations patronales (%)', '42']],
         function (v) {
           var n = Math.min(v.h, 35), h25 = Math.max(0, Math.min(v.h, 43) - 35), h50 = Math.max(0, v.h - 43);

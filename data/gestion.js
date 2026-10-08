@@ -45,7 +45,7 @@ R.fiche({
       <div><b>Peu élastique</b><strong>E &lt; 1</strong><span>Les clients réagissent peu au prix.</span></div>
       <div><b>Unitaire</b><strong>E = 1</strong><span>La demande varie comme le prix.</span></div>
     </div>
-    <p>L'exemple chargé : prix +5 %, ventes −15 %, donc E = 3. Change les chiffres pour t'entraîner.</p>
+    <p class="situation"><b>Fil rouge Sport'Tours :</b> Léa monte le prix des gourdes de 10 € à 10,50 €. Sur le trimestre, les ventes passent de 1 000 à 850. Les clients sont-ils sensibles au prix ? Change les chiffres pour tester d'autres cas.</p>
     <div data-calc="elasticite"></div>
 
     <h2>Stratégies face à la concurrence</h2>
@@ -67,7 +67,7 @@ R.fiche({
     <p><b>Différenciation :</b> tarifs multidimensionnels (heure, saison), tarifs selon la quantité, bundling (offre groupée).</p>
 
     <h2>Calculs de marge (souvent à l'examen)</h2>
-    <p>Ces formules ne sont pas dans tes PDF mais tombent souvent en BTS MCO.</p>
+    <p class="situation"><b>Fil rouge Sport'Tours :</b> Léa achète une paire de chaussures de running 40 € HT et la vend 60 € HT (72 € TTC). Calcule sa marge, ses taux et son coefficient, puis change les prix.</p>
     <div data-calc="marge"></div>
   `
 });
@@ -101,6 +101,7 @@ R.fiche({
     <div class="formule"><b>Note pondérée</b> = Σ (note × coefficient)</div>
     <p class="exemple"><b>Ex. fournisseur C :</b> 5 × 60 % + 2 × 40 % = 3,8.<br>
     <b>Exercice</b> (qualité et prix coef. 2) : Durax 15, Helpon 15, <b>Astoa 17</b>, Socx 13. On retient Astoa.</p>
+    <p class="situation"><b>Fil rouge Sport'Tours :</b> Léa compare trois fournisseurs de ballons (A, B, C) sur 4 critères, notés sur 5. La qualité et le prix comptent double. Change les notes pour voir qui l'emporte.</p>
     <div data-calc="scoring"></div>
 
     <h2>Les enjeux de la négociation</h2>

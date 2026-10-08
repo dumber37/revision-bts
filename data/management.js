@@ -212,7 +212,7 @@ R.fiche({
     </div>
 
     <h2>À toi de calculer</h2>
-    <p>L'exemple chargé : un vendeur à 12 € de l'heure, 46 h dans la semaine, 8 000 € de CA à 2 % de commission. Change les chiffres pour t'entraîner.</p>
+    <p class="situation"><b>Fil rouge Sport'Tours :</b> semaine d'inventaire pour Hugo, vendeur à 12 € brut de l'heure. Il travaille 46 h et vend pour 2 000 € avec 2 % de commission. Quel est son brut, son net, et combien coûte-t-il au magasin ? Change les chiffres pour t'entraîner.</p>
     <div data-calc="paie"></div>
   `
 });

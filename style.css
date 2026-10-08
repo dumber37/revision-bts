@@ -186,6 +186,32 @@ h1 { font-size: 1.8rem; line-height: 1.2; margin: 0 0 16px; letter-spacing: -.01
   .lecteur-miniatures button { flex-basis: 72px; }
 }
 
+/* Fil rouge et calculs en situation */
+.fil-rouge {
+  padding: 14px 16px; border-radius: 10px; margin-bottom: 8px;
+  background: var(--nuit); color: var(--nuit-texte);
+}
+.fil-rouge > b { color: var(--or); font-size: 1.05rem; }
+.fil-rouge p { margin: 4px 0 0; }
+.fil-rouge p b { color: var(--or); }
+.situation { padding: 10px 14px; border-radius: 8px; background: var(--retenir); border-left: 4px solid var(--or); }
+.cas { margin: 18px 0; padding: 14px 16px; border: 1px solid var(--bord); border-radius: 12px; background: var(--bg); }
+.cas h3 { display: flex; align-items: center; gap: 10px; margin: 0 0 8px; }
+.cas h3 span {
+  display: inline-flex; align-items: center; justify-content: center; flex: 0 0 auto;
+  width: 28px; height: 28px; border-radius: 50%; background: var(--nuit); color: var(--or); font-size: .9rem;
+}
+.correction { margin-top: 8px; }
+.correction summary {
+  display: inline-block; cursor: pointer; font-weight: 700; font-size: .9rem; list-style: none;
+  padding: 5px 12px; border-radius: 8px; border: 1px solid var(--bord); background: var(--surface);
+}
+.correction summary::-webkit-details-marker { display: none; }
+.correction summary::before { content: "▸ "; color: var(--rouille); }
+.correction[open] summary::before { content: "▾ "; }
+.correction[open] summary { margin-bottom: 6px; }
+.correction p { margin: 4px 0; }
+
 /* QCM */
 .qcm {
   margin-top: 16px; padding: 18px 18px 8px; border-radius: 12px;
