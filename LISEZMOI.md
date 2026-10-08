@@ -8,6 +8,7 @@ En ligne : https://dumber37.github.io/revision-bts/ (aussi utilisable en ouvrant
 - `visuels/<matiere>/` : les pages des PDF en JPG 1600 px, leurs miniatures 400 px dans `mini/`, et les PDF d'origine.
   On les déclare avec `R.diaporama({...})` (voir `data/matieres.js`).
 - `data/qcm.js` : les banques de QCM par fiche (5 questions tirées au hasard par fiche, 8 sur l'onglet Visuels).
+- `jeu.js` : XP, niveaux, flamme, étoiles, badges, Défi éclair (progression gardée dans le navigateur).
 - Chaque fiche a un bouton « Demander à Claude » qui ouvre claude.ai avec la fiche et la question (aucune clé d'API).
 
 À chaque mise en ligne, augmenter le `?v=` des fichiers dans `index.html` (GitHub Pages garde les fichiers 10 min en cache).

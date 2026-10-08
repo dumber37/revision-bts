@@ -53,6 +53,7 @@
         '<span class="nom">' + esc(m.nom) + '</span>' +
         '<span class="long">' + esc(m.long) + '</span>' +
         '<span class="compte">' + pluriel(nf, 'fiche') + (nv ? ' · ' + pluriel(nv, 'visuel') : '') + '</span>' +
+        Jeu.progression(fichesDe(m.id)) +
         '</a>';
     }).join('');
 
@@ -60,6 +61,10 @@
       '<h1>Mes matières</h1>' +
       '<div class="recherche"><input id="q" type="search" placeholder="Chercher une notion (ex. élasticité, SONCASE)…" autocomplete="off"></div>' +
       '<div id="resultats"></div>' +
+      '<div class="raccourcis">' +
+        '<a class="lien-defi" href="#/defi"><span class="ico">⚡</span><span><b>Défi éclair</b><span>10 questions chrono, toutes matières</span></span></a>' +
+        '<a class="lien-profil" href="#/profil"><span class="ico">🏅</span><span><b>Mon profil</b><span>Niveau, badges et records</span></span></a>' +
+      '</div>' +
       '<div class="grille-matieres">' + cartes + '</div>' +
       (R.formules ? '<a class="lien-formules" href="#/formules"><b>Formules à retenir</b><span>Tous les calculs d’examen sur une page ›</span></a>' : '');
 
@@ -84,6 +89,7 @@
       '<span class="tag">' + esc(m.nom) + '</span>' +
       '<span class="titre">' + esc(f.titre) + '</span>' +
       (f.resume ? '<span class="resume">' + esc(f.resume) + '</span>' : '') +
+      '<span class="carte-jeu">' + Jeu.etoiles(f.id) + '</span>' +
       '</a>';
   }
 
@@ -126,7 +132,7 @@
         '<a href="#/' + m.id + '/visuels"' + (onglet === 'visuels' ? ' class="actif"' : '') + '>Visuels (' + visuels.length + ')</a>' +
       '</div>' + corps;
     activerLecteurs();
-    if ($('#qcm')) Composants.qcm($('#qcm'), banqueMatiere(m.id), 8);
+    if ($('#qcm')) Composants.qcm($('#qcm'), banqueMatiere(m.id), 8, 'matiere:' + m.id);
   }
 
   function banqueMatiere(id) {
@@ -307,6 +313,17 @@
     });
   }
 
+  // Une fiche compte comme « lue » quand on arrive à son QCM (donc à la fin du contenu).
+  var lecture = null;
+  function surveillerLecture(id) {
+    var cible = $('#qcm') || $('.suite');
+    if (!cible || !('IntersectionObserver' in window)) return;
+    lecture = new IntersectionObserver(function (e) {
+      if (e[0].isIntersecting) { Jeu.ficheLue(id); lecture.disconnect(); lecture = null; }
+    });
+    lecture.observe(cible);
+  }
+
   function pageFiche(m, f) {
     document.title = f.titre + ' · Révisions BTS MCO';
     var liste = fichesDe(m.id), i = liste.indexOf(f);
@@ -329,7 +346,8 @@
       '</nav>';
     preparerContenu();
     activerLecteurs();
-    if ($('#qcm')) Composants.qcm($('#qcm'), R.qcm[f.id], 5);
+    if ($('#qcm')) Composants.qcm($('#qcm'), R.qcm[f.id], 5, 'fiche:' + f.id);
+    surveillerLecture(f.id);
     activerClaude(f.titre, 'Matière : ' + m.code + ' ' + m.long + '.', texteFiche(f));
   }
 
@@ -354,6 +372,9 @@
       boiteClaude();
     preparerContenu();
     activerClaude('Formules à retenir', 'Ce sont les formules de calcul pour l’examen.', enTexte(R.formules));
+    Array.prototype.forEach.call(app.querySelectorAll('details.correction'), function (d, i) {
+      d.addEventListener('toggle', function () { if (d.open) Jeu.correction(i); });
+    });
   }
 
   function introuvable() {
@@ -365,10 +386,14 @@
   function route() {
     var parts = location.hash.replace(/^#\/?/, '').split('/').filter(Boolean);
     lecteurs = [];
+    Jeu.quitter(); // arrête le chrono du Défi éclair si on quitte la page
+    if (lecture) { lecture.disconnect(); lecture = null; }
     lb.hidden = true; // bouton retour du téléphone : on ne garde pas la visionneuse ouverte
     if (document.fullscreenElement) document.exitFullscreen();
     if (!parts.length) accueil();
     else if (parts[0] === 'formules' && R.formules) pageFormules();
+    else if (parts[0] === 'defi') Jeu.pageDefi(app);
+    else if (parts[0] === 'profil') Jeu.pageProfil(app);
     else {
       var m = matiere(parts[0]);
       if (!m) introuvable();
@@ -431,5 +456,6 @@
   });
 
   window.addEventListener('hashchange', route);
+  Jeu.majChip();
   route();
 })();

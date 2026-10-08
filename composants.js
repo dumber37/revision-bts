@@ -259,7 +259,13 @@ var Composants = (function () {
     }
     return t;
   }
-  function qcm(div, banque, n) {
+  var BRAVO = ['Bonne réponse !', 'Exact !', 'Bien vu !', 'Dans le mille !', 'Parfait !', 'Yes !'];
+  var RATE = ['Raté.', 'Pas tout à fait.', 'Presque…', 'Non, mais tu vas la retenir.'];
+  function auHasard(t) { return t[Math.floor(Math.random() * t.length)]; }
+
+  // cle : identifiant du QCM pour garder le meilleur score (ex. « fiche:repo »).
+  function qcm(div, banque, n, cle) {
+    var J = typeof Jeu !== 'undefined' ? Jeu : null;
     function tirer() {
       var qs = melanger(banque).slice(0, Math.min(n, banque.length));
       var faites = 0, bonnes = 0;
@@ -290,17 +296,19 @@ var Composants = (function () {
             if (x.dataset.ok === '1') x.classList.add('bonne');
           });
           var ex = fs.querySelector('.qcm-expl');
-          ex.innerHTML = (juste ? '<b>Bonne réponse.</b> ' : '<b>Raté.</b> ') + ex.innerHTML;
+          ex.innerHTML = '<b>' + auHasard(juste ? BRAVO : RATE) + '</b> ' + ex.innerHTML;
           ex.hidden = false;
           faites++;
           if (juste) bonnes++;
-          div.querySelector('.qcm-score').textContent = bonnes + ' / ' + faites;
+          var serie = J ? J.reponse(juste) : 0;
+          div.querySelector('.qcm-score').innerHTML = bonnes + ' / ' + faites + (serie >= 2 ? ' <span class="qcm-serie">🔥 ' + serie + '</span>' : '');
           if (faites === qs.length) {
             var fin = div.querySelector('.qcm-fin'), r = bonnes / qs.length;
             fin.innerHTML = '<b>' + bonnes + ' / ' + qs.length + '</b> · ' +
-              (r === 1 ? 'Parfait, tout est su !' : r >= 0.7 ? 'Bien joué, encore un petit effort.' : r >= 0.4 ? 'C’est un début : relis la fiche et retente.' : 'Relis la fiche, puis relance un QCM.') +
+              (r === 1 ? '★★★ Parfait, tout est su !' : r >= 0.8 ? '★★ Bien joué, presque parfait.' : r >= 0.6 ? '★ C’est en bonne voie, retente pour les étoiles.' : 'Relis la fiche, puis relance un QCM.') +
               ' <button type="button" class="qcm-nouveau">↻ Nouveau QCM</button>';
             fin.hidden = false;
+            if (J && cle) J.qcmFini(cle, bonnes, qs.length);
           }
         });
       });
