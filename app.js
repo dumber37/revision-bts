@@ -81,7 +81,10 @@
       '<div class="grille-matieres">' + cartes + '</div>' +
       '<h2 class="titre-section">S’entraîner</h2>' +
       '<div class="raccourcis">' +
-        '<a class="lien-defi" href="#/defi"><span class="ico">⚡</span><span><b>Défi éclair</b><span>10 questions chrono, toutes matières</span></span></a>' +
+        '<a class="lien-profil" href="#/bilan"><span class="ico">🎯</span><span><b>Mes points faibles</b><span>Ce qu’il faut retravailler en priorité</span></span></a>' +
+        '<a class="lien-profil" href="#/calculs"><span class="ico">🧮</span><span><b>Calculs à l’infini</b><span>Paie, élasticité, marge… avec correction</span></span></a>' +
+        '<a class="lien-profil" href="#/oral"><span class="ico">🎙️</span><span><b>Simulateur d’oral</b><span>E41 et E42 avec Claude, noté sur 20</span></span></a>' +
+        '<a class="lien-defi" href="#/defi"><span class="ico">⚡</span><span><b>Défi éclair</b><span>10 questions chrono, à envoyer à un ami</span></span></a>' +
         '<a class="lien-profil" href="#/duel"><span class="ico">⚔️</span><span><b>Duel</b><span>À deux sur le même téléphone</span></span></a>' +
         '<a class="lien-profil" href="#/express"><span class="ico">⏱</span><span><b>L’essentiel en 1 minute</b><span>Les 3 points clés de chaque fiche</span></span></a>' +
         '<a class="lien-profil" href="#/profil"><span class="ico">🏅</span><span><b>Mon profil</b><span>Niveau, badges et records</span></span></a>' +
@@ -417,7 +420,13 @@
     if (document.fullscreenElement) document.exitFullscreen();
     if (!parts.length) accueil();
     else if (parts[0] === 'formules' && R.formules) pageFormules();
-    else if (parts[0] === 'defi') Jeu.pageDefi(app);
+    else if (parts[0] === 'defi') {
+      // #/defi/<graine>/<score>/<prénom> : défi envoyé par un ami
+      var adv = parts.length >= 4 && /^\d+$/.test(parts[1]) && /^\d+$/.test(parts[2])
+        ? { graine: +parts[1], score: +parts[2], nom: (function () { try { return decodeURIComponent(parts[3]).slice(0, 16); } catch (e) { return 'Un ami'; } })() }
+        : null;
+      Jeu.pageDefi(app, adv);
+    }
     else if (parts[0] === 'profil') Jeu.pageProfil(app);
     else if (parts[0] === 'revoir') Jeu.pageRevoir(app);
     else if (parts[0] === 'express') Activites.pageExpress(app);

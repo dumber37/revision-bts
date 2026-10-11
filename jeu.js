@@ -12,7 +12,7 @@ var Jeu = (function () {
 
   function vierge() {
     return { xp: 0, jours: { dernier: '', serie: 0, max: 0 }, lues: {}, best: {}, badges: {}, corr: {},
-             srs: {}, jour: { date: '', c: {}, missions: [], faites: {} }, duelNoms: null, reglages: {},
+             srs: {}, jour: { date: '', c: {}, missions: [], faites: {} }, duelNoms: null, reglages: {}, parFiche: {}, notes: {}, favoris: {},
              stats: { bonnes: 0, reponses: 0, qcm: 0, defis: 0, record: 0, comboMax: 0, missions: 0 } };
   }
   var E = vierge();
@@ -172,7 +172,8 @@ var Jeu = (function () {
     ['revision', '🔁', 'Mémoire d’éléphant', 'Terminer une révision des erreurs'],
     ['journee', '✅', 'Journée parfaite', 'Réussir les 3 missions d’une journée'],
     ['missions-10', '🎖️', 'Employé du mois', 'Réussir 10 missions au total'],
-    ['ancre', '⚓', 'Bien ancré', '20 questions rangées dans la boîte « sue »']
+    ['ancre', '⚓', 'Bien ancré', '20 questions rangées dans la boîte « sue »'],
+    ['defi-ami', '🥇', 'Défi relevé', 'Battre le score d’un ami au Défi éclair']
   ];
   var conditionsExtra = []; // ajoutées par les autres modules (activités)
   function conditions() {
@@ -303,6 +304,7 @@ var Jeu = (function () {
     E.stats.reponses++;
     planifier(id, juste);
     var x = id && parId(id);
+    if (x) { var t = E.parFiche[x.f.id] || (E.parFiche[x.f.id] = [0, 0]); t[1]++; if (juste) t[0]++; } // réussite par chapitre
     if (juste) {
       combo++;
       E.stats.bonnes++;
@@ -479,32 +481,59 @@ var Jeu = (function () {
   function quitterPage() { stopMinuteur(); jetonPage++; }
   function apres(ms, fn) { var j = jetonPage; return setTimeout(function () { if (j === jetonPage) fn(); }, ms); }
 
-  function pageDefi(app) {
+  // Hasard reproductible : avec la même graine, on obtient les mêmes questions dans le même ordre.
+  // C'est ce qui permet d'envoyer un défi à un ami sans serveur (la graine voyage dans le lien).
+  function hasard(graine) {
+    var a = graine >>> 0;
+    return function () {
+      a = (a + 0x6D2B79F5) >>> 0;
+      var t = a;
+      t = Math.imul(t ^ (t >>> 15), t | 1);
+      t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+      return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+    };
+  }
+  function melangerAvec(t, rnd) {
+    t = t.slice();
+    for (var i = t.length - 1; i > 0; i--) { var j = Math.floor(rnd() * (i + 1)), x = t[i]; t[i] = t[j]; t[j] = x; }
+    return t;
+  }
+
+  // adversaire : { graine, score, nom } quand on relève le défi d'un ami (lien #/defi/graine/score/nom).
+  function pageDefi(app, adversaire) {
     document.title = 'Défi éclair · Révisions BTS MCO';
     stopMinuteur();
     app.innerHTML =
       '<nav class="fil"><a href="#/">Matières</a> › Défi éclair</nav>' +
       '<section class="defi defi-accueil">' +
         '<div class="defi-eclair">⚡</div><h1>Défi éclair</h1>' +
-        '<p>10 questions tirées dans toutes les matières, <b>' + DUREE + ' secondes</b> pour chacune.</p>' +
-        '<ul><li>Bonne réponse : <b>100 points</b> + un bonus de vitesse</li><li>3 bonnes d’affilée et plus : <b>bonus de série</b> 🔥</li><li>À la fin : la correction de tes erreurs</li></ul>' +
+        (adversaire
+          ? '<p class="defi-adversaire"><b>' + esc(adversaire.nom) + '</b> te défie : <b>' + adversaire.score + ' points</b> à battre, sur exactement les mêmes questions.</p>'
+          : '<p>10 questions tirées dans toutes les matières, <b>' + DUREE + ' secondes</b> pour chacune.</p>') +
+        '<ul><li>Bonne réponse : <b>100 points</b> + un bonus de vitesse</li><li>3 bonnes d’affilée et plus : <b>bonus de série</b> 🔥</li><li>À la fin : la correction de tes erreurs, et un lien pour défier un ami</li></ul>' +
         '<p class="defi-record">Ton record : <b>' + E.stats.record + '</b> points</p>' +
-        '<button type="button" class="defi-go">C’est parti !</button>' +
+        '<button type="button" class="defi-go">' + (adversaire ? 'Relever le défi' : 'C’est parti !') + '</button>' +
       '</section>';
-    app.querySelector('.defi-go').addEventListener('click', function () { lancerDefi(app); });
+    app.querySelector('.defi-go').addEventListener('click', function () {
+      lancerDefi(app, adversaire ? adversaire.graine : Math.floor(Math.random() * 1e9), adversaire);
+    });
   }
 
-  function lancerDefi(app) {
-    var qs = melanger(questions()).slice(0, 10), i = 0, score = 0, bonnes = 0, serie = 0, erreurs = [];
+  function lancerDefi(app, graine, adversaire) {
+    var rnd = hasard(graine);
+    var qs = melangerAvec(questions(), rnd).slice(0, 10), i = 0, score = 0, bonnes = 0, serie = 0, erreurs = [];
+    // L'ordre des réponses est tiré d'avance : identique pour les deux joueurs.
+    var ordres = qs.map(function (it) { return melangerAvec([0, 1, 2, 3].slice(0, it.q[1].length), rnd); });
 
     function question() {
       stopMinuteur();
       var it = qs[i], m = R.matieres.filter(function (x) { return x.id === it.f.matiere; })[0];
-      var reps = melanger(it.q[1].map(function (r, k) { return { txt: r, ok: k === 0 }; }));
+      var reps = ordres[i].map(function (k) { return { txt: it.q[1][k], ok: k === 0 }; });
       app.innerHTML =
         '<section class="defi">' +
           '<div class="defi-haut"><span>Question ' + (i + 1) + '/' + qs.length + '</span><span class="defi-score">' + score + ' pts</span>' +
             (serie >= 2 ? '<span class="defi-serie">🔥 ' + serie + '</span>' : '') + '</div>' +
+          (adversaire ? '<p class="defi-cible">À battre : ' + adversaire.score + ' pts (' + esc(adversaire.nom) + ')</p>' : '') +
           '<div class="defi-temps"><i></i></div>' +
           '<span class="defi-tag" style="--c:' + m.couleur + '">' + esc(m.nom) + ' · ' + esc(it.f.titre) + '</span>' +
           '<h2 class="defi-q">' + it.q[0] + '</h2>' +
@@ -559,24 +588,46 @@ var Jeu = (function () {
       var record = score > E.stats.record;
       if (record) E.stats.record = score;
       if (bonnes >= 8) debloquer('eclair-8');
+      var gagne = adversaire && score > adversaire.score;
+      if (gagne) { E.stats.defisGagnes = (E.stats.defisGagnes || 0) + 1; debloquer('defi-ami'); }
       verifierBadges(); sauver();
       compter('defi');
-      gagner(Math.round(score / 20), 'Défi éclair');
-      if (record || bonnes === qs.length) confettis();
+      gagner(Math.round(score / 20) + (gagne ? 30 : 0), gagne ? 'défi relevé !' : 'Défi éclair');
+      if (record || bonnes === qs.length || gagne) confettis();
+      var prenom = (E.reglages && E.reglages.prenom) || '';
       app.innerHTML =
         '<nav class="fil"><a href="#/">Matières</a> › Défi éclair</nav>' +
         '<section class="defi defi-fin">' +
-          '<div class="defi-eclair">' + (bonnes >= 8 ? '🏆' : bonnes >= 5 ? '⚡' : '💡') + '</div>' +
+          '<div class="defi-eclair">' + (gagne ? '🥇' : bonnes >= 8 ? '🏆' : bonnes >= 5 ? '⚡' : '💡') + '</div>' +
           '<h1>' + score + ' points</h1>' +
+          (adversaire ? '<p class="defi-adversaire">' + (gagne ? 'Tu as battu <b>' + esc(adversaire.nom) + '</b> (' + adversaire.score + ' pts) !'
+            : score === adversaire.score ? 'Égalité parfaite avec <b>' + esc(adversaire.nom) + '</b> !' : '<b>' + esc(adversaire.nom) + '</b> garde l’avantage avec ' + adversaire.score + ' pts.') + '</p>' : '') +
           '<p><b>' + bonnes + '/' + qs.length + '</b> bonnes réponses' + (record ? ' · <b class="nouveau-record">nouveau record !</b>' : ' · record : ' + E.stats.record) + '</p>' +
-          '<button type="button" class="defi-go">Rejouer</button>' +
+          '<div class="defi-partage"><b>Défie un ami sur les mêmes questions</b>' +
+            '<label><span>Ton prénom</span><input id="prenom" maxlength="16" value="' + esc(prenom) + '" placeholder="Ex. Gary"></label>' +
+            '<button type="button" class="defi-go partager">📤 Envoyer le défi</button><p class="defi-lien" hidden></p></div>' +
+          '<p><button type="button" class="defi-go secondaire rejouer">Rejouer (nouvelles questions)</button></p>' +
         '</section>' +
         listeErreurs(erreurs);
-      app.querySelector('.defi-go').addEventListener('click', function () { lancerDefi(app); });
+      app.querySelector('.rejouer').addEventListener('click', function () { lancerDefi(app, Math.floor(Math.random() * 1e9)); });
+      app.querySelector('.partager').addEventListener('click', function () {
+        var nom = app.querySelector('#prenom').value.trim() || 'Un ami';
+        E.reglages = E.reglages || {}; E.reglages.prenom = nom === 'Un ami' ? '' : nom; sauver();
+        var url = location.origin + location.pathname + '#/defi/' + graine + '/' + score + '/' + encodeURIComponent(nom);
+        var txt = nom + ' te défie au Défi éclair BTS MCO : ' + score + ' points à battre ⚡';
+        var zone = app.querySelector('.defi-lien');
+        function montrer(msg) { zone.hidden = false; zone.innerHTML = msg + '<br><input readonly value="' + esc(url) + '" onclick="this.select()">'; }
+        if (navigator.share) {
+          navigator.share({ title: 'Défi éclair', text: txt, url: url }).catch(function () { montrer('Copie ce lien :'); });
+        } else if (navigator.clipboard) {
+          navigator.clipboard.writeText(txt + '\n' + url).then(function () { montrer('✓ Lien copié : colle-le dans une conversation.'); }, function () { montrer('Copie ce lien :'); });
+        } else montrer('Copie ce lien :');
+      });
     }
 
     question();
   }
+
 
   function listeErreurs(erreurs) {
     return erreurs.length ? '<h2 class="titre-section">À revoir</h2><div class="defi-erreurs">' + erreurs.map(function (it) {

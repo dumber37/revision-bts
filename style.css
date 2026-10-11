@@ -349,6 +349,73 @@ table.bilan a { color: inherit; }
 .express-fiche li { margin: 3px 0; }
 .express-fin { text-align: center; margin-top: 20px; }
 
+/* ---------- Outils : points faibles, calculs, défi entre amis, transfert, oral ---------- */
+.defi-go.secondaire { background: var(--surface); color: var(--texte); border: 1px solid var(--bord); box-shadow: none; font-weight: 500; }
+.calc-boutons { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin: 12px 0 4px; }
+
+.pf-global { font-size: 1.05rem; }
+.pf-prio { display: grid; gap: 10px; grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr)); }
+.pf-carte { display: flex; flex-direction: column; gap: 4px; padding: 14px; border-radius: 12px; background: var(--surface); border: 1px solid var(--bord); border-left: 5px solid #c4462b; }
+.pf-carte b { font-size: 1.02rem; }
+.pf-carte-taux { color: #c4462b; font-weight: 700; font-size: .9rem; }
+.pf-actions { display: flex; flex-wrap: wrap; gap: 6px 12px; margin-top: 4px; font-size: .86rem; }
+.pf-actions a { color: var(--rouille); font-weight: 700; text-decoration: none; }
+.pf-liste { display: grid; gap: 6px; }
+.pf-ligne {
+  display: grid; grid-template-columns: 1fr minmax(80px, 30%) 52px; align-items: center; gap: 10px;
+  padding: 9px 12px; border-radius: 10px; background: var(--surface); border: 1px solid var(--bord); text-decoration: none;
+}
+.pf-titre { font-size: .93rem; font-weight: 500; min-width: 0; }
+.pf-titre small { color: #1d8a5a; font-weight: 700; }
+.pf-barre { height: 8px; border-radius: 4px; background: var(--bord); overflow: hidden; }
+.pf-barre i { display: block; height: 100%; border-radius: 4px; }
+.pf-taux { text-align: right; font-weight: 700; font-variant-numeric: tabular-nums; font-size: .9rem; }
+.pf-ligne.vert .pf-barre i { background: #2fa36b; } .pf-ligne.vert .pf-taux { color: #1d8a5a; }
+.pf-ligne.orange .pf-barre i { background: #e8a33d; } .pf-ligne.orange .pf-taux { color: var(--rouille); }
+.pf-ligne.rouge .pf-barre i { background: #c4462b; } .pf-ligne.rouge .pf-taux { color: #c4462b; }
+.pf-ligne.gris .pf-taux { color: var(--doux); }
+.pf-legende { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: .82rem; color: var(--doux); }
+.pf-legende .vert { color: #1d8a5a; } .pf-legende .orange { color: var(--rouille); } .pf-legende .rouge { color: #c4462b; }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) :is(.pf-ligne.vert .pf-taux, .pf-legende .vert, .pf-titre small) { color: #5cc28f; } :root:not([data-theme="light"]) :is(.pf-ligne.rouge .pf-taux, .pf-legende .rouge, .pf-carte-taux) { color: #ef7a5f; } }
+:root[data-theme="dark"] :is(.pf-ligne.vert .pf-taux, .pf-legende .vert, .pf-titre small) { color: #5cc28f; }
+:root[data-theme="dark"] :is(.pf-ligne.rouge .pf-taux, .pf-legende .rouge, .pf-carte-taux) { color: #ef7a5f; }
+
+.calc-types { display: flex; flex-wrap: wrap; gap: 6px; margin: 4px 0 14px; }
+.calc-types a { padding: 5px 11px; border-radius: 999px; border: 1px solid var(--bord); text-decoration: none; font-size: .84rem; background: var(--bg); }
+.calc-types a.actif { background: var(--nuit); color: var(--or); border-color: var(--nuit); font-weight: 700; }
+.calculs .situation { margin-bottom: 14px; }
+.calculs .situation .table-wrap { margin: 10px 0 0; }
+.calc-form { display: grid; gap: 10px; grid-template-columns: repeat(auto-fill, minmax(min(100%, 220px), 1fr)); }
+.calc-form label { display: flex; flex-direction: column; gap: 4px; font-size: .86rem; font-weight: 700; }
+.calc-form .calc-boutons { grid-column: 1 / -1; }
+.calc-saisie { display: flex; align-items: center; gap: 6px; }
+.calc-saisie em { font-style: normal; color: var(--doux); font-weight: 700; }
+.calc-form input, .calc-form select {
+  width: 100%; font: inherit; font-weight: 500; padding: 9px 11px; border-radius: 8px; border: 2px solid var(--bord); background: var(--bg); color: var(--texte);
+}
+.calc-form .ok { border-color: #1d8a5a; background: #e3f3ec; color: #0f4d32; }
+.calc-form .ko { border-color: #c4462b; background: #fbe7e2; color: #7a2412; }
+.calc-correction .qcm-expl { line-height: 1.8; }
+
+.defi-adversaire { font-size: 1.05rem; padding: 10px 14px; border-radius: 10px; background: var(--actif); border: 1px solid var(--or); }
+.defi-cible { margin: 4px 0 0; font-size: .85rem; color: var(--rouille); font-weight: 700; }
+.defi-partage { display: flex; flex-direction: column; align-items: center; gap: 8px; margin: 16px auto 4px; padding: 14px; max-width: 420px; border-radius: 12px; background: var(--bg); border: 1px dashed var(--or); }
+.defi-partage label { display: flex; align-items: center; gap: 8px; font-size: .9rem; }
+.defi-partage input { font: inherit; padding: 7px 10px; border-radius: 8px; border: 1px solid var(--bord); background: var(--surface); color: var(--texte); width: 160px; }
+.defi-lien { font-size: .85rem; margin: 0; width: 100%; }
+.defi-lien input { width: 100%; margin-top: 6px; font-size: .8rem; }
+
+.transfert { margin-top: 8px; }
+.transfert > p { color: var(--doux); font-size: .92rem; }
+.transfert .calc-boutons { justify-content: flex-start; }
+.transfert textarea { width: 100%; font: inherit; font-size: .85rem; padding: 9px; border-radius: 8px; border: 1px solid var(--bord); background: var(--bg); color: var(--texte); }
+.installer-btn.fichier { display: inline-block; cursor: pointer; }
+.transfert-msg { font-weight: 700; }
+
+.oral-desc { text-align: left; padding: 10px 14px; border-radius: 10px; background: var(--retenir); border-left: 4px solid var(--or); }
+.oral-etapes { margin: 0; padding: 14px 14px 14px 34px; border-radius: 12px; background: var(--surface); border: 1px solid var(--bord); }
+.oral-etapes li { margin: 5px 0; }
+
 /* ---------- Ambiance : animations douces et schémas dessinés ---------- */
 @keyframes entree { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
 @keyframes surgit { from { opacity: 0; transform: translateY(10px) scale(.98); } to { opacity: 1; transform: none; } }
