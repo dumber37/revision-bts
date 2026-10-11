@@ -2,7 +2,7 @@
 // - Pages, scripts et styles : réseau d'abord (on a toujours la dernière version), cache si hors-ligne.
 // - Images et PDF : cache d'abord (ils ne changent pas), réseau sinon.
 // À chaque mise en ligne : augmenter VERSION en même temps que le ?v= de index.html.
-var VERSION = 13;
+var VERSION = 14;
 var CACHE = 'revision-bts-v' + VERSION;
 var V = '?v=' + VERSION;
 var COEUR = [

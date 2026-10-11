@@ -132,7 +132,7 @@ R.fiche({
   resume: 'Parcours optimisé, IA, personnalisation, autonomie du client. Exemple Nespresso.',
   date: '2026-09-16',
   contenu: `
-    <ol class="etapes">
+    <ol class="etapes" data-libre>
       <li><b>Optimiser le parcours d'achat</b><p>Moins de friction, plus de fluidité entre le web et le magasin.</p></li>
       <li><b>IA de plus en plus présente et performante</b><p>Recommandations, chatbots, prévision des besoins.</p></li>
       <li><b>Personnalisation</b><p>Offres et conseils adaptés à chaque client.</p></li>

@@ -261,6 +261,88 @@ h1 { font-size: 1.8rem; line-height: 1.2; margin: 0 0 16px; letter-spacing: -.01
 .qcm-reps button.choisie { border-color: var(--or); background: var(--actif); }
 a.defi-go { display: inline-block; text-decoration: none; }
 
+/* ---------- S'entraîner : cartes mémo, ordre, trous, examen, essentiel ---------- */
+.astuce { font-size: .88rem; color: var(--doux); margin: 10px 2px 0; }
+.activites { display: grid; gap: 10px; grid-template-columns: repeat(auto-fill, minmax(min(100%, 250px), 1fr)); }
+.activite {
+  display: flex; align-items: center; gap: 14px; padding: 16px; border-radius: 12px; text-decoration: none;
+  background: var(--surface); border: 1px solid var(--bord); border-left: 5px solid var(--c); box-shadow: var(--ombre);
+  transition: transform .12s, border-color .12s;
+}
+.activite:hover { transform: translateY(-2px); border-color: var(--c); }
+.activite-ico { font-size: 2rem; line-height: 1; }
+.activite b { display: block; font-size: 1.05rem; }
+.activite span span { font-size: .88rem; color: var(--doux); }
+
+.memo { max-width: 560px; margin: 0 auto; }
+.memo-carte { display: block; width: 100%; margin: 14px 0; padding: 0; border: 0; background: none; cursor: pointer; perspective: 1200px; }
+.memo-in { display: grid; min-height: 240px; transition: transform .5s; transform-style: preserve-3d; }
+.memo-carte.retournee .memo-in { transform: rotateY(180deg); }
+.memo-face {
+  grid-area: 1 / 1; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; padding: 22px;
+  border-radius: 16px; backface-visibility: hidden; -webkit-backface-visibility: hidden; text-align: center; box-shadow: 0 8px 24px rgba(23, 35, 64, .15);
+}
+.memo-recto { background: linear-gradient(150deg, #172340, #2d3f6b); color: var(--nuit-texte); }
+.memo-recto b { font-size: 1.6rem; line-height: 1.2; }
+.memo-recto small, .memo-verso small { font-size: .75rem; letter-spacing: .1em; text-transform: uppercase; color: var(--or); }
+.memo-recto em { font-style: normal; font-size: .8rem; opacity: .6; }
+.memo-verso { background: var(--surface); border: 2px solid var(--or); transform: rotateY(180deg); font-size: 1.05rem; line-height: 1.5; }
+.memo-choix { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.memo-choix button { padding: 14px; border-radius: 12px; border: 0; cursor: pointer; font-weight: 700; font-size: 1rem; }
+.memo-non { background: #fbe7e2; color: #7a2412; }
+.memo-oui { background: #e3f3ec; color: #0f4d32; }
+.memo-aide { text-align: center; font-size: .8rem; color: var(--doux); }
+@media (hover: none) { .memo-aide { display: none; } }
+
+.ordre-aide { color: var(--doux); font-size: .9rem; margin: 0 0 10px; }
+.ordre-rang { counter-reset: r; list-style: none; padding: 0; margin: 0 0 12px; display: grid; gap: 6px; min-height: 10px; }
+.ordre-rang li {
+  counter-increment: r; display: flex; align-items: center; gap: 10px; padding: 9px 12px; border-radius: 10px;
+  background: #e3f3ec; color: #0f4d32; font-weight: 700; animation: pop .25s ease-out;
+}
+.ordre-rang li::before { content: counter(r); display: inline-flex; align-items: center; justify-content: center; width: 24px; height: 24px; border-radius: 50%; background: #1d8a5a; color: #fff; font-size: .8rem; flex: 0 0 auto; }
+.ordre-pioche { display: flex; flex-wrap: wrap; gap: 8px; }
+.ordre-pioche button { padding: 9px 14px; border-radius: 999px; border: 1px solid var(--bord); background: var(--bg); cursor: pointer; font-weight: 500; }
+.ordre-pioche button:hover { border-color: var(--or); }
+.secoue { animation: secoue .35s; border-color: #c4462b !important; }
+@keyframes secoue { 20%, 60% { transform: translateX(-6px); } 40%, 80% { transform: translateX(6px); } }
+@keyframes pop { from { transform: scale(.9); opacity: 0; } to { transform: none; opacity: 1; } }
+
+.trou-phrase { font-size: 1.25rem; line-height: 1.6; margin: 12px 0 16px; }
+.trou { display: inline-block; min-width: 80px; padding: 0 10px; border-bottom: 3px dashed var(--or); text-align: center; color: var(--rouille); font-weight: 700; }
+.trou.ok { border-bottom-style: solid; border-color: #1d8a5a; color: #1d8a5a; animation: pop .25s; }
+.trou.ko { border-bottom-style: solid; border-color: #c4462b; color: #c4462b; }
+.trou-choix { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 160px), 1fr)); gap: 8px; }
+.trou-choix button { padding: 11px 12px; border-radius: 10px; border: 1px solid var(--bord); background: var(--bg); cursor: pointer; font-weight: 500; }
+.trou-choix button.bonne { background: #e3f3ec; border-color: #1d8a5a; color: #0f4d32; }
+.trou-choix button.fausse { background: #fbe7e2; border-color: #c4462b; color: #7a2412; }
+.trou-choix button:disabled { cursor: default; }
+
+.serie-chrono { font-variant-numeric: tabular-nums; }
+.serie-chrono.urgent { color: #c4462b; }
+.note-examen { font-size: 3.2rem; font-weight: 700; line-height: 1; margin: 6px 0; color: var(--rouille); }
+.note-examen small { font-size: 1.2rem; color: var(--doux); }
+table.bilan { border-collapse: collapse; width: 100%; max-width: 480px; margin: 10px auto; text-align: left; }
+table.bilan th, table.bilan td { padding: 7px 10px; border-bottom: 1px solid var(--bord); }
+table.bilan tr.bon td:last-child { color: #1d8a5a; font-weight: 700; }
+table.bilan tr.moyen td:last-child { color: var(--rouille); font-weight: 700; }
+table.bilan tr.faible td:last-child { color: #c4462b; font-weight: 700; }
+table.bilan a { color: inherit; }
+
+.essentiel {
+  margin: 4px 0 18px; padding: 12px 16px; border-radius: 12px;
+  background: linear-gradient(135deg, var(--actif), var(--retenir)); border: 1px solid var(--or);
+}
+.essentiel-titre { font-weight: 700; color: var(--rouille); margin-bottom: 4px; }
+.essentiel ul { margin: 0; padding-left: 1.2em; }
+.essentiel li { margin: 3px 0; }
+.express-tete { text-align: center; }
+.express-fiche { padding: 12px 16px; margin-bottom: 10px; border-radius: 12px; background: var(--surface); border: 1px solid var(--bord); border-left: 4px solid var(--c); }
+.express-fiche a { text-decoration: none; }
+.express-fiche ul { margin: 6px 0 0; padding-left: 1.2em; }
+.express-fiche li { margin: 3px 0; }
+.express-fin { text-align: center; margin-top: 20px; }
+
 /* ---------- Jeu : niveau, étoiles, badges, défi ---------- */
 .topbar-droite { display: flex; align-items: center; gap: 10px; }
 .niveau-chip {

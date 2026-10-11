@@ -82,8 +82,10 @@
       '<h2 class="titre-section">S’entraîner</h2>' +
       '<div class="raccourcis">' +
         '<a class="lien-defi" href="#/defi"><span class="ico">⚡</span><span><b>Défi éclair</b><span>10 questions chrono, toutes matières</span></span></a>' +
+        '<a class="lien-profil" href="#/express"><span class="ico">⏱</span><span><b>L’essentiel en 1 minute</b><span>Les 3 points clés de chaque fiche</span></span></a>' +
         '<a class="lien-profil" href="#/profil"><span class="ico">🏅</span><span><b>Mon profil</b><span>Niveau, badges et records</span></span></a>' +
       '</div>' +
+      '<p class="astuce">Cartes mémo, listes à remettre dans l’ordre, textes à trous et examen blanc : onglet <b>S’entraîner</b> de chaque matière.</p>' +
       (R.formules ? '<a class="lien-formules" href="#/formules"><b>Formules à retenir</b><span>Tous les calculs d’examen sur une page ›</span></a>' : '') +
       '<div id="installer"></div>';
     afficherInstallation($('#installer'));
@@ -135,6 +137,8 @@
         : '<p class="vide">Pas encore de visuel pour cette matière.</p>';
       // QCM de fin : questions de toutes les fiches de la matière, mélangées.
       if (Jeu.questionsMatiere(m.id).length) corps += '<div id="qcm"></div>';
+    } else if (onglet === 'entrainement') {
+      corps = Activites.hub(m);
     } else {
       corps = fiches.length
         ? '<div class="liste-fiches">' + fiches.map(carteFiche).join('') + '</div>'
@@ -148,8 +152,9 @@
         '<h1>' + esc(m.nom) + '</h1><p>' + esc(m.long) + '</p>' +
       '</header>' +
       '<div class="onglets" style="--c:' + m.couleur + '">' +
-        '<a href="#/' + m.id + '"' + (onglet !== 'visuels' ? ' class="actif"' : '') + '>Fiches (' + fiches.length + ')</a>' +
+        '<a href="#/' + m.id + '"' + (onglet === 'fiches' ? ' class="actif"' : '') + '>Fiches (' + fiches.length + ')</a>' +
         '<a href="#/' + m.id + '/visuels"' + (onglet === 'visuels' ? ' class="actif"' : '') + '>Visuels (' + visuels.length + ')</a>' +
+        '<a href="#/' + m.id + '/entrainement"' + (onglet === 'entrainement' ? ' class="actif"' : '') + '>S’entraîner</a>' +
       '</div>' + corps;
     activerLecteurs();
     if ($('#qcm')) Composants.qcm($('#qcm'), Jeu.questionsMatiere(m.id), 8, 'matiere:' + m.id);
@@ -351,6 +356,7 @@
       '<article class="fiche" style="--c:' + m.couleur + '">' +
         '<h1>' + esc(f.titre) + '</h1>' +
         (f.date ? '<p class="meta">' + dateFr(f.date) + '</p>' : '') +
+        Activites.encadreEssentiel(f) +
         '<div class="contenu">' + f.contenu + '</div>' +
         (visuels.length ? '<h2>Les diapos de la fiche</h2>' + lecteur(visuels) : '') +
       '</article>' +
@@ -403,6 +409,8 @@
     var parts = location.hash.replace(/^#\/?/, '').split('/').filter(Boolean);
     lecteurs = [];
     Jeu.quitter(); // arrête le chrono du Défi éclair si on quitte la page
+    Activites.quitter(); // idem pour l'examen blanc
+    Activites.definirClavier(null);
     if (lecture) { lecture.disconnect(); lecture = null; }
     lb.hidden = true; // bouton retour du téléphone : on ne garde pas la visionneuse ouverte
     if (document.fullscreenElement) document.exitFullscreen();
@@ -411,11 +419,15 @@
     else if (parts[0] === 'defi') Jeu.pageDefi(app);
     else if (parts[0] === 'profil') Jeu.pageProfil(app);
     else if (parts[0] === 'revoir') Jeu.pageRevoir(app);
+    else if (parts[0] === 'express') Activites.pageExpress(app);
     else {
       var m = matiere(parts[0]);
+      var pages = { cartes: Activites.pageCartes, ordre: Activites.pageOrdre, trous: Activites.pageTrous, examen: Activites.pageExamen };
       if (!m) introuvable();
       else if (!parts[1]) pageMatiere(m, 'fiches');
-      else if (parts[1] === 'visuels') pageMatiere(m, 'visuels');
+      else if (parts[1] === 'visuels' || parts[1] === 'entrainement') pageMatiere(m, parts[1]);
+      else if (Activites.page && Activites.page(parts[1])) Activites.page(parts[1])(app, m);
+      else if (pages[parts[1]]) pages[parts[1]](app, m);
       else {
         var f = fichesDe(m.id).filter(function (x) { return x.id === parts[1]; })[0];
         if (f) pageFiche(m, f); else introuvable();
