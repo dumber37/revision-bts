@@ -425,7 +425,7 @@ var Activites = (function () {
     var html = R.matieres.map(function (m) {
       var fs = fichesDe(m.id).filter(function (f) { return R.essentiel && R.essentiel[f.id]; });
       if (!fs.length) return '';
-      return '<h2 class="titre-section" style="color:' + m.couleur + '">' + esc(m.nom) + '</h2>' + fs.map(function (f) {
+      return '<h2 class="titre-section titre-matiere" style="--c:' + m.couleur + '">' + esc(m.nom) + '</h2>' + fs.map(function (f) {
         return '<div class="express-fiche" style="--c:' + m.couleur + '"><a href="#/' + m.id + '/' + f.id + '"><b>' + esc(f.titre) + '</b> ›</a><ul>' +
           R.essentiel[f.id].map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul></div>';
       }).join('');

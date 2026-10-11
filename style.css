@@ -30,6 +30,11 @@
   --exemple: #223152; --actif: #2d3550; --ombre: none; color-scheme: dark;
 }
 
+/* Couleur de matière utilisée comme couleur de TEXTE : éclaircie en mode sombre pour rester lisible. */
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) [style*="--c"] { --ct: color-mix(in srgb, var(--c) 45%, #f3efe6); } }
+:root[data-theme="dark"] [style*="--c"] { --ct: color-mix(in srgb, var(--c) 45%, #f3efe6); }
+.titre-matiere { color: var(--ct, var(--c)); }
+
 * { box-sizing: border-box; }
 html { -webkit-text-size-adjust: 100%; }
 body {
@@ -78,7 +83,7 @@ h1 { font-size: 1.8rem; line-height: 1.2; margin: 0 0 16px; letter-spacing: -.01
 }
 .carte-matiere:hover { transform: translateY(-2px); }
 .carte-matiere .code, .entete-matiere .code {
-  align-self: flex-start; font-size: .75rem; font-weight: 700; color: var(--c);
+  align-self: flex-start; font-size: .75rem; font-weight: 700; color: var(--ct, var(--c));
   letter-spacing: .08em;
 }
 .carte-matiere .nom { font-size: 1.3rem; font-weight: 700; }
@@ -115,7 +120,7 @@ h1 { font-size: 1.8rem; line-height: 1.2; margin: 0 0 16px; letter-spacing: -.01
   border-radius: 10px;
 }
 .carte-fiche:hover { border-color: var(--c); }
-.carte-fiche .tag { font-size: .75rem; font-weight: 700; color: var(--c); }
+.carte-fiche .tag { font-size: .75rem; font-weight: 700; color: var(--ct, var(--c)); }
 .carte-fiche .titre { font-weight: 700; font-size: 1.05rem; }
 .carte-fiche .resume { color: var(--doux); font-size: .92rem; }
 .vide { color: var(--doux); padding: 24px 0; }
@@ -251,7 +256,7 @@ h1 { font-size: 1.8rem; line-height: 1.2; margin: 0 0 16px; letter-spacing: -.01
 .boite strong { display: block; font-size: 1.3rem; }
 .boite span { font-size: .72rem; color: var(--doux); }
 .boite.b0 { border-color: #c4462b; } .boite.b0 strong { color: #c4462b; }
-.boite.b5 { border-color: #2fa36b; } .boite.b5 strong { color: #2fa36b; }
+.boite.b5 { border-color: #1d8a5a; } .boite.b5 strong { color: #1d8a5a; }
 @media (max-width: 480px) { .boites { grid-template-columns: repeat(3, 1fr); } }
 .serie-avance { height: 6px; border-radius: 3px; background: var(--bord); margin: 10px 0 14px; overflow: hidden; }
 .serie-avance i { display: block; height: 100%; background: var(--or); transition: width .3s; }
@@ -285,6 +290,7 @@ a.defi-go { display: inline-block; text-decoration: none; }
 .memo-recto { background: linear-gradient(150deg, #172340, #2d3f6b); color: var(--nuit-texte); }
 .memo-recto b { font-size: 1.6rem; line-height: 1.2; }
 .memo-recto small, .memo-verso small { font-size: .75rem; letter-spacing: .1em; text-transform: uppercase; color: var(--or); }
+.memo-verso small { color: var(--rouille); }
 .memo-recto em { font-style: normal; font-size: .8rem; opacity: .6; }
 .memo-verso { background: var(--surface); border: 2px solid var(--or); transform: rotateY(180deg); font-size: 1.05rem; line-height: 1.5; }
 .memo-choix { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
@@ -446,10 +452,12 @@ table.bilan a { color: inherit; }
 
 .memory-grille { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
 @media (max-width: 560px) { .memory-grille { grid-template-columns: repeat(3, 1fr); } }
-.tuile { position: relative; min-height: 96px; padding: 0; border: 0; border-radius: 10px; cursor: pointer; perspective: 600px; background: none; }
+@media (max-width: 440px) { .memory-grille { grid-template-columns: repeat(2, 1fr); } .tuile { min-height: 104px; } }
+.tuile { position: relative; min-height: 122px; padding: 0; border: 0; border-radius: 10px; cursor: pointer; perspective: 600px; background: none; }
 .tuile-dos, .tuile-face {
   position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; padding: 6px; border-radius: 10px;
-  backface-visibility: hidden; -webkit-backface-visibility: hidden; transition: transform .35s; font-size: .78rem; line-height: 1.25; overflow: hidden;
+  backface-visibility: hidden; -webkit-backface-visibility: hidden; transition: transform .35s; font-size: .76rem; line-height: 1.22; overflow: hidden;
+  text-align: center; hyphens: auto; -webkit-hyphens: auto;
 }
 .tuile-dos { background: linear-gradient(150deg, #172340, #2d3f6b); color: var(--or); font-size: 1.6rem; font-weight: 700; }
 .tuile-face { background: var(--surface); border: 2px solid var(--bord); transform: rotateY(180deg); }
@@ -487,8 +495,8 @@ table.bilan a { color: inherit; }
 @keyframes confetti { to { top: 105vh; transform: translateX(40px) rotate(720deg); opacity: .8; } }
 
 .carte-jeu { display: flex; align-items: center; gap: 10px; margin-top: 4px; font-size: .85rem; }
-.etoiles { color: var(--or); letter-spacing: 2px; font-size: 1rem; }
-.etoiles i { font-style: normal; color: var(--bord); }
+.etoiles { color: #d4901f; letter-spacing: 2px; font-size: 1rem; }
+.etoiles i { font-style: normal; color: var(--doux); opacity: .45; }
 .lue { color: #1d8a5a; font-weight: 700; font-size: .8rem; }
 .progression { display: flex; align-items: center; gap: 8px; margin-top: 8px; font-size: .8rem; color: var(--doux); }
 .progression .prog-barre { width: 70px; background: var(--bord); }
@@ -509,11 +517,16 @@ table.bilan a { color: inherit; }
 .profil { background: var(--surface); border: 1px solid var(--bord); border-top: 5px solid var(--or); border-radius: 12px; padding: 18px; }
 .profil-niveau { display: flex; align-items: center; gap: 14px; margin-bottom: 8px; }
 .profil-niveau b { display: block; font-size: 1.3rem; }
-.profil-niveau span { display: block; color: var(--doux); font-size: .9rem; }
+/* Seulement les lignes de texte à droite du rond (sinon cette règle écrasait le centrage du rond). */
+.profil-niveau > div > span:not(.prog-barre) { display: block; color: var(--doux); font-size: .9rem; }
 .profil-n {
   flex: 0 0 auto; display: flex; align-items: center; justify-content: center; width: 58px; height: 58px; border-radius: 50%;
-  background: var(--nuit); color: var(--or) !important; font-size: 1.6rem !important; font-weight: 700;
+  background: var(--or); color: #172340; font-size: 1.6rem; font-weight: 700; line-height: 1;
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--or) 25%, transparent);
 }
+.chiffres strong .emoji { font-size: .7em; vertical-align: .12em; }
+.profil .chiffres { grid-template-columns: repeat(auto-fit, minmax(min(100%, 140px), 1fr)); }
+@media (max-width: 440px) { .profil .chiffres { grid-template-columns: 1fr 1fr; } .profil .chiffres strong { font-size: 1.6rem; } }
 .prog-barre.grande { width: 100%; max-width: 320px; height: 8px; margin-top: 6px; background: var(--bord); }
 .badges { display: grid; gap: 8px; grid-template-columns: repeat(auto-fill, minmax(min(100%, 150px), 1fr)); }
 .badge { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 2px; padding: 12px 10px; border-radius: 10px; border: 1px solid var(--bord); background: var(--surface); opacity: .55; }
@@ -547,7 +560,7 @@ table.bilan a { color: inherit; }
 .defi-temps { height: 8px; border-radius: 4px; background: var(--bord); margin: 10px 0 14px; overflow: hidden; }
 .defi-temps i { display: block; height: 100%; width: 100%; background: var(--or); border-radius: 4px; transition: width .1s linear, background .2s; }
 .defi-temps i.urgent { background: #c4462b; }
-.defi-tag { display: inline-block; font-size: .78rem; font-weight: 700; color: var(--c); }
+.defi-tag { display: inline-block; font-size: .78rem; font-weight: 700; color: var(--ct, var(--c)); }
 .defi-q { font-size: 1.2rem; line-height: 1.35; margin: 4px 0 12px; }
 .defi-retour { min-height: 1.6em; margin: 10px 0 0; text-align: center; }
 .defi-retour b { color: var(--rouille); }
@@ -758,7 +771,8 @@ table.bilan a { color: inherit; }
 .contenu .calc-table td:last-child { white-space: nowrap; font-weight: 500; }
 .contenu .calc-table tr.fort td { font-weight: 700; background: var(--surface); }
 .contenu .scoring td { vertical-align: middle; }
-.contenu .scoring td.gagnant { background: var(--nuit); color: var(--or); }
+/* tr.fort td impose un fond clair : il faut être plus précis pour garder la case du gagnant en bleu nuit. */
+.contenu .scoring tr td.gagnant, .contenu .scoring tr.fort td.gagnant { background: var(--nuit); color: var(--or); }
 .calc-verdict { margin: 8px 0 0; font-size: .92rem; }
 
 .suite { display: flex; justify-content: space-between; gap: 12px; margin-top: 18px; font-size: .92rem; }

@@ -270,7 +270,7 @@ var Jeux = (function () {
     return Activites.cartesDe(m).filter(function (c) {
       var r = sansBalises(c.recto).trim(), v = sansBalises(c.verso).trim();
       // Pas de lettre seule (SONCASE), pas de question (« À quoi servent-elles ? ») : il faut une notion qui se suffit.
-      if (r.length <= 2 || r.length > 40 || /\?$/.test(r) || v.length > 110 || vus[r]) return false;
+      if (r.length <= 2 || r.length > 40 || /\?$/.test(r) || v.length > 85 || vus[r]) return false;
       vus[r] = true;
       return true;
     });

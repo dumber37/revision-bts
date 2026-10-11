@@ -441,7 +441,7 @@ var Jeu = (function () {
           '<span class="prog-barre grande"><i style="width:' + nv.pct + '%"></i></span></div></div>' +
         '<div id="magasin"></div>' +
         '<div class="chiffres">' +
-          '<div><b>Flamme</b><strong>🔥 ' + serieActuelle() + '</strong><span>jours d’affilée (record : ' + E.jours.max + ')</span></div>' +
+          '<div><b>Flamme</b><strong><span class="emoji">🔥</span> ' + serieActuelle() + '</strong><span>jour' + (serieActuelle() > 1 ? 's' : '') + ' d’affilée · record ' + E.jours.max + '</span></div>' +
           '<div><b>Bonnes réponses</b><strong>' + E.stats.bonnes + '</strong><span>' + taux + ' % de réussite</span></div>' +
           '<div><b>Fiches lues</b><strong>' + Object.keys(E.lues).length + '/' + R.fiches.length + '</strong><span>jusqu’au bout</span></div>' +
           '<div><b>Défi éclair</b><strong>' + E.stats.record + '</strong><span>points, record</span></div>' +
