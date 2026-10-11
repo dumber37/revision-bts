@@ -88,6 +88,9 @@
         '<a class="lien-profil" href="#/oral"><span class="ico">🎙️</span><span><b>Simulateur d’oral</b><span>E41 et E42 avec Claude, noté sur 20</span></span></a>' +
         '<a class="lien-profil" href="#/lexique"><span class="ico">📚</span><span><b>Lexique</b><span>Toutes les notions de A à Z</span></span></a>' +
         '<a class="lien-profil" href="#/carnet"><span class="ico">📒</span><span><b>Mon carnet</b><span>Mes favoris et mes notes</span></span></a>' +
+        '<a class="lien-profil" href="#/ecoute"><span class="ico">🎧</span><span><b>Écouter les fiches</b><span>Voix naturelle, pour le bus ou en marchant</span></span></a>' +
+        '<a class="lien-profil" href="#/methodo"><span class="ico">🧭</span><span><b>Méthodologie</b><span>Écrits, oraux, calculs, pièges, jour J</span></span></a>' +
+        '<a class="lien-profil" href="#/cas"><span class="ico">🗂️</span><span><b>Études de cas</b><span>Comme à l’examen, avec corrigé</span></span></a>' +
       '</div>' +
       '<h2 class="titre-section">Jouer</h2>' +
       '<div class="raccourcis">' +
@@ -101,6 +104,7 @@
     afficherInstallation($('#installer'));
     if (typeof Jeux !== 'undefined') Jeux.magasin($('#hero-magasin'), true);
     Carnet.decorerAccueil(app); // compte à rebours et favoris
+    Bonus.decorerAccueil(app); // défi de la semaine
 
     var q = $('#q');
     q.addEventListener('input', function () { chercher(q.value.trim().toLowerCase()); });
@@ -369,6 +373,7 @@
         '<h1>' + esc(f.titre) + '</h1>' +
         (f.date ? '<p class="meta">' + dateFr(f.date) + '</p>' : '') +
         Activites.encadreEssentiel(f) +
+        Bonus.lecteurFiche(f) +
         '<div class="contenu">' + f.contenu + '</div>' +
         (visuels.length ? '<h2>Les diapos de la fiche</h2>' + lecteur(visuels) : '') +
       '</article>' +
@@ -384,6 +389,7 @@
     surveillerLecture(f.id);
     activerClaude(f.titre, 'Matière : ' + m.code + ' ' + m.long + '.', texteFiche(f));
     Carnet.decorerFiche(app, m, f); // favori ☆ et bloc « Mes notes »
+    Bonus.activerLecteur(app, f); // lecture audio de la fiche
   }
 
   // Les tableaux larges défilent dans leur cadre plutôt que la page entière,

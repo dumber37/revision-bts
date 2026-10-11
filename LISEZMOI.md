@@ -10,11 +10,19 @@ En ligne : https://dumber37.github.io/revision-bts/ (installable sur téléphone
 - `qcm.js` : banques de QCM par fiche (bonne réponse en premier).
 - `entrainement.js` : l'essentiel en 1 minute, les textes à trous et la chasse à l'erreur, par fiche.
 - `formules.js` : la page « Formules à retenir » (fil rouge Sport'Tours).
+- `entrainement.js` contient aussi le lexique (`R.lexique`) ; `cas.js` : les études de cas ; `audio.js` : durées des fiches audio.
+
+## Audio
+`audio/<id-fiche>.mp3` : chaque fiche lue par la voix neuronale Piper « fr_FR-siwis-medium » (générée hors-ligne, MP3 48 kbit/s).
+Si le texte d'une fiche change, il faut régénérer son MP3 et mettre à jour sa durée dans `data/audio.js`.
 
 ## Code
 - `jeu.js` : progression (XP, grades, flamme, étoiles, badges, missions du jour, révision des erreurs, Défi éclair).
 - `activites.js` : séries de questions, onglet S'entraîner (cartes mémo, ordre, trous, examen blanc), l'essentiel en 1 minute.
 - `jeux.js` : magasin qui s'agrandit, boss, duel, chasse à l'erreur, memory.
+- `outils.js` : mes points faibles, calculs à l'infini, transfert de progression, simulateur d'oral.
+- `carnet.js` : planning d'examen, lexique, notes, favoris, taille du texte.
+- `bonus.js` : écoute des fiches, méthodologie, études de cas, défi de la semaine.
 - `ambiance.js` : sons (désactivables) et animations.
 - `composants.js`, `app.js` : composants des fiches, pages et navigation.
 - `sw.js` + `manifest.webmanifest` + `icones/` : application installable et hors-ligne.

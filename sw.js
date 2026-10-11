@@ -2,14 +2,14 @@
 // - Pages, scripts et styles : réseau d'abord (on a toujours la dernière version), cache si hors-ligne.
 // - Images et PDF : cache d'abord (ils ne changent pas), réseau sinon.
 // À chaque mise en ligne : augmenter VERSION en même temps que le ?v= de index.html.
-var VERSION = 23;
+var VERSION = 25;
 var CACHE = 'revision-bts-v' + VERSION;
 var V = '?v=' + VERSION;
 var COEUR = [
   './', 'index.html', 'manifest.webmanifest', 'style.css' + V,
   'data/matieres.js' + V, 'data/drcv.js' + V, 'data/adoc.js' + V, 'data/management.js' + V, 'data/gestion.js' + V,
-  'data/formules.js' + V, 'data/qcm.js' + V, 'data/entrainement.js' + V,
-  'jeu.js' + V, 'activites.js' + V, 'jeux.js' + V, 'outils.js' + V, 'carnet.js' + V, 'ambiance.js' + V, 'composants.js' + V, 'app.js' + V,
+  'data/formules.js' + V, 'data/qcm.js' + V, 'data/entrainement.js' + V, 'data/cas.js' + V, 'data/audio.js' + V,
+  'jeu.js' + V, 'activites.js' + V, 'jeux.js' + V, 'outils.js' + V, 'carnet.js' + V, 'bonus.js' + V, 'ambiance.js' + V, 'composants.js' + V, 'app.js' + V,
   'icones/icon-192.png', 'icones/icon-512.png', 'icones/apple-touch-icon.png', 'icones/favicon-32.png'
 ];
 
@@ -32,6 +32,7 @@ self.addEventListener('fetch', function (e) {
   if (req.method !== 'GET') return;
   var url = new URL(req.url);
   if (url.origin !== self.location.origin) return; // polices Google, claude.ai… : on ne s'en mêle pas
+  if (/\.mp3$/i.test(url.pathname)) return; // audio : le navigateur gère seul la lecture par morceaux
 
   var statique = /\.(jpg|jpeg|png|webp|svg|pdf)$/i.test(url.pathname);
   if (statique) {

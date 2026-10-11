@@ -12,7 +12,7 @@ var Jeu = (function () {
 
   function vierge() {
     return { xp: 0, jours: { dernier: '', serie: 0, max: 0 }, lues: {}, best: {}, badges: {}, corr: {},
-             srs: {}, jour: { date: '', c: {}, missions: [], faites: {} }, duelNoms: null, reglages: {}, parFiche: {}, notes: {}, favoris: {},
+             srs: {}, jour: { date: '', c: {}, missions: [], faites: {} }, duelNoms: null, reglages: {}, parFiche: {}, notes: {}, favoris: {}, semaine: { id: '', c: {}, jours: {}, fait: false },
              stats: { bonnes: 0, reponses: 0, qcm: 0, defis: 0, record: 0, comboMax: 0, missions: 0 } };
   }
   var E = vierge();
@@ -274,9 +274,22 @@ var Jeu = (function () {
       return { id: id, txt: d.txt, obj: d.obj, lien: d.lien, n: Math.min(E.jour.c[d.cle] || 0, d.obj), faite: !!E.jour.faites[id] };
     }).filter(Boolean);
   }
+  // Identifiant de semaine ISO, ex. « 2026-S41 ».
+  function semaineId(d) {
+    d = d ? new Date(d) : new Date();
+    var t = new Date(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate())), j = t.getUTCDay() || 7;
+    t.setUTCDate(t.getUTCDate() + 4 - j);
+    var an = new Date(Date.UTC(t.getUTCFullYear(), 0, 1));
+    return t.getUTCFullYear() + '-S' + ('0' + Math.ceil(((t - an) / 864e5 + 1) / 7)).slice(-2);
+  }
   function compter(cle, n) {
     nouvelleJournee();
     E.jour.c[cle] = (E.jour.c[cle] || 0) + (n || 1);
+    // Même compteur à l'échelle de la semaine (défi de la semaine).
+    var sid = semaineId();
+    if (!E.semaine || E.semaine.id !== sid) E.semaine = { id: sid, c: {}, jours: {}, fait: false };
+    E.semaine.c[cle] = (E.semaine.c[cle] || 0) + (n || 1);
+    E.semaine.jours[jour()] = true;
     var defs = MISSIONS(), toutes = true, nouvelle = false;
     E.jour.missions.forEach(function (id) {
       var d = defs.filter(function (x) { return x.id === id; })[0];
@@ -640,7 +653,7 @@ var Jeu = (function () {
   return {
     // données
     questions: questions, questionsDe: questionsDe, questionsMatiere: questionsMatiere, aRevoir: aRevoir,
-    etat: function () { return E; }, sauver: sauver, jour: jour, niveau: niveau,
+    etat: function () { return E; }, sauver: sauver, jour: jour, niveau: niveau, semaineId: semaineId,
     // événements
     reponse: reponse, qcmFini: qcmFini, ficheLue: ficheLue, correction: correction, compter: compter,
     gagner: gagner, debloquer: debloquer, toast: toast, confettis: confettis,

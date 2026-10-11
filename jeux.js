@@ -18,19 +18,49 @@ var Jeux = (function () {
   var ETAPES = ['La boutique ouvre', 'Premiers rayons', 'Une vitrine habillée', 'Le rayon ballons',
     'Un store tout neuf', 'Des plantes à l’entrée', 'Une enseigne lumineuse', 'L’étoile du centre-ville'];
 
-  function magasinSVG(n) {
-    var s = '<svg class="magasin-svg" viewBox="0 0 320 190" role="img" aria-label="Le magasin Sport’Tours, niveau ' + n + '">';
+  // Personnalisation (réglages.magasin) : couleur de l'enseigne, sport en vitrine, nom du magasin.
+  // Certaines options se débloquent avec le grade.
+  var COULEURS_MAG = [
+    { id: 'nuit', nom: 'Bleu nuit', c: '#172340', niv: 1 },
+    { id: 'rouge', nom: 'Rouge', c: '#a8322a', niv: 2 },
+    { id: 'vert', nom: 'Vert sapin', c: '#1d6b4f', niv: 3 },
+    { id: 'violet', nom: 'Violet', c: '#5a3d8f', niv: 5 },
+    { id: 'or', nom: 'Doré', c: '#a87412', niv: 7 }
+  ];
+  var SPORTS_MAG = [
+    { id: 'running', nom: 'Running', maillot: '#e8a33d', niv: 1 },
+    { id: 'foot', nom: 'Football', maillot: '#2f5fb3', niv: 2 },
+    { id: 'basket', nom: 'Basket', maillot: '#b85c1e', niv: 4 },
+    { id: 'tennis', nom: 'Tennis', maillot: '#f5f2ec', niv: 6 }
+  ];
+  function reglagesMag() { var r = Jeu.etat().reglages || {}; return r.magasin || {}; }
+  function trouver(t, id) { return t.filter(function (x) { return x.id === id; })[0] || t[0]; }
+
+  // Petit objet du sport choisi, dessiné en (x, y).
+  function objetSport(sport, x, y) {
+    if (sport === 'basket') return '<circle cx="' + x + '" cy="' + y + '" r="5.5" fill="#e39158" stroke="#172340" stroke-width="1"/><path d="M' + (x - 5.5) + ' ' + y + 'h11M' + x + ' ' + (y - 5.5) + 'v11" stroke="#172340" stroke-width=".8"/>';
+    if (sport === 'tennis') return '<circle cx="' + x + '" cy="' + y + '" r="4.5" fill="#d7e84a" stroke="#172340" stroke-width="1"/><path d="M' + (x - 4) + ' ' + (y - 2) + 'q4 2 8 0" stroke="#fff" fill="none" stroke-width="1"/>';
+    if (sport === 'running') return '<path d="M' + (x - 7) + ' ' + (y + 3) + 'h13l2-4-6-2-3-3h-4z" fill="#e8a33d" stroke="#172340" stroke-width="1"/>';
+    return '<circle cx="' + x + '" cy="' + y + '" r="5.5" fill="#fff" stroke="#172340" stroke-width="1"/><path d="M' + x + ' ' + (y - 2) + 'l2 1.5-.8 2.3h-2.4L' + (x - 2) + ' ' + (y - .5) + 'z" fill="#172340"/>';
+  }
+
+  function magasinSVG(n, opts) {
+    opts = opts || reglagesMag();
+    var coul = trouver(COULEURS_MAG, opts.couleur).c, sport = trouver(SPORTS_MAG, opts.sport);
+    var nom = (opts.nom || 'Sport’Tours').toUpperCase().slice(0, 14);
+    var s = '<svg class="magasin-svg" viewBox="0 0 320 190" role="img" aria-label="Le magasin ' + esc(nom) + ', niveau ' + n + '">';
     s += '<rect x="0" y="160" width="320" height="30" fill="#cfc7b6"/><path d="M0 160h320" stroke="#b5ac98" stroke-width="2"/>';
     if (n >= 8) s += '<path d="M160 6l6 12 13 2-9 9 2 13-12-6-12 6 2-13-9-9 13-2z" fill="#e8a33d" class="mag-etoile"/>' +
       '<path d="M60 42V22l18 6-18 6M260 42V22l-18 6 18 6" fill="#b85c1e" stroke="#172340" stroke-width="1.5"/>';
     s += '<rect x="40" y="50" width="240" height="110" fill="#f5f2ec" stroke="#172340" stroke-width="2"/>' +
-      '<rect x="34" y="42" width="252" height="12" rx="2" fill="#172340"/>';
+      '<rect x="34" y="42" width="252" height="12" rx="2" fill="' + coul + '"/>';
     if (n >= 7) {
       var c = ['#e8a33d', '#f5f2ec', '#5cc2b4', '#e39158'];
       for (var i = 0; i < 12; i++) s += '<circle class="mag-guirlande" cx="' + (46 + i * 21) + '" cy="58" r="3" fill="' + c[i % 4] + '" style="animation-delay:' + (i * 0.15) + 's"/>';
     }
-    s += '<rect x="100" y="60" width="120" height="22" rx="4" fill="#172340"' + (n >= 7 ? ' class="mag-neon"' : '') + '/>' +
-      '<text x="160" y="75.5" text-anchor="middle" font-family="DM Sans, system-ui, sans-serif" font-size="12" font-weight="700" letter-spacing="1.5" fill="' + (n >= 7 ? '#ffd27a' : '#e8a33d') + '">SPORT’TOURS</text>';
+    var taille = nom.length > 11 ? 10 : 12;
+    s += '<rect x="96" y="60" width="128" height="22" rx="4" fill="' + coul + '"' + (n >= 7 ? ' class="mag-neon"' : '') + '/>' +
+      '<text x="160" y="75.5" text-anchor="middle" font-family="DM Sans, system-ui, sans-serif" font-size="' + taille + '" font-weight="700" letter-spacing="1.2" fill="' + (n >= 7 ? '#ffd27a' : '#e8a33d') + '">' + esc(nom) + '</text>';
     if (n >= 5) {
       for (var k = 0; k < 11; k++) s += '<path d="M' + (50 + k * 20) + ' 86h20v8a10 6 0 0 1-20 0z" fill="' + (k % 2 ? '#f5f2ec' : '#b85c1e') + '" stroke="#172340" stroke-width="1"/>';
     }
@@ -42,9 +72,8 @@ var Jeux = (function () {
       '<rect x="64" y="108" width="10" height="10" fill="#2f5fb3"/><rect x="78" y="111" width="8" height="7" fill="#1d6b6b"/><rect x="90" y="106" width="12" height="12" fill="#e8a33d"/>' +
       '<rect x="68" y="124" width="12" height="10" fill="#6b4fa0"/><rect x="84" y="127" width="9" height="7" fill="#b85c1e"/>';
     if (n >= 3) s += '<circle cx="228" cy="112" r="6" fill="#e9c9a8" stroke="#172340" stroke-width="1"/>' +
-      '<path d="M218 146l3-26h14l3 26z" fill="#e8a33d" stroke="#172340" stroke-width="1"/><path d="M215 126l6-6M241 126l-6-6" stroke="#172340" stroke-width="2"/>';
-    if (n >= 4) s += '<circle cx="104" cy="143" r="5.5" fill="#fff" stroke="#172340" stroke-width="1"/><circle cx="117" cy="143" r="5.5" fill="#e39158" stroke="#172340" stroke-width="1"/>' +
-      '<path d="M111.5 143h11M117 137.5v11" stroke="#172340" stroke-width=".8"/><circle cx="250" cy="143" r="5" fill="#fff" stroke="#172340" stroke-width="1"/>';
+      '<path d="M218 146l3-26h14l3 26z" fill="' + sport.maillot + '" stroke="#172340" stroke-width="1"/><path d="M215 126l6-6M241 126l-6-6" stroke="#172340" stroke-width="2"/>';
+    if (n >= 4) s += objetSport(sport.id, 104, 143) + objetSport(sport.id, 117, 143) + objetSport(sport.id, 250, 143);
     if (n >= 6) s += '<rect x="128" y="150" width="10" height="10" fill="#b85c1e"/><circle cx="133" cy="146" r="7" fill="#2fa36b"/>' +
       '<rect x="182" y="150" width="10" height="10" fill="#b85c1e"/><circle cx="187" cy="146" r="7" fill="#2fa36b"/>';
     return s + '</svg>';
@@ -56,7 +85,45 @@ var Jeux = (function () {
     cible.innerHTML = '<div class="magasin' + (mini ? ' mini' : '') + '">' + magasinSVG(n) +
       '<div class="magasin-txt"><b>Ton magasin : ' + esc(ETAPES[n - 1]) + '</b>' +
       (n < ETAPES.length ? '<span>Niveau ' + (n + 1) + ' : ' + esc(ETAPES[n]).toLowerCase() + '</span>' : '<span>Le magasin est au complet, bravo !</span>') +
-      '</div></div>';
+      (mini ? '' : '<button type="button" class="installer-btn secondaire mag-perso">🎨 Personnaliser</button>') +
+      '</div></div>' + (mini ? '' : '<div class="mag-panneau" hidden></div>');
+    if (mini) return;
+    var panneau = cible.querySelector('.mag-panneau');
+    cible.querySelector('.mag-perso').addEventListener('click', function () {
+      panneau.hidden = !panneau.hidden;
+      if (!panneau.hidden) remplirPanneau();
+    });
+    function remplirPanneau() {
+      var r = reglagesMag();
+      panneau.innerHTML =
+        '<div class="mag-choix"><b>Couleur de l’enseigne</b><div class="mag-pastilles">' + COULEURS_MAG.map(function (x) {
+          var ok = nv >= x.niv;
+          return '<button type="button" data-couleur="' + x.id + '" class="pastille' + ((r.couleur || 'nuit') === x.id ? ' actif' : '') + '"' + (ok ? '' : ' disabled') +
+            ' style="--p:' + x.c + '" title="' + x.nom + (ok ? '' : ' (niveau ' + x.niv + ')') + '">' + (ok ? '' : '🔒') + '</button>';
+        }).join('') + '</div></div>' +
+        '<div class="mag-choix"><b>Sport en vitrine</b><div class="mag-sports">' + SPORTS_MAG.map(function (x) {
+          var ok = nv >= x.niv;
+          return '<button type="button" data-sport="' + x.id + '"' + ((r.sport || 'running') === x.id ? ' class="actif"' : '') + (ok ? '' : ' disabled') + '>' + (ok ? '' : '🔒 ') + x.nom + (ok ? '' : ' · niv. ' + x.niv) + '</button>';
+        }).join('') + '</div></div>' +
+        '<label class="mag-choix"><b>Nom du magasin</b><input maxlength="14" value="' + esc(r.nom || '') + '" placeholder="Sport’Tours"></label>';
+      panneau.addEventListener('click', clic);
+      panneau.querySelector('input').addEventListener('input', function (e) { enregistrer({ nom: e.target.value.trim() }); });
+    }
+    function clic(e) {
+      var b = e.target.closest('[data-couleur],[data-sport]');
+      if (!b || b.disabled) return;
+      enregistrer(b.dataset.couleur ? { couleur: b.dataset.couleur } : { sport: b.dataset.sport });
+      panneau.removeEventListener('click', clic);
+      remplirPanneau();
+    }
+    function enregistrer(o) {
+      var E = Jeu.etat();
+      E.reglages = E.reglages || {};
+      var r = E.reglages.magasin = E.reglages.magasin || {};
+      for (var k in o) r[k] = o[k];
+      Jeu.sauver();
+      cible.querySelector('.magasin-svg').outerHTML = magasinSVG(n);
+    }
   }
   Jeu.surProfil(function (app) { magasin(app.querySelector('#magasin')); });
 
@@ -94,6 +161,7 @@ var Jeux = (function () {
           Jeu.compter('boss');
           if (!r.perdu && r.bonnes === n) {
             Jeu.debloquer('boss-' + m.id);
+            Jeu.compter('bossGagne');
             Jeu.gagner(100, 'boss vaincu');
             Jeu.confettis();
             return '<p class="boss-victoire">👑 ' + esc(b[1]) + ' est vaincu !</p>';
@@ -372,5 +440,5 @@ var Jeux = (function () {
     { id: 'memory', txt: 'Terminer un memory', cle: 'memory', obj: 1, lien: Activites.lienEntrainement }
   ]);
 
-  return { magasin: magasin, magasinSVG: magasinSVG };
+  return { magasin: magasin, magasinSVG: magasinSVG, COULEURS_MAG: COULEURS_MAG, SPORTS_MAG: SPORTS_MAG };
 })();
