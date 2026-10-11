@@ -140,3 +140,74 @@ R.trous = {
     ['L’___ automatise l’échange des commandes et des factures.', 'EDI', ['ECR', 'SCM', 'SRM']]
   ]
 };
+
+// R.chasse : [affirmation vraie, la même rendue fausse]. La chasse à l'erreur en truque quelques-unes.
+R.chasse = {
+  'vente-conseil': [
+    ['Dans SONCASE, le « O » signifie Orgueil.', 'Dans SONCASE, le « O » signifie Offre.'],
+    ['Le cycle de vente commence par la prise de contact.', 'Le cycle de vente commence par l’argumentation.'],
+    ['CAP signifie Caractéristique, Avantage, Preuve.', 'CAP signifie Client, Argument, Prix.'],
+    ['La découverte des besoins se fait avec des questions ouvertes.', 'La découverte des besoins se fait surtout avec des questions fermées.']
+  ],
+  'repo': [
+    ['REPO commence par reformuler l’objection.', 'REPO commence par baisser le prix.'],
+    ['« Ouvrir » sert à vérifier que le client est convaincu.', '« Ouvrir » sert à présenter un autre produit.'],
+    ['Une démonstration peut servir de preuve.', 'L’avis personnel du vendeur suffit comme preuve.']
+  ],
+  'reclamations': [
+    ['La garantie légale de conformité dure 2 ans.', 'La garantie légale de conformité dure 6 mois.'],
+    ['Face à un client opportuniste, on reste ferme et poli.', 'Face à un client opportuniste, on accepte toutes ses demandes.'],
+    ['Une garantie commerciale s’ajoute à la garantie légale.', 'Une garantie commerciale remplace la garantie légale.'],
+    ['On s’excuse pour la gêne sans accuser un collègue.', 'On s’excuse en expliquant que c’est la faute d’un collègue.']
+  ],
+  'numerique': [
+    ['Un pure player vend uniquement en ligne.', 'Un pure player vend uniquement en magasin.'],
+    ['Le click and collect : commande en ligne, retrait en magasin.', 'Le click and collect : commande en magasin, livraison à domicile.'],
+    ['La désintermédiation supprime des intermédiaires.', 'La désintermédiation ajoute de nouveaux intermédiaires.']
+  ],
+  'experience-achat': [
+    ['Le self-scanning illustre l’autonomie du client.', 'Le self-scanning illustre la baisse des prix.'],
+    ['Le Club Nespresso est un outil de fidélisation.', 'Le Club Nespresso est une stratégie de prix bas.'],
+    ['Les chatbots illustrent la place croissante de l’IA.', 'Les chatbots illustrent le recul du numérique.']
+  ],
+  'formation': [
+    ['Former ses salariés est une obligation de l’employeur.', 'Former ses salariés est facultatif pour l’employeur.'],
+    ['L’évaluation à froid a lieu quelque temps après la formation.', 'L’évaluation à froid a lieu à la toute fin de la formation.'],
+    ['Une formation asynchrone se suit quand on le souhaite.', 'Une formation asynchrone impose que tous soient connectés en même temps.'],
+    ['Le plan de formation est établi par le manager de l’unité.', 'Le plan de formation est établi par l’inspection du travail.']
+  ],
+  'evaluer-motivation': [
+    ['L’absentéisme est un indicateur social.', 'L’absentéisme est un indicateur de performance commerciale.'],
+    ['L’entretien individuel d’évaluation a lieu une fois par an.', 'L’entretien individuel d’évaluation a lieu chaque semaine.'],
+    ['Great Place to Work est un label de bien-être au travail.', 'Great Place to Work est un indicateur de chiffre d’affaires.']
+  ],
+  'facteurs-motivation': [
+    ['Pour Herzberg, le salaire est un facteur d’hygiène.', 'Pour Herzberg, le salaire est le principal facteur moteur.'],
+    ['Le sommet de la pyramide de Maslow est l’accomplissement.', 'Le sommet de la pyramide de Maslow est la sécurité.'],
+    ['La reconnaissance est un facteur intrinsèque.', 'La reconnaissance est un facteur extrinsèque.']
+  ],
+  'stimuler-animer': [
+    ['Dans un challenge, tous ceux qui atteignent l’objectif gagnent.', 'Dans un challenge, seul le meilleur vendeur gagne.'],
+    ['L’intéressement est une rémunération variable collective.', 'L’intéressement est une rémunération fixe.'],
+    ['La communication ascendante va des vendeurs vers le manager.', 'La communication ascendante va du manager vers les vendeurs.'],
+    ['Un concours peut démotiver s’il y a peu de gagnants.', 'Un concours ne présente aucun risque de démotivation.']
+  ],
+  'remuneration': [
+    ['Les cotisations salariales sont retenues sur le salaire.', 'Les cotisations salariales sont payées en plus par l’entreprise.'],
+    ['La base mensuelle est de 151,67 heures.', 'La base mensuelle est de 160 heures.'],
+    ['La 40e heure de la semaine est majorée de 25 %.', 'La 40e heure de la semaine est majorée de 50 %.'],
+    ['La participation est obligatoire à partir de 50 salariés.', 'La participation est obligatoire dans toutes les entreprises.']
+  ],
+  'fixation-prix': [
+    ['Le taux de marge se calcule sur le coût d’achat.', 'Le taux de marge se calcule sur le prix de vente.'],
+    ['Une élasticité de 3 indique une demande très élastique.', 'Une élasticité de 3 indique une demande peu élastique.'],
+    ['L’écrémage pratique un prix élevé pour de petits volumes.', 'L’écrémage pratique un prix bas pour de gros volumes.'],
+    ['Le prix imposé par un fournisseur est interdit.', 'Le prix imposé par un fournisseur est autorisé.']
+  ],
+  'fournisseurs': [
+    ['La sélection d’un fournisseur commence par le choix des critères.', 'La sélection d’un fournisseur commence par la signature du contrat.'],
+    ['Les promotions alimentaires sont limitées à 34 % du prix.', 'Les promotions alimentaires peuvent atteindre 70 % du prix.'],
+    ['Le mot « gratuit » est interdit dans les promotions alimentaires.', 'Le mot « offert » est interdit dans les promotions alimentaires.'],
+    ['L’ECR vise le bon produit, au bon moment, au bon prix.', 'L’ECR est un logiciel de caisse.']
+  ]
+};

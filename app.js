@@ -82,13 +82,15 @@
       '<h2 class="titre-section">S’entraîner</h2>' +
       '<div class="raccourcis">' +
         '<a class="lien-defi" href="#/defi"><span class="ico">⚡</span><span><b>Défi éclair</b><span>10 questions chrono, toutes matières</span></span></a>' +
+        '<a class="lien-profil" href="#/duel"><span class="ico">⚔️</span><span><b>Duel</b><span>À deux sur le même téléphone</span></span></a>' +
         '<a class="lien-profil" href="#/express"><span class="ico">⏱</span><span><b>L’essentiel en 1 minute</b><span>Les 3 points clés de chaque fiche</span></span></a>' +
         '<a class="lien-profil" href="#/profil"><span class="ico">🏅</span><span><b>Mon profil</b><span>Niveau, badges et records</span></span></a>' +
       '</div>' +
-      '<p class="astuce">Cartes mémo, listes à remettre dans l’ordre, textes à trous et examen blanc : onglet <b>S’entraîner</b> de chaque matière.</p>' +
+      '<p class="astuce">Cartes mémo, ordre, textes à trous, memory, chasse à l’erreur, boss et examen blanc : onglet <b>S’entraîner</b> de chaque matière.</p>' +
       (R.formules ? '<a class="lien-formules" href="#/formules"><b>Formules à retenir</b><span>Tous les calculs d’examen sur une page ›</span></a>' : '') +
       '<div id="installer"></div>';
     afficherInstallation($('#installer'));
+    if (typeof Jeux !== 'undefined') Jeux.magasin($('#hero-magasin'), true);
 
     var q = $('#q');
     q.addEventListener('input', function () { chercher(q.value.trim().toLowerCase()); });
@@ -409,8 +411,7 @@
     var parts = location.hash.replace(/^#\/?/, '').split('/').filter(Boolean);
     lecteurs = [];
     Jeu.quitter(); // arrête le chrono du Défi éclair si on quitte la page
-    Activites.quitter(); // idem pour l'examen blanc
-    Activites.definirClavier(null);
+    Activites.quitterTout(); // chronos de l'examen, du duel… et raccourcis clavier des jeux
     if (lecture) { lecture.disconnect(); lecture = null; }
     lb.hidden = true; // bouton retour du téléphone : on ne garde pas la visionneuse ouverte
     if (document.fullscreenElement) document.exitFullscreen();
@@ -420,13 +421,14 @@
     else if (parts[0] === 'profil') Jeu.pageProfil(app);
     else if (parts[0] === 'revoir') Jeu.pageRevoir(app);
     else if (parts[0] === 'express') Activites.pageExpress(app);
+    else if (Activites.pageGlobale(parts[0])) Activites.pageGlobale(parts[0])(app);
     else {
       var m = matiere(parts[0]);
       var pages = { cartes: Activites.pageCartes, ordre: Activites.pageOrdre, trous: Activites.pageTrous, examen: Activites.pageExamen };
       if (!m) introuvable();
       else if (!parts[1]) pageMatiere(m, 'fiches');
       else if (parts[1] === 'visuels' || parts[1] === 'entrainement') pageMatiere(m, parts[1]);
-      else if (Activites.page && Activites.page(parts[1])) Activites.page(parts[1])(app, m);
+      else if (Activites.page(parts[1])) Activites.page(parts[1])(app, m);
       else if (pages[parts[1]]) pages[parts[1]](app, m);
       else {
         var f = fichesDe(m.id).filter(function (x) { return x.id === parts[1]; })[0];

@@ -36,6 +36,7 @@ var Activites = (function () {
             (opts.limite ? '<span class="serie-chrono">⏱ <b>' + mmss(opts.limite - (Date.now() - debut) / 1000) + '</b></span>' : '') +
             (corrige ? '<span class="defi-score">' + res.bonnes + ' ✓</span>' : '') + '</div>' +
           '<div class="serie-avance"><i style="width:' + Math.round(i / file.length * 100) + '%"></i></div>' +
+          (opts.bandeau ? opts.bandeau(res, i, file.length) : '') +
           '<span class="defi-tag" style="--c:' + m.couleur + '">' + esc(m.nom) + ' · ' + esc(it.f.titre) + '</span>' +
           '<h2 class="defi-q">' + it.q[0] + '</h2>' +
           '<div class="qcm-reps defi-reps">' + reps.map(function (r, k) {
@@ -462,7 +463,17 @@ var Activites = (function () {
     { id: 'express', txt: 'Relire l’essentiel en 1 minute', cle: 'express', obj: 1, lien: '#/express' }
   ]);
 
+  // Pages ajoutées par d'autres modules : #/<matière>/<nom> et #/<nom>.
+  var pagesMatiere = {}, pagesGlobales = {};
+  var arrets = [];
+
   return {
+    ajouterPage: function (nom, fn) { pagesMatiere[nom] = fn; },
+    page: function (nom) { return pagesMatiere[nom]; },
+    ajouterPageGlobale: function (nom, fn) { pagesGlobales[nom] = fn; },
+    pageGlobale: function (nom) { return pagesGlobales[nom]; },
+    surQuitter: function (fn) { arrets.push(fn); },
+    quitterTout: function () { quitter(); clavier = null; arrets.forEach(function (fn) { fn(); }); },
     serie: serie, matiere: matiere, quitter: quitter, hub: hub, ajouterActivite: ajouterActivite,
     cartesDe: cartesDe, listesDe: listesDe, trousDe: trousDe, fil: fil, stat: stat, relancer: relancer,
     pageCartes: pageCartes, pageOrdre: pageOrdre, pageTrous: pageTrous, pageExamen: pageExamen,

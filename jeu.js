@@ -12,7 +12,7 @@ var Jeu = (function () {
 
   function vierge() {
     return { xp: 0, jours: { dernier: '', serie: 0, max: 0 }, lues: {}, best: {}, badges: {}, corr: {},
-             srs: {}, jour: { date: '', c: {}, missions: [], faites: {} },
+             srs: {}, jour: { date: '', c: {}, missions: [], faites: {} }, duelNoms: null, reglages: {},
              stats: { bonnes: 0, reponses: 0, qcm: 0, defis: 0, record: 0, comboMax: 0, missions: 0 } };
   }
   var E = vierge();
@@ -380,6 +380,7 @@ var Jeu = (function () {
         '<a class="hero-grade" href="#/profil"><span class="hero-n">' + nv.n + '</span><span><b>' + esc(nv.nom) + '</b>' +
           '<span class="prog-barre"><i style="width:' + nv.pct + '%"></i></span><small>' + E.xp + ' XP</small></span></a>' +
       '</div>' +
+      '<div id="hero-magasin"></div>' +
       '<div class="hero-missions"><div class="hero-titre">Missions du jour</div>' + ms.map(function (m) {
         return '<a class="mission' + (m.faite ? ' faite' : '') + '" href="' + m.lien + '"><span class="mission-coche">' + (m.faite ? '✓' : '') + '</span>' +
           '<span class="mission-txt">' + esc(m.txt) + '</span><span class="mission-n">' + m.n + '/' + m.obj + '</span>' +

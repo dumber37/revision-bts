@@ -343,6 +343,74 @@ table.bilan a { color: inherit; }
 .express-fiche li { margin: 3px 0; }
 .express-fin { text-align: center; margin-top: 20px; }
 
+/* ---------- Jeux : magasin, boss, duel, chasse, memory ---------- */
+.magasin { display: flex; align-items: center; gap: 14px; margin: 14px 0 4px; }
+.magasin-svg { width: 200px; flex: 0 0 auto; border-radius: 10px; background: linear-gradient(#cfe3f2, #eaf2f8 70%); }
+.magasin-txt b { display: block; }
+.magasin-txt span { font-size: .88rem; color: var(--doux); }
+.hero .magasin { position: relative; z-index: 1; background: rgba(255, 255, 255, .06); padding: 8px; border-radius: 12px; }
+.hero .magasin-svg { width: 150px; }
+.hero .magasin-txt span { color: inherit; opacity: .75; }
+@media (max-width: 420px) { .hero .magasin-svg { width: 120px; } .magasin-svg { width: 150px; } }
+.mag-neon { filter: drop-shadow(0 0 4px #e8a33d); animation: neon 2.4s ease-in-out infinite; }
+.mag-guirlande { animation: clignote 1.6s ease-in-out infinite; }
+.mag-etoile { transform-origin: 160px 26px; animation: brille 3s ease-in-out infinite; }
+@keyframes neon { 50% { filter: drop-shadow(0 0 9px #e8a33d); } }
+@keyframes clignote { 50% { opacity: .35; } }
+@keyframes brille { 50% { transform: scale(1.15); } }
+
+.boss-ico { font-size: 4rem; line-height: 1; animation: flotte 2.5s ease-in-out infinite; }
+.boss-ico.petit { font-size: 1.6rem; animation: none; }
+@keyframes flotte { 50% { transform: translateY(-6px); } }
+.boss-barre { display: flex; align-items: center; gap: 10px; margin: -4px 0 12px; font-size: .9rem; }
+.boss-pv { flex: 1; height: 12px; border-radius: 6px; background: var(--bord); overflow: hidden; }
+.boss-pv i { display: block; height: 100%; background: linear-gradient(90deg, #c4462b, #e39158); transition: width .4s; }
+.boss-victoire { font-size: 1.2rem; font-weight: 700; color: var(--rouille); }
+
+.duel-form { display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr)); text-align: left; margin: 14px 0; }
+.duel-form label { display: flex; flex-direction: column; gap: 4px; font-size: .85rem; font-weight: 700; }
+.duel-form input, .duel-form select { font: inherit; padding: 9px 11px; border: 1px solid var(--bord); border-radius: 8px; background: var(--bg); color: var(--texte); }
+.duel-scores { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px; }
+.duel-j { padding: 10px 12px; border-radius: 12px; border: 2px solid var(--bord); background: var(--bg); transition: transform .2s; }
+.duel-j span { display: block; font-weight: 700; font-size: .9rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.duel-j b { font-size: 1.5rem; font-variant-numeric: tabular-nums; }
+.duel-j small { display: block; color: var(--doux); }
+.duel-j.j0.actif { border-color: #2f5fb3; background: color-mix(in srgb, #2f5fb3 12%, var(--surface)); transform: scale(1.03); }
+.duel-j.j1.actif { border-color: #e8a33d; background: color-mix(in srgb, #e8a33d 14%, var(--surface)); transform: scale(1.03); }
+.duel-tour { text-align: center; margin: 4px 0 0; }
+
+.chasse-liste { display: grid; gap: 8px; margin-bottom: 12px; }
+.chasse-item {
+  display: flex; flex-wrap: wrap; align-items: flex-start; gap: 10px; text-align: left; padding: 11px 12px;
+  border-radius: 10px; border: 1px solid var(--bord); background: var(--bg); cursor: pointer; line-height: 1.4;
+}
+.chasse-item > span:nth-child(2) { flex: 1; min-width: 0; }
+.chasse-case { flex: 0 0 auto; width: 22px; height: 22px; border-radius: 6px; border: 2px solid var(--bord); margin-top: 1px; }
+.chasse-item.choisi { border-color: var(--rouille); background: var(--actif); }
+.chasse-item.choisi .chasse-case { background: var(--rouille); border-color: var(--rouille); }
+.chasse-item.choisi .chasse-case::after { content: "✗"; display: block; color: #fff; font-size: .8rem; text-align: center; line-height: 18px; }
+.chasse-item.trouvee { border-color: #1d8a5a; background: #e3f3ec; color: #0f4d32; }
+.chasse-item.ratee { border-color: #c4462b; background: #fbe7e2; color: #7a2412; }
+.chasse-item.alerte { border-color: #e8a33d; background: #fff3e0; color: #6b3d0a; }
+.chasse-vrai { flex-basis: 100%; font-size: .88rem; font-weight: 700; padding-left: 32px; }
+.chasse-item:disabled { cursor: default; }
+
+.memory-grille { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+@media (max-width: 560px) { .memory-grille { grid-template-columns: repeat(3, 1fr); } }
+.tuile { position: relative; min-height: 96px; padding: 0; border: 0; border-radius: 10px; cursor: pointer; perspective: 600px; background: none; }
+.tuile-dos, .tuile-face {
+  position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; padding: 6px; border-radius: 10px;
+  backface-visibility: hidden; -webkit-backface-visibility: hidden; transition: transform .35s; font-size: .78rem; line-height: 1.25; overflow: hidden;
+}
+.tuile-dos { background: linear-gradient(150deg, #172340, #2d3f6b); color: var(--or); font-size: 1.6rem; font-weight: 700; }
+.tuile-face { background: var(--surface); border: 2px solid var(--bord); transform: rotateY(180deg); }
+.tuile.notion .tuile-face { font-weight: 700; font-size: .9rem; color: var(--rouille); }
+.tuile.visible .tuile-dos { transform: rotateY(180deg); }
+.tuile.visible .tuile-face { transform: rotateY(360deg); }
+.tuile.trouvee .tuile-face { border-color: #1d8a5a; background: #e3f3ec; color: #0f4d32; }
+.tuile.rate .tuile-face { border-color: #c4462b; }
+.memory-coups { color: var(--doux); }
+
 /* ---------- Jeu : niveau, étoiles, badges, défi ---------- */
 .topbar-droite { display: flex; align-items: center; gap: 10px; }
 .niveau-chip {
