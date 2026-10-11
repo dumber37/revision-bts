@@ -186,6 +186,81 @@ h1 { font-size: 1.8rem; line-height: 1.2; margin: 0 0 16px; letter-spacing: -.01
   .lecteur-miniatures button { flex-basis: 72px; }
 }
 
+/* ---------- Accueil : bandeau, missions, révision, installation ---------- */
+.hero {
+  position: relative; overflow: hidden; border-radius: 16px; padding: 18px; margin-bottom: 16px;
+  background: radial-gradient(120% 140% at 100% 0%, #2d3f6b 0%, #172340 55%, #111a31 100%); color: var(--nuit-texte);
+  box-shadow: 0 8px 24px rgba(23, 35, 64, .18);
+}
+.hero::after {
+  content: ""; position: absolute; right: -40px; top: -40px; width: 160px; height: 160px; border-radius: 50%;
+  background: radial-gradient(circle, rgba(232, 163, 61, .35), transparent 70%); pointer-events: none;
+}
+.hero-haut { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; }
+.hero-salut b { display: block; font-size: 1.6rem; line-height: 1.15; }
+.hero-salut span { opacity: .85; font-size: .92rem; }
+.hero-grade { display: flex; align-items: center; gap: 10px; text-decoration: none; color: inherit; padding: 6px 12px 6px 6px; border-radius: 999px; background: rgba(255, 255, 255, .08); }
+.hero-n { display: flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 50%; background: var(--or); color: #172340; font-weight: 700; font-size: 1.15rem; }
+.hero-grade b { display: block; font-size: .92rem; }
+.hero-grade .prog-barre { width: 110px; }
+.hero-grade small { display: block; font-size: .75rem; opacity: .75; }
+.hero-missions { margin-top: 14px; position: relative; z-index: 1; }
+.hero-titre { font-size: .75rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--or); margin-bottom: 6px; }
+.mission {
+  display: grid; grid-template-columns: 22px 1fr auto; grid-template-rows: auto 4px; column-gap: 10px; row-gap: 4px; align-items: center;
+  padding: 8px 10px; margin-bottom: 6px; border-radius: 10px; background: rgba(255, 255, 255, .07); text-decoration: none; color: inherit;
+  transition: background .15s;
+}
+.mission:hover { background: rgba(255, 255, 255, .12); }
+.mission-coche { grid-row: 1 / 3; display: flex; align-items: center; justify-content: center; width: 22px; height: 22px; border-radius: 50%; border: 2px solid rgba(255, 255, 255, .35); font-size: .8rem; font-weight: 700; }
+.mission.faite .mission-coche { background: #2fa36b; border-color: #2fa36b; color: #fff; }
+.mission.faite .mission-txt { text-decoration: line-through; opacity: .7; }
+.mission-txt { font-size: .92rem; }
+.mission-n { font-size: .8rem; font-weight: 700; color: var(--or); font-variant-numeric: tabular-nums; }
+.mission-barre { grid-column: 2 / 4; height: 4px; border-radius: 2px; background: rgba(255, 255, 255, .15); overflow: hidden; }
+.mission-barre i { display: block; height: 100%; background: var(--or); border-radius: 2px; transition: width .5s; }
+.mission.faite .mission-barre i { background: #2fa36b; }
+.hero-bonus { margin: 2px 0 0; font-size: .78rem; opacity: .7; }
+.hero-revoir {
+  position: relative; z-index: 1; display: flex; align-items: center; gap: 12px; margin-top: 10px; padding: 12px 14px; border-radius: 12px;
+  text-decoration: none; color: inherit; background: rgba(255, 255, 255, .07); border: 1px dashed rgba(255, 255, 255, .25);
+}
+.hero-revoir.actif { background: var(--or); color: #172340; border: 0; box-shadow: 0 3px 0 #b85c1e; }
+.hero-revoir .ico { font-size: 1.6rem; }
+.hero-revoir b { display: block; }
+.hero-revoir span span { font-size: .85rem; opacity: .85; }
+
+.carte-matiere { position: relative; }
+.carte-ico {
+  position: absolute; top: 14px; right: 14px; width: 42px; height: 42px; padding: 8px; border-radius: 12px;
+  fill: none; stroke: var(--c); stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round;
+  background: color-mix(in srgb, var(--c) 12%, transparent);
+}
+.carte-matiere .nom { padding-right: 48px; }
+
+.installer { display: flex; gap: 12px; align-items: flex-start; margin-top: 16px; padding: 14px 16px; border-radius: 12px; background: var(--surface); border: 1px solid var(--bord); }
+.installer-ico { font-size: 1.8rem; line-height: 1; }
+.installer-txt b { display: block; }
+.installer-txt > span { display: block; font-size: .9rem; color: var(--doux); margin-bottom: 8px; }
+.installer-btn { border: 0; border-radius: 8px; padding: 7px 14px; margin: 0 6px 6px 0; cursor: pointer; font-weight: 700; background: var(--or); color: #172340; }
+.installer-btn.secondaire { background: var(--surface); color: var(--texte); border: 1px solid var(--bord); font-weight: 500; }
+.installer-btn:disabled { opacity: .7; cursor: default; }
+
+.boites { display: grid; grid-template-columns: repeat(6, 1fr); gap: 6px; margin: 14px 0; }
+.boite { padding: 8px 4px; border-radius: 10px; background: var(--bg); border: 1px solid var(--bord); }
+.boite strong { display: block; font-size: 1.3rem; }
+.boite span { font-size: .72rem; color: var(--doux); }
+.boite.b0 { border-color: #c4462b; } .boite.b0 strong { color: #c4462b; }
+.boite.b5 { border-color: #2fa36b; } .boite.b5 strong { color: #2fa36b; }
+@media (max-width: 480px) { .boites { grid-template-columns: repeat(3, 1fr); } }
+.serie-avance { height: 6px; border-radius: 3px; background: var(--bord); margin: 10px 0 14px; overflow: hidden; }
+.serie-avance i { display: block; height: 100%; background: var(--or); transition: width .3s; }
+.serie-retour .defi-go { margin-top: 8px; }
+.serie-retour .qcm-expl { margin-top: 10px; }
+.note-revoir { color: var(--doux); font-size: .88rem; text-align: center; }
+.qcm-reps button.choisie { border-color: var(--or); background: var(--actif); }
+a.defi-go { display: inline-block; text-decoration: none; }
+
 /* ---------- Jeu : niveau, étoiles, badges, défi ---------- */
 .topbar-droite { display: flex; align-items: center; gap: 10px; }
 .niveau-chip {

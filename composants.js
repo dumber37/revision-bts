@@ -263,20 +263,22 @@ var Composants = (function () {
   var RATE = ['Raté.', 'Pas tout à fait.', 'Presque…', 'Non, mais tu vas la retenir.'];
   function auHasard(t) { return t[Math.floor(Math.random() * t.length)]; }
 
+  // banque : [{ id, q: [énoncé, [bonne, fausses…], explication] }] (voir Jeu.questionsDe).
   // cle : identifiant du QCM pour garder le meilleur score (ex. « fiche:repo »).
   function qcm(div, banque, n, cle) {
     var J = typeof Jeu !== 'undefined' ? Jeu : null;
     function tirer() {
-      var qs = melanger(banque).slice(0, Math.min(n, banque.length));
+      var items = melanger(banque).slice(0, Math.min(n, banque.length));
       var faites = 0, bonnes = 0;
       div.className = 'qcm';
       div.innerHTML =
-        '<div class="qcm-tete"><span class="qcm-titre">QCM · ' + qs.length + ' questions</span>' +
+        '<div class="qcm-tete"><span class="qcm-titre">QCM · ' + items.length + ' questions</span>' +
         '<span class="qcm-score" aria-live="polite"></span>' +
         '<button type="button" class="qcm-nouveau">↻ Nouveau QCM</button></div>' +
-        qs.map(function (q, i) {
+        items.map(function (it, i) {
+          var q = it.q;
           var reps = melanger(q[1].map(function (r, k) { return { txt: r, ok: k === 0 }; }));
-          return '<fieldset class="qcm-q"><legend><span class="num">' + (i + 1) + '.</span> ' + q[0] + '</legend>' +
+          return '<fieldset class="qcm-q" data-id="' + it.id + '"><legend><span class="num">' + (i + 1) + '.</span> ' + q[0] + '</legend>' +
             '<div class="qcm-reps">' + reps.map(function (r, k) {
               return '<button type="button" data-ok="' + (r.ok ? 1 : 0) + '"><span class="qcm-lettre">' + 'ABCD'[k] + '</span>' + r.txt + '</button>';
             }).join('') + '</div>' +
@@ -300,15 +302,15 @@ var Composants = (function () {
           ex.hidden = false;
           faites++;
           if (juste) bonnes++;
-          var serie = J ? J.reponse(juste) : 0;
+          var serie = J ? J.reponse(juste, false, fs.dataset.id) : 0;
           div.querySelector('.qcm-score').innerHTML = bonnes + ' / ' + faites + (serie >= 2 ? ' <span class="qcm-serie">🔥 ' + serie + '</span>' : '');
-          if (faites === qs.length) {
-            var fin = div.querySelector('.qcm-fin'), r = bonnes / qs.length;
-            fin.innerHTML = '<b>' + bonnes + ' / ' + qs.length + '</b> · ' +
+          if (faites === items.length) {
+            var fin = div.querySelector('.qcm-fin'), r = bonnes / items.length;
+            fin.innerHTML = '<b>' + bonnes + ' / ' + items.length + '</b> · ' +
               (r === 1 ? '★★★ Parfait, tout est su !' : r >= 0.8 ? '★★ Bien joué, presque parfait.' : r >= 0.6 ? '★ C’est en bonne voie, retente pour les étoiles.' : 'Relis la fiche, puis relance un QCM.') +
               ' <button type="button" class="qcm-nouveau">↻ Nouveau QCM</button>';
             fin.hidden = false;
-            if (J && cle) J.qcmFini(cle, bonnes, qs.length);
+            if (J && cle) J.qcmFini(cle, bonnes, items.length);
           }
         });
       });

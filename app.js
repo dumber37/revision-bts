@@ -44,11 +44,27 @@
 
   // ---------- Pages ----------
 
+  // Icônes dessinées des matières (traits, couleur de la matière).
+  var ICONES = {
+    // Relation client : deux bulles de dialogue
+    drcv: '<path d="M4 6.5A2.5 2.5 0 0 1 6.5 4h8A2.5 2.5 0 0 1 17 6.5v4a2.5 2.5 0 0 1-2.5 2.5H10l-3.5 3v-3h0A2.5 2.5 0 0 1 4 10.5z"/><path d="M19.5 9.5A2 2 0 0 1 21 11.4v3.6a2 2 0 0 1-2 2h-.5v2.5L15.5 17H13a2 2 0 0 1-1.7-1"/><path d="M8 8.5h5M8 11h3"/>',
+    // Offre commerciale : vitrine avec store
+    adoc: '<path d="M3.5 9 5 4.5h14L20.5 9"/><path d="M3.5 9a2.1 2.1 0 0 0 4.25 0 2.1 2.1 0 0 0 4.25 0 2.1 2.1 0 0 0 4.25 0 2.1 2.1 0 0 0 4.25 0"/><path d="M5 11.5V20h14v-8.5"/><path d="M10 20v-5h4v5"/>',
+    // Management : une équipe
+    management: '<circle cx="12" cy="7.5" r="2.8"/><path d="M6.5 19.5v-1.2A4.3 4.3 0 0 1 10.8 14h2.4a4.3 4.3 0 0 1 4.3 4.3v1.2"/><circle cx="5" cy="9.5" r="2"/><path d="M2 18v-.8A3 3 0 0 1 5 14.2h.8"/><circle cx="19" cy="9.5" r="2"/><path d="M22 18v-.8a3 3 0 0 0-3-3h-.8"/>',
+    // Gestion : graphique en barres avec tendance
+    gestion: '<path d="M4 4v16h16"/><path d="M8 16v-4M12 16V9M16 16v-6"/><path d="m7 9.5 4-3.5 3 2 5-4.5"/><path d="M16.5 3.5H19V6"/>'
+  };
+  function icone(id) {
+    return ICONES[id] ? '<svg class="carte-ico" viewBox="0 0 24 24" aria-hidden="true">' + ICONES[id] + '</svg>' : '';
+  }
+
   function accueil() {
     document.title = 'Révisions BTS MCO';
     var cartes = R.matieres.map(function (m) {
       var nf = fichesDe(m.id).length, nv = visuelsDe(m.id).length;
       return '<a class="carte-matiere" href="#/' + m.id + '" style="--c:' + m.couleur + '">' +
+        icone(m.id) +
         '<span class="code">' + esc(m.code) + '</span>' +
         '<span class="nom">' + esc(m.nom) + '</span>' +
         '<span class="long">' + esc(m.long) + '</span>' +
@@ -58,15 +74,19 @@
     }).join('');
 
     app.innerHTML =
-      '<h1>Mes matières</h1>' +
+      Jeu.hero() +
       '<div class="recherche"><input id="q" type="search" placeholder="Chercher une notion (ex. élasticité, SONCASE)…" autocomplete="off"></div>' +
       '<div id="resultats"></div>' +
+      '<h2 class="titre-section">Mes matières</h2>' +
+      '<div class="grille-matieres">' + cartes + '</div>' +
+      '<h2 class="titre-section">S’entraîner</h2>' +
       '<div class="raccourcis">' +
         '<a class="lien-defi" href="#/defi"><span class="ico">⚡</span><span><b>Défi éclair</b><span>10 questions chrono, toutes matières</span></span></a>' +
         '<a class="lien-profil" href="#/profil"><span class="ico">🏅</span><span><b>Mon profil</b><span>Niveau, badges et records</span></span></a>' +
       '</div>' +
-      '<div class="grille-matieres">' + cartes + '</div>' +
-      (R.formules ? '<a class="lien-formules" href="#/formules"><b>Formules à retenir</b><span>Tous les calculs d’examen sur une page ›</span></a>' : '');
+      (R.formules ? '<a class="lien-formules" href="#/formules"><b>Formules à retenir</b><span>Tous les calculs d’examen sur une page ›</span></a>' : '') +
+      '<div id="installer"></div>';
+    afficherInstallation($('#installer'));
 
     var q = $('#q');
     q.addEventListener('input', function () { chercher(q.value.trim().toLowerCase()); });
@@ -114,7 +134,7 @@
           }).join('')
         : '<p class="vide">Pas encore de visuel pour cette matière.</p>';
       // QCM de fin : questions de toutes les fiches de la matière, mélangées.
-      if (banqueMatiere(m.id).length) corps += '<div id="qcm"></div>';
+      if (Jeu.questionsMatiere(m.id).length) corps += '<div id="qcm"></div>';
     } else {
       corps = fiches.length
         ? '<div class="liste-fiches">' + fiches.map(carteFiche).join('') + '</div>'
@@ -132,11 +152,7 @@
         '<a href="#/' + m.id + '/visuels"' + (onglet === 'visuels' ? ' class="actif"' : '') + '>Visuels (' + visuels.length + ')</a>' +
       '</div>' + corps;
     activerLecteurs();
-    if ($('#qcm')) Composants.qcm($('#qcm'), banqueMatiere(m.id), 8, 'matiere:' + m.id);
-  }
-
-  function banqueMatiere(id) {
-    return fichesDe(id).reduce(function (t, f) { return t.concat((R.qcm && R.qcm[f.id]) || []); }, []);
+    if ($('#qcm')) Composants.qcm($('#qcm'), Jeu.questionsMatiere(m.id), 8, 'matiere:' + m.id);
   }
 
   function liensPdf(pdf) {
@@ -338,7 +354,7 @@
         '<div class="contenu">' + f.contenu + '</div>' +
         (visuels.length ? '<h2>Les diapos de la fiche</h2>' + lecteur(visuels) : '') +
       '</article>' +
-      (R.qcm && R.qcm[f.id] ? '<div id="qcm"></div>' : '') +
+      (Jeu.questionsDe(f.id).length ? '<div id="qcm"></div>' : '') +
       boiteClaude() +
       '<nav class="suite">' +
         (prec ? '<a href="#/' + m.id + '/' + prec.id + '">‹ ' + esc(prec.titre) + '</a>' : '<span></span>') +
@@ -346,7 +362,7 @@
       '</nav>';
     preparerContenu();
     activerLecteurs();
-    if ($('#qcm')) Composants.qcm($('#qcm'), R.qcm[f.id], 5, 'fiche:' + f.id);
+    if ($('#qcm')) Composants.qcm($('#qcm'), Jeu.questionsDe(f.id), 5, 'fiche:' + f.id);
     surveillerLecture(f.id);
     activerClaude(f.titre, 'Matière : ' + m.code + ' ' + m.long + '.', texteFiche(f));
   }
@@ -394,6 +410,7 @@
     else if (parts[0] === 'formules' && R.formules) pageFormules();
     else if (parts[0] === 'defi') Jeu.pageDefi(app);
     else if (parts[0] === 'profil') Jeu.pageProfil(app);
+    else if (parts[0] === 'revoir') Jeu.pageRevoir(app);
     else {
       var m = matiere(parts[0]);
       if (!m) introuvable();
@@ -454,6 +471,75 @@
     root.dataset.theme = sombre ? 'light' : 'dark';
     try { localStorage.setItem('theme', root.dataset.theme); } catch (e) {}
   });
+
+  // ---------- Application installable et hors-ligne ----------
+
+  var invite = null; // proposition d'installation de Chrome / Edge / Android
+  window.addEventListener('beforeinstallprompt', function (e) {
+    e.preventDefault();
+    invite = e;
+    var c = $('#installer');
+    if (c) afficherInstallation(c);
+  });
+  window.addEventListener('appinstalled', function () { invite = null; Jeu.toast('📲 Application installée !', 'grand'); });
+
+  function installee() {
+    return (window.matchMedia && matchMedia('(display-mode: standalone)').matches) || navigator.standalone === true;
+  }
+  function afficherInstallation(c) {
+    if (!c) return;
+    var ios = /iphone|ipad|ipod/i.test(navigator.userAgent);
+    var html = '<section class="installer"><div class="installer-ico">📲</div><div class="installer-txt">';
+    if (installee()) {
+      html += '<b>Application installée</b><span>Tu peux aussi télécharger les visuels pour réviser sans réseau.</span>';
+    } else if (invite) {
+      html += '<b>Installer l’application</b><span>Sur ton écran d’accueil, comme une vraie appli, et disponible sans réseau.</span>' +
+        '<button type="button" class="installer-btn" data-installer>Installer</button>';
+    } else if (ios) {
+      html += '<b>Installer sur iPhone</b><span>Dans Safari : bouton Partager <b>⎙</b>, puis « Sur l’écran d’accueil ».</span>';
+    } else {
+      html += '<b>Réviser sans réseau</b><span>Les pages déjà ouvertes restent disponibles hors-ligne. Télécharge aussi les visuels pour le bus ou la salle d’attente.</span>';
+    }
+    html += 'serviceWorker' in navigator ? '<button type="button" class="installer-btn secondaire" data-horsligne>Télécharger les visuels (≈ 13 Mo)</button>' : '';
+    html += '</div></section>';
+    c.innerHTML = html;
+    var bi = c.querySelector('[data-installer]');
+    if (bi) bi.addEventListener('click', function () {
+      invite.prompt();
+      invite.userChoice.then(function () { invite = null; afficherInstallation(c); });
+    });
+    var bh = c.querySelector('[data-horsligne]');
+    if (bh) bh.addEventListener('click', function () { toutTelecharger(bh); });
+  }
+  Jeu.surProfil(function (a) { afficherInstallation(a.querySelector('#installer')); });
+
+  // Charge chaque image et PDF une fois : le service worker les garde en cache.
+  function toutTelecharger(btn) {
+    var urls = [];
+    R.visuels.forEach(function (v) { urls.push(v.src); if (v.mini) urls.push(v.mini); });
+    R.visuels.forEach(function (v) {
+      (typeof v.pdf === 'string' ? [[0, v.pdf]] : v.pdf || []).forEach(function (p) { if (urls.indexOf(p[1]) < 0) urls.push(p[1]); });
+    });
+    var faits = 0;
+    btn.disabled = true;
+    function maj() { btn.textContent = 'Téléchargement… ' + Math.round(faits / urls.length * 100) + ' %'; }
+    maj();
+    var file = urls.slice();
+    function suivant() {
+      var u = file.shift();
+      if (!u) {
+        btn.textContent = '✓ Visuels disponibles hors-ligne';
+        Jeu.toast('✓ Tout est disponible hors-ligne', 'grand');
+        return;
+      }
+      fetch(u).catch(function () {}).then(function () { faits++; maj(); suivant(); });
+    }
+    for (var k = 0; k < 4; k++) suivant(); // 4 téléchargements en parallèle
+  }
+
+  if ('serviceWorker' in navigator && (location.protocol === 'https:' || location.hostname === 'localhost')) {
+    window.addEventListener('load', function () { navigator.serviceWorker.register('sw.js').catch(function () {}); });
+  }
 
   window.addEventListener('hashchange', route);
   Jeu.majChip();
