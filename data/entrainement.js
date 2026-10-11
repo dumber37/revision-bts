@@ -211,3 +211,39 @@ R.chasse = {
     ['L’ECR vise le bon produit, au bon moment, au bon prix.', 'L’ECR est un logiciel de caisse.']
   ]
 };
+
+// R.lexique : notions-clés en plus des cartes des fiches [terme, définition courte, id de la fiche].
+R.lexique = [
+  ['SONCASE', 'Les mobiles d’achat : Sécurité, Orgueil, Nouveauté, Confort, Argent, Sympathie, Écologie.', 'vente-conseil'],
+  ['CAP', 'Méthode pour construire un argument : Caractéristique, Avantage, Preuve.', 'vente-conseil'],
+  ['REPO', 'Méthode pour traiter une objection : Reformuler, Énoncer, Prouver, Ouvrir.', 'repo'],
+  ['Cycle de vente', 'Prise de contact, découverte des besoins, argumentation, objections, conclusion.', 'vente-conseil'],
+  ['Garantie légale de conformité', 'Garantie obligatoire de 2 ans pour le consommateur.', 'reclamations'],
+  ['Garantie commerciale', 'Garantie facultative de l’enseigne, qui s’ajoute à la garantie légale.', 'reclamations'],
+  ['Élasticité-prix', 'Sensibilité de la demande au prix : % variation demande ÷ % variation prix.', 'fixation-prix'],
+  ['Taux de marge', 'Marge ÷ coût d’achat HT × 100.', 'fixation-prix'],
+  ['Taux de marque', 'Marge ÷ prix de vente HT × 100.', 'fixation-prix'],
+  ['Coefficient multiplicateur', 'Prix de vente TTC ÷ coût d’achat HT.', 'fixation-prix'],
+  ['Démarque', 'Perte de marchandise, connue (casse, péremption) ou inconnue (vol, erreurs).', 'fixation-prix'],
+  ['Prix d’acceptabilité', 'Prix accepté par le plus de clients, mesuré par un sondage à deux questions.', 'fixation-prix'],
+  ['Vente à perte', 'Revente sous le prix d’achat : interdite, sauf soldes, produits périssables ou saisonniers.', 'fixation-prix'],
+  ['MDD', 'Marque de distributeur : produits vendus sous la marque de l’enseigne.', 'fournisseurs'],
+  ['CGV', 'Conditions générales de vente du fournisseur, base de la négociation annuelle.', 'fournisseurs'],
+  ['Cahier des charges', 'Document qui décrit précisément le besoin avant l’appel d’offres.', 'fournisseurs'],
+  ['Appel d’offres', 'Mise en concurrence de plusieurs fournisseurs à partir du cahier des charges.', 'fournisseurs'],
+  ['Scoring', 'Choix d’un fournisseur par note pondérée : Σ (note × coefficient).', 'fournisseurs'],
+  ['Turn-over', 'Rotation du personnel : départs et remplacements de salariés.', 'evaluer-motivation'],
+  ['Facteurs d’hygiène', 'Selon Herzberg : éléments externes (salaire, ambiance) dont l’absence démotive.', 'facteurs-motivation'],
+  ['Facteurs moteurs', 'Selon Herzberg : éléments liés au travail (reconnaissance, contenu) qui motivent vraiment.', 'facteurs-motivation'],
+  ['Pyramide de Maslow', 'Besoins de bas en haut : physiologiques, sécurité, appartenance, estime, accomplissement.', 'facteurs-motivation'],
+  ['SMIC', 'Salaire minimum légal : aucun salaire ne peut être inférieur.', 'remuneration'],
+  ['Salaire brut', 'Fixe + commissions + primes, avant cotisations.', 'remuneration'],
+  ['Salaire net', 'Brut − cotisations salariales.', 'remuneration'],
+  ['Coût employeur', 'Brut + cotisations patronales : ce que le salarié coûte à l’entreprise.', 'remuneration'],
+  ['Heures supplémentaires', 'Au-delà de 35 h : +25 % de la 36e à la 43e heure, +50 % ensuite.', 'remuneration'],
+  ['Plan de formation', 'Tableau annuel des actions de formation, avec public, durée et coût.', 'formation'],
+  ['Matrice des compétences', 'Outil qui hiérarchise les besoins de formation selon le niveau de maîtrise.', 'formation'],
+  ['Évaluation à froid', 'Mesure de l’efficacité réelle d’une formation, quelque temps après.', 'formation'],
+  ['Self-scanning', 'Le client scanne lui-même ses articles : illustre son autonomie.', 'experience-achat'],
+  ['Omnicanal', 'Stratégie où tous les canaux sont connectés pour un parcours client fluide.', 'numerique']
+];

@@ -79,14 +79,20 @@
       '<div id="resultats"></div>' +
       '<h2 class="titre-section">Mes matières</h2>' +
       '<div class="grille-matieres">' + cartes + '</div>' +
-      '<h2 class="titre-section">S’entraîner</h2>' +
+      '<h2 class="titre-section">Réviser</h2>' +
       '<div class="raccourcis">' +
+        '<a class="lien-profil" href="#/planning"><span class="ico">📅</span><span><b>Mon planning</b><span>Compte à rebours et programme du jour</span></span></a>' +
         '<a class="lien-profil" href="#/bilan"><span class="ico">🎯</span><span><b>Mes points faibles</b><span>Ce qu’il faut retravailler en priorité</span></span></a>' +
+        '<a class="lien-profil" href="#/express"><span class="ico">⏱</span><span><b>L’essentiel en 1 minute</b><span>Les 3 points clés de chaque fiche</span></span></a>' +
         '<a class="lien-profil" href="#/calculs"><span class="ico">🧮</span><span><b>Calculs à l’infini</b><span>Paie, élasticité, marge… avec correction</span></span></a>' +
         '<a class="lien-profil" href="#/oral"><span class="ico">🎙️</span><span><b>Simulateur d’oral</b><span>E41 et E42 avec Claude, noté sur 20</span></span></a>' +
+        '<a class="lien-profil" href="#/lexique"><span class="ico">📚</span><span><b>Lexique</b><span>Toutes les notions de A à Z</span></span></a>' +
+        '<a class="lien-profil" href="#/carnet"><span class="ico">📒</span><span><b>Mon carnet</b><span>Mes favoris et mes notes</span></span></a>' +
+      '</div>' +
+      '<h2 class="titre-section">Jouer</h2>' +
+      '<div class="raccourcis">' +
         '<a class="lien-defi" href="#/defi"><span class="ico">⚡</span><span><b>Défi éclair</b><span>10 questions chrono, à envoyer à un ami</span></span></a>' +
         '<a class="lien-profil" href="#/duel"><span class="ico">⚔️</span><span><b>Duel</b><span>À deux sur le même téléphone</span></span></a>' +
-        '<a class="lien-profil" href="#/express"><span class="ico">⏱</span><span><b>L’essentiel en 1 minute</b><span>Les 3 points clés de chaque fiche</span></span></a>' +
         '<a class="lien-profil" href="#/profil"><span class="ico">🏅</span><span><b>Mon profil</b><span>Niveau, badges et records</span></span></a>' +
       '</div>' +
       '<p class="astuce">Cartes mémo, ordre, textes à trous, memory, chasse à l’erreur, boss et examen blanc : onglet <b>S’entraîner</b> de chaque matière.</p>' +
@@ -94,6 +100,7 @@
       '<div id="installer"></div>';
     afficherInstallation($('#installer'));
     if (typeof Jeux !== 'undefined') Jeux.magasin($('#hero-magasin'), true);
+    Carnet.decorerAccueil(app); // compte à rebours et favoris
 
     var q = $('#q');
     q.addEventListener('input', function () { chercher(q.value.trim().toLowerCase()); });
@@ -376,6 +383,7 @@
     if ($('#qcm')) Composants.qcm($('#qcm'), Jeu.questionsDe(f.id), 5, 'fiche:' + f.id);
     surveillerLecture(f.id);
     activerClaude(f.titre, 'Matière : ' + m.code + ' ' + m.long + '.', texteFiche(f));
+    Carnet.decorerFiche(app, m, f); // favori ☆ et bloc « Mes notes »
   }
 
   // Les tableaux larges défilent dans leur cadre plutôt que la page entière,
