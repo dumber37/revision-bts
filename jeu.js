@@ -474,6 +474,10 @@ var Jeu = (function () {
   var DUREE = 20; // secondes par question
   var minuteur = null;
   function stopMinuteur() { if (minuteur) { clearInterval(minuteur); minuteur = null; } }
+  // Jeton de page : il change à chaque navigation. Un délai lancé sur une page ne doit pas agir sur la suivante.
+  var jetonPage = 0;
+  function quitterPage() { stopMinuteur(); jetonPage++; }
+  function apres(ms, fn) { var j = jetonPage; return setTimeout(function () { if (j === jetonPage) fn(); }, ms); }
 
   function pageDefi(app) {
     document.title = 'Défi éclair · Révisions BTS MCO';
@@ -535,7 +539,7 @@ var Jeu = (function () {
           erreurs.push(it);
           reponse(false, true, it.id);
         }
-        setTimeout(function () { i++; if (i < qs.length) question(); else bilan(); }, juste ? 900 : 1600);
+        apres(juste ? 900 : 1600, function () { i++; if (i < qs.length) question(); else bilan(); });
       }
       app.querySelector('.defi-reps').addEventListener('click', function (e) {
         var b = e.target.closest('button[data-ok]');
@@ -591,10 +595,10 @@ var Jeu = (function () {
     gagner: gagner, debloquer: debloquer, toast: toast, confettis: confettis,
     // extensions
     ajouterBadges: ajouterBadges, ajouterMissions: ajouterMissions, surChangement: surChangement, surProfil: surProfil,
-    definirSon: function (fn) { son = fn; },
+    definirSon: function (fn) { son = fn; }, sonner: function (t) { son(t); },
     // affichage
     etoiles: etoiles, progression: progression, majChip: majChip, hero: hero, listeErreurs: listeErreurs,
-    pageProfil: pageProfil, pageDefi: pageDefi, pageRevoir: pageRevoir, quitter: stopMinuteur,
+    pageProfil: pageProfil, pageDefi: pageDefi, pageRevoir: pageRevoir, quitter: quitterPage, apres: apres,
     esc: esc, melanger: melanger
   };
 })();

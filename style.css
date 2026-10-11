@@ -343,6 +343,55 @@ table.bilan a { color: inherit; }
 .express-fiche li { margin: 3px 0; }
 .express-fin { text-align: center; margin-top: 20px; }
 
+/* ---------- Ambiance : animations douces et schémas dessinés ---------- */
+@keyframes entree { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@keyframes surgit { from { opacity: 0; transform: translateY(10px) scale(.98); } to { opacity: 1; transform: none; } }
+@keyframes pousse { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+@keyframes allume { 0% { opacity: .2; transform: scale(.6); } 70% { transform: scale(1.25); } 100% { opacity: 1; transform: none; } }
+#app.entree { animation: entree .28s ease-out; }
+#app.entree :is(.carte-matiere, .carte-fiche, .activite, .mission, .badge, .express-fiche) { animation: surgit .35s ease-out backwards; }
+#app.entree :is(.carte-matiere, .carte-fiche, .activite, .mission, .badge, .express-fiche):nth-child(2) { animation-delay: .05s; }
+#app.entree :is(.carte-matiere, .carte-fiche, .activite, .mission, .badge, .express-fiche):nth-child(3) { animation-delay: .1s; }
+#app.entree :is(.carte-matiere, .carte-fiche, .activite, .mission, .badge, .express-fiche):nth-child(4) { animation-delay: .15s; }
+#app.entree :is(.carte-matiere, .carte-fiche, .activite, .mission, .badge, .express-fiche):nth-child(5) { animation-delay: .2s; }
+#app.entree :is(.carte-matiere, .carte-fiche, .activite, .mission, .badge, .express-fiche):nth-child(n+6) { animation-delay: .25s; }
+#app.entree :is(.prog-barre, .mission-barre, .chip-barre) i { transform-origin: left; animation: pousse .7s .15s ease-out backwards; }
+#app.entree .etoiles { display: inline-block; animation: allume .5s .25s ease-out backwards; }
+.hero-grade small.monte { color: var(--or); font-weight: 700; opacity: 1; }
+@media (max-width: 420px) { .logo span { display: none; } }
+
+.etapes-liste.frise { display: flex; gap: 0; overflow-x: auto; padding: 4px 2px 8px; scrollbar-width: thin; }
+.frise .etape {
+  position: relative; flex: 1 0 104px; flex-direction: column; align-items: center; gap: 6px; text-align: center;
+  border: 0; background: none; padding: 4px 6px; font-size: .84rem; line-height: 1.25;
+}
+.frise .etape::before { content: ""; position: absolute; top: 19px; left: -50%; width: 100%; height: 3px; background: var(--bord); z-index: 0; }
+.frise .etape:first-child::before { display: none; }
+.frise .etape.vue::before, .frise .etape.active::before { background: var(--or); }
+.frise .etape .num {
+  position: relative; z-index: 1; display: flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 50%;
+  background: var(--surface); border: 3px solid var(--bord); color: var(--doux); font-size: .9rem; transition: transform .2s, background .2s;
+}
+.frise .etape.vue .num { border-color: var(--or); color: var(--rouille); }
+.frise .etape.active { background: none; color: var(--texte); }
+.frise .etape.active .num { background: var(--or); border-color: var(--or); color: #172340; transform: scale(1.12); }
+.frise .etape.vue { opacity: 1; }
+
+.pyramide-svg { display: block; width: 100%; max-width: 380px; margin: 0 auto; }
+.etage-svg { cursor: pointer; outline: none; transition: transform .2s; transform-origin: center; transform-box: fill-box; }
+.etage-svg:hover polygon, .etage-svg:focus-visible polygon { filter: brightness(1.12); }
+.etage-svg.active polygon { stroke: var(--or); stroke-width: 4; }
+.etage-svg text { pointer-events: none; font-family: "DM Sans", system-ui, sans-serif; }
+
+.calc-jauge { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 16px; margin-top: 8px; }
+.jauge { width: 210px; flex: 0 0 auto; color: var(--texte); }
+.jauge .aiguille { transition: all .4s; }
+.calc-jauge .calc-verdict { flex: 1; min-width: 180px; }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+}
+
 /* ---------- Jeux : magasin, boss, duel, chasse, memory ---------- */
 .magasin { display: flex; align-items: center; gap: 14px; margin: 14px 0 4px; }
 .magasin-svg { width: 200px; flex: 0 0 auto; border-radius: 10px; background: linear-gradient(#cfe3f2, #eaf2f8 70%); }
@@ -658,12 +707,6 @@ table.bilan a { color: inherit; }
 
 /* Pyramide */
 .pyramide-ui { margin: 12px 0; }
-.pyramide-etages { display: flex; flex-direction: column; align-items: center; gap: 4px; }
-.etage {
-  padding: 8px 6px; border: 0; border-radius: 6px; cursor: pointer; font-weight: 700; font-size: .92rem;
-  background: var(--exemple); transition: background .15s;
-}
-.etage.active { background: var(--nuit); color: var(--or); }
 .pyramide-detail { text-align: center; color: var(--doux); margin: 10px 0 0; }
 .pyramide-detail b { color: var(--texte); }
 

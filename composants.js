@@ -26,7 +26,8 @@ var Composants = (function () {
       return { titre: b ? b.innerHTML : li.innerHTML, detail: p ? p.innerHTML : '' };
     });
     var ui = el('div', 'etapes-ui');
-    var liste = el('div', 'etapes-liste');
+    // Une suite ordonnée devient une frise (étapes reliées) ; une liste libre reste une grille.
+    var liste = el('div', 'etapes-liste' + (ol.hasAttribute('data-libre') ? '' : ' frise'));
     var detail = el('div', 'etapes-detail');
     items.forEach(function (it, i) {
       var b = el('button', 'etape', '<span class="num">' + (i + 1) + '</span><span>' + it.titre + '</span>');
@@ -39,6 +40,9 @@ var Composants = (function () {
         b.classList.toggle('active', j === i);
         b.classList.toggle('vue', j < i);
       });
+      // Dans une frise qui déborde (téléphone), on garde l'étape active visible.
+      var a = liste.children[i];
+      if (liste.scrollWidth > liste.clientWidth) liste.scrollTo({ left: a.offsetLeft - (liste.clientWidth - a.offsetWidth) / 2, behavior: 'smooth' });
       detail.innerHTML =
         '<div class="etapes-titre"><span class="num">' + (i + 1) + '/' + items.length + '</span> ' + items[i].titre + '</div>' +
         '<p>' + items[i].detail + '</p>' +
@@ -56,25 +60,56 @@ var Composants = (function () {
     montrer(0);
   }
 
-  // ---------- Pyramide ----------
+  // ---------- Pyramide (dessinée en SVG, un étage par élément, du haut vers le bas) ----------
+  var TEINTES = [['#e8a33d', '#172340'], ['#e39158', '#172340'], ['#b85c1e', '#fff'], ['#2d3f6b', '#fff'], ['#172340', '#f5f2ec'], ['#111a31', '#f5f2ec']];
   function pyramide(ol) {
-    var lis = Array.prototype.slice.call(ol.children);
-    var ui = el('div', 'pyramide-ui');
-    var etages = el('div', 'pyramide-etages');
-    var detail = el('p', 'pyramide-detail', 'Clique sur un étage.');
+    var lis = Array.prototype.slice.call(ol.children), n = lis.length;
+    var H = 250, L = 300, top = 8, h = (H - top) / n;
+    // Demi-largeur à la hauteur y : la pointe est tronquée pour que le nom du dernier étage tienne.
+    function demi(y) { return 40 + (y - top) / (H - top) * (L / 2 - 46); }
+    var svg = '<svg class="pyramide-svg" viewBox="0 0 ' + L + ' ' + (H + 4) + '" role="group" aria-label="Pyramide">';
     lis.forEach(function (li, i) {
-      var b = el('button', 'etage', li.querySelector('b').innerHTML);
-      b.type = 'button';
-      b.style.width = (40 + 60 * (i + 1) / lis.length) + '%';
-      b.addEventListener('click', function () {
-        Array.prototype.forEach.call(etages.children, function (x) { x.classList.toggle('active', x === b); });
-        detail.innerHTML = '<b>' + li.querySelector('b').innerHTML + '</b> : ' + li.querySelector('p').innerHTML;
-      });
-      etages.appendChild(b);
+      var y1 = top + i * h, y2 = y1 + h, c = TEINTES[Math.min(i, TEINTES.length - 1)];
+      var pts = [[L / 2 - demi(y1), y1], [L / 2 + demi(y1), y1], [L / 2 + demi(y2), y2], [L / 2 - demi(y2), y2]]
+        .map(function (p) { return p[0].toFixed(1) + ',' + p[1].toFixed(1); }).join(' ');
+      var nom = li.querySelector('b').textContent, taille = i === 0 ? 11 : 12.5;
+      svg += '<g class="etage-svg" data-i="' + i + '" tabindex="0" role="button" aria-label="' + nom + '">' +
+        '<polygon points="' + pts + '" fill="' + c[0] + '" stroke="var(--surface)" stroke-width="2"/>' +
+        '<text x="' + L / 2 + '" y="' + (y1 + h / 2 + 4).toFixed(1) + '" text-anchor="middle" font-size="' + taille + '" font-weight="700" fill="' + c[1] + '">' + nom + '</text></g>';
     });
-    ui.appendChild(etages);
+    svg += '</svg>';
+    var ui = el('div', 'pyramide-ui', svg);
+    var detail = el('p', 'pyramide-detail', 'Touche un étage de la pyramide.');
     ui.appendChild(detail);
+    function choisir(g) {
+      Array.prototype.forEach.call(ui.querySelectorAll('.etage-svg'), function (x) { x.classList.toggle('active', x === g); });
+      var li = lis[+g.dataset.i];
+      detail.innerHTML = '<b>' + li.querySelector('b').innerHTML + '</b> : ' + li.querySelector('p').innerHTML;
+    }
+    ui.addEventListener('click', function (e) { var g = e.target.closest('.etage-svg'); if (g) choisir(g); });
+    ui.addEventListener('keydown', function (e) {
+      var g = e.target.closest('.etage-svg');
+      if (g && (e.key === 'Enter' || e.key === ' ')) { e.preventDefault(); choisir(g); }
+    });
     ol.parentNode.replaceChild(ui, ol);
+  }
+
+  // ---------- Jauge d'élasticité (0 à 4, aiguille sur la valeur) ----------
+  function jauge(e) {
+    if (!isFinite(e)) return '';
+    var v = Math.min(Math.max(e, 0), 4), ang = Math.PI * (1 - v / 4), cx = 110, cy = 100, r = 80;
+    function pt(val, rr) { var a = Math.PI * (1 - val / 4); return (cx + rr * Math.cos(a)).toFixed(1) + ' ' + (cy - rr * Math.sin(a)).toFixed(1); }
+    function arc(a, b, col) { return '<path d="M' + pt(a, r) + ' A' + r + ' ' + r + ' 0 0 1 ' + pt(b, r) + '" stroke="' + col + '" stroke-width="16" fill="none"/>'; }
+    return '<svg class="jauge" viewBox="0 0 220 140" role="img" aria-label="Élasticité ' + fr(e) + '">' +
+      arc(0, 0.92, '#2fa36b') + arc(0.92, 1.08, '#8a93a6') + arc(1.08, 4, '#c4462b') +
+      '<text x="' + (cx - r) + '" y="116" font-size="10" text-anchor="middle" fill="currentColor">0</text>' +
+      '<text x="' + cx + '" y="14" font-size="10" text-anchor="middle" fill="currentColor">2</text>' +
+      '<text x="' + (cx + r) + '" y="116" font-size="10" text-anchor="middle" fill="currentColor">4+</text>' +
+      '<text x="' + (cx - 52) + '" y="74" font-size="9" fill="#2fa36b" text-anchor="middle">peu</text>' +
+      '<text x="' + (cx + 52) + '" y="74" font-size="9" fill="#c4462b" text-anchor="middle">très</text>' +
+      '<line class="aiguille" x1="' + cx + '" y1="' + cy + '" x2="' + (cx + (r - 14) * Math.cos(ang)).toFixed(1) + '" y2="' + (cy - (r - 14) * Math.sin(ang)).toFixed(1) + '" stroke="currentColor" stroke-width="4" stroke-linecap="round"/>' +
+      '<circle cx="' + cx + '" cy="' + cy + '" r="7" fill="currentColor"/>' +
+      '<text x="' + cx + '" y="' + (cy + 34) + '" font-size="16" font-weight="700" text-anchor="middle" fill="currentColor">E = ' + fr(e) + '</text></svg>';
   }
 
   // ---------- Cartes à retourner ----------
@@ -176,7 +211,7 @@ var Composants = (function () {
             ligne('% variation du prix', '(' + fr(v.p1) + ' − ' + fr(v.p0) + ') ÷ ' + fr(v.p0), fr(vp) + ' %'),
             ligne('% variation de la demande', '(' + fr(v.d1, 0) + ' − ' + fr(v.d0, 0) + ') ÷ ' + fr(v.d0, 0), fr(vd) + ' %'),
             ligne('Élasticité', '|' + fr(vd) + ' ÷ ' + fr(vp) + '|', fr(e), true)
-          ]) + '<p class="calc-verdict">' + verdict + '</p>';
+          ]) + '<div class="calc-jauge">' + jauge(e) + '<p class="calc-verdict">' + verdict + '</p></div>';
         });
     },
     paie: function (div) {

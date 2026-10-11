@@ -130,7 +130,7 @@ var Jeux = (function () {
       Jeu.etat().duelNoms = j; Jeu.sauver();
       var mid = app.querySelector('#dm').value, n = +app.querySelector('#dn').value;
       var pool = mid ? Jeu.questionsMatiere(mid) : Jeu.questions();
-      jouerDuel(app, j, melanger(pool).slice(0, n * 2));
+      jouerDuel(app, j, melanger(pool).slice(0, Math.min(n * 2, pool.length - pool.length % 2)));
     });
   }
 
@@ -164,13 +164,15 @@ var Jeux = (function () {
         if (juste) {
           var pts = 100 + Math.round(reste * 5);
           scores[t] += pts; bonnes[t]++;
+          Jeu.sonner('bon');
           b.classList.add('bonne');
           ret.innerHTML = '<b>+' + pts + ' pts pour ' + esc(joueurs[t]) + '</b>';
         } else {
           if (b) b.classList.add('fausse');
+          Jeu.sonner('faux');
           ret.innerHTML = '<b>' + (b ? 'Raté' : 'Temps écoulé') + '</b> · réponse : ' + it.q[1][0];
         }
-        setTimeout(function () { i++; if (i < qs.length) question(); else fin(); }, juste ? 1100 : 1900);
+        Jeu.apres(juste ? 1100 : 1900, function () { i++; if (i < qs.length) question(); else fin(); });
       }
       app.querySelector('.defi-reps').addEventListener('click', function (e) { var b = e.target.closest('button[data-ok]'); if (b) repondre(b); });
       minuteur = setInterval(function () {
@@ -306,12 +308,14 @@ var Jeux = (function () {
       var a = tuiles[+retournees[0].dataset.i], c = tuiles[+retournees[1].dataset.i];
       if (a.k === c.k && a.type !== c.type) {
         retournees.forEach(function (x) { x.classList.add('trouvee'); });
+        Jeu.sonner('bon');
         retournees = [];
         trouvees++;
         if (trouvees === paires.length) fin();
       } else {
         bloque = true;
         retournees.forEach(function (x) { x.classList.add('rate'); });
+        Jeu.sonner('faux');
         setTimeout(function () {
           retournees.forEach(function (x) { x.classList.remove('visible', 'rate'); });
           retournees = []; bloque = false;
@@ -363,9 +367,9 @@ var Jeux = (function () {
     ['duel', '⚔️', 'Esprit de compétition', 'Jouer un duel']
   ]), function (E) { return { 'duel': (E.stats.duels || 0) >= 1 }; });
   Jeu.ajouterMissions([
-    { id: 'boss', txt: 'Affronter un boss', cle: 'boss', obj: 1, lien: '#/' },
-    { id: 'chasse', txt: 'Faire une chasse à l’erreur', cle: 'chasse', obj: 1, lien: '#/' },
-    { id: 'memory', txt: 'Terminer un memory', cle: 'memory', obj: 1, lien: '#/' }
+    { id: 'boss', txt: 'Affronter un boss', cle: 'boss', obj: 1, lien: Activites.lienEntrainement },
+    { id: 'chasse', txt: 'Faire une chasse à l’erreur', cle: 'chasse', obj: 1, lien: Activites.lienEntrainement },
+    { id: 'memory', txt: 'Terminer un memory', cle: 'memory', obj: 1, lien: Activites.lienEntrainement }
   ]);
 
   return { magasin: magasin, magasinSVG: magasinSVG };

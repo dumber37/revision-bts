@@ -75,7 +75,7 @@ var Activites = (function () {
         s.focus({ preventScroll: true });
         s.addEventListener('click', function () { suite(stop); });
       } else {
-        setTimeout(function () { if (!fini) suite(false); }, 300);
+        Jeu.apres(300, function () { if (!fini) suite(false); });
       }
     }
 
@@ -285,9 +285,11 @@ var Activites = (function () {
           rang.appendChild(li);
           b.remove();
           places++;
+          Jeu.sonner('bon');
           if (places === L.etapes.length) terminer(erreurs);
         } else {
           erreurs++;
+          Jeu.sonner('faux');
           app.querySelector('.ordre-err').textContent = erreurs + ' erreur' + (erreurs > 1 ? 's' : '');
           b.classList.remove('secoue'); void b.offsetWidth; b.classList.add('secoue');
         }
@@ -338,6 +340,7 @@ var Activites = (function () {
           if (x.textContent === it.bonne) x.classList.add('bonne');
         });
         if (!juste) { b.classList.add('fausse'); erreurs.push(it); } else bonnes++;
+        Jeu.sonner(juste ? 'bon' : 'faux');
         var trou = app.querySelector('.trou');
         trou.textContent = it.bonne;
         trou.classList.add(juste ? 'ok' : 'ko');
@@ -440,6 +443,9 @@ var Activites = (function () {
     });
   }
 
+  // Les missions d'entraînement mènent à l'onglet « S'entraîner » de la première matière qui a du contenu.
+  var LIEN_ENT = '#/' + ((R.matieres.filter(function (x) { return Jeu.questionsMatiere(x.id).length; })[0] || R.matieres[0]).id) + '/entrainement';
+
   // ---------- Badges et missions de ce lot ----------
 
   Jeu.ajouterBadges([
@@ -456,10 +462,10 @@ var Activites = (function () {
     };
   });
   Jeu.ajouterMissions([
-    { id: 'cartes', txt: 'Faire un paquet de cartes mémo', cle: 'cartes', obj: 1, lien: '#/' },
-    { id: 'ordre', txt: 'Remettre 2 listes dans l’ordre', cle: 'ordre', obj: 2, lien: '#/' },
-    { id: 'trous', txt: 'Compléter 5 textes à trous', cle: 'trous', obj: 5, lien: '#/' },
-    { id: 'examen', txt: 'Passer un examen blanc', cle: 'examen', obj: 1, lien: '#/' },
+    { id: 'cartes', txt: 'Faire un paquet de cartes mémo', cle: 'cartes', obj: 1, lien: LIEN_ENT },
+    { id: 'ordre', txt: 'Remettre 2 listes dans l’ordre', cle: 'ordre', obj: 2, lien: LIEN_ENT },
+    { id: 'trous', txt: 'Compléter 5 textes à trous', cle: 'trous', obj: 5, lien: LIEN_ENT },
+    { id: 'examen', txt: 'Passer un examen blanc', cle: 'examen', obj: 1, lien: LIEN_ENT },
     { id: 'express', txt: 'Relire l’essentiel en 1 minute', cle: 'express', obj: 1, lien: '#/express' }
   ]);
 
@@ -474,7 +480,7 @@ var Activites = (function () {
     pageGlobale: function (nom) { return pagesGlobales[nom]; },
     surQuitter: function (fn) { arrets.push(fn); },
     quitterTout: function () { quitter(); clavier = null; arrets.forEach(function (fn) { fn(); }); },
-    serie: serie, matiere: matiere, quitter: quitter, hub: hub, ajouterActivite: ajouterActivite,
+    serie: serie, matiere: matiere, quitter: quitter, hub: hub, ajouterActivite: ajouterActivite, lienEntrainement: LIEN_ENT,
     cartesDe: cartesDe, listesDe: listesDe, trousDe: trousDe, fil: fil, stat: stat, relancer: relancer,
     pageCartes: pageCartes, pageOrdre: pageOrdre, pageTrous: pageTrous, pageExamen: pageExamen,
     pageExpress: pageExpress, encadreEssentiel: encadreEssentiel,

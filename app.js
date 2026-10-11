@@ -436,6 +436,8 @@
       }
     }
     window.scrollTo(0, 0);
+    Ambiance.entree(app);
+    if (!parts.length) Ambiance.compteurXP();
   }
 
   // ---------- Visionneuse d'images ----------
