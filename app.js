@@ -75,7 +75,7 @@
 
     app.innerHTML =
       Jeu.hero() +
-      '<div class="recherche"><input id="q" type="search" placeholder="Chercher une notion (ex. élasticité, SONCASE)…" autocomplete="off"></div>' +
+      '<div class="recherche"><input id="q" type="search" placeholder="Chercher une notion, un cas, une formule (ex. élasticité, SONCASE)…" autocomplete="off"></div>' +
       '<div id="resultats"></div>' +
       '<h2 class="titre-section">Mes matières</h2>' +
       '<div class="grille-matieres">' + cartes + '</div>' +
@@ -107,18 +107,44 @@
     Bonus.decorerAccueil(app); // défi de la semaine
 
     var q = $('#q');
-    q.addEventListener('input', function () { chercher(q.value.trim().toLowerCase()); });
+    q.addEventListener('input', function () { chercher(q.value.trim()); });
   }
 
-  function chercher(q) {
-    var out = $('#resultats');
+  // Recherche sans tenir compte des majuscules ni des accents (« elasticite » trouve « élasticité »).
+  function norm(s) { return String(s).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[’']/g, ' '); }
+  var indexRecherche = null;
+  function index() {
+    if (indexRecherche) return indexRecherche;
+    indexRecherche = {
+      cas: (R.cas || []).map(function (c) {
+        return { c: c, t: norm(c.titre + ' ' + c.resume + ' ' + enTexte(c.contexte + (c.annexes || '') + c.questions.map(function (x) { return '<p>' + x.q + '</p>' + x.corrige; }).join(''))) };
+      }),
+      lexique: typeof Carnet !== 'undefined' ? Carnet.entreesLexique().map(function (x) { return { x: x, t: norm(x.terme + ' ' + x.def) }; }) : [],
+      formules: R.formules ? norm(enTexte(R.formules)) : ''
+    };
+    return indexRecherche;
+  }
+
+  function chercher(brut) {
+    var out = $('#resultats'), q = norm(brut);
     if (q.length < 2) { out.innerHTML = ''; return; }
-    var res = R.fiches.filter(function (f) {
-      return (f.titre + ' ' + (f.resume || '') + ' ' + texteFiche(f)).toLowerCase().indexOf(q) >= 0;
-    });
-    out.innerHTML = res.length
-      ? '<div class="liste-fiches">' + res.map(carteFiche).join('') + '</div>'
-      : '<p class="vide">Aucune fiche ne contient « ' + esc(q) + ' ».</p>';
+    var ix = index();
+    var fiches = R.fiches.filter(function (f) { return norm(f.titre + ' ' + (f.resume || '') + ' ' + texteFiche(f)).indexOf(q) >= 0; });
+    var cas = ix.cas.filter(function (x) { return x.t.indexOf(q) >= 0; });
+    var lex = ix.lexique.filter(function (x) { return x.t.indexOf(q) >= 0; }).slice(0, 6);
+    var formules = ix.formules.indexOf(q) >= 0;
+    var html = '';
+    if (fiches.length) html += '<h3 class="res-titre">Fiches</h3><div class="liste-fiches">' + fiches.map(carteFiche).join('') + '</div>';
+    if (lex.length) html += '<h3 class="res-titre">Lexique</h3><div class="res-lexique">' + lex.map(function (x) {
+      var e = x.x;
+      return '<a class="lex-entree" href="' + (e.f ? '#/' + e.f.matiere + '/' + e.f.id : '#/lexique') + '"><b>' + esc(e.terme) + '</b><span>' + esc(e.def) + '</span></a>';
+    }).join('') + '</div>';
+    if (cas.length) html += '<h3 class="res-titre">Études de cas</h3><div class="liste-fiches">' + cas.map(function (x) {
+      var m = matiere(x.c.matiere);
+      return '<a class="carte-fiche" href="#/cas/' + x.c.id + '" style="--c:' + m.couleur + '"><span class="tag">🗂️ ' + esc(m.nom) + '</span><span class="titre">' + esc(x.c.titre) + '</span><span class="resume">' + esc(x.c.resume) + '</span></a>';
+    }).join('') + '</div>';
+    if (formules) html += '<h3 class="res-titre">Formules</h3><a class="lien-formules" href="#/formules"><b>Formules à retenir</b><span>« ' + esc(brut) + ' » apparaît dans les calculs d’examen ›</span></a>';
+    out.innerHTML = html || '<p class="vide">Rien ne contient « ' + esc(brut) + ' » (fiches, lexique, études de cas, formules).</p>';
   }
 
   function carteFiche(f) {
@@ -371,7 +397,7 @@
       '<nav class="fil"><a href="#/">Matières</a> › <a href="#/' + m.id + '">' + esc(m.nom) + '</a></nav>' +
       '<article class="fiche" style="--c:' + m.couleur + '">' +
         '<h1>' + esc(f.titre) + '</h1>' +
-        (f.date ? '<p class="meta">' + dateFr(f.date) + '</p>' : '') +
+        '<p class="meta">' + (f.date ? dateFr(f.date) + ' · ' : '') + '<button type="button" class="imprimer-btn">🖨️ Imprimer / PDF</button></p>' +
         Activites.encadreEssentiel(f) +
         Bonus.lecteurFiche(f) +
         '<div class="contenu">' + f.contenu + '</div>' +
@@ -385,6 +411,9 @@
       '</nav>';
     preparerContenu();
     activerLecteurs();
+    $('.imprimer-btn').addEventListener('click', function () {
+      Composants.imprimer(esc(f.titre), esc(m.code + ' · ' + m.nom) + (f.date ? ' · ' + dateFr(f.date) : ''), Activites.encadreEssentiel(f) + f.contenu);
+    });
     if ($('#qcm')) Composants.qcm($('#qcm'), Jeu.questionsDe(f.id), 5, 'fiche:' + f.id);
     surveillerLecture(f.id);
     activerClaude(f.titre, 'Matière : ' + m.code + ' ' + m.long + '.', texteFiche(f));
@@ -409,8 +438,10 @@
     app.innerHTML =
       '<nav class="fil"><a href="#/">Matières</a> › Formules</nav>' +
       '<article class="fiche" style="--c:var(--rouille)"><h1>Formules à retenir</h1>' +
+      '<p class="meta"><button type="button" class="imprimer-btn">🖨️ Imprimer / PDF</button></p>' +
       '<div class="contenu">' + R.formules + '</div></article>' +
       boiteClaude();
+    $('.imprimer-btn').addEventListener('click', function () { Composants.imprimer('Formules à retenir', 'Avec les corrections', R.formules); });
     preparerContenu();
     activerClaude('Formules à retenir', 'Ce sont les formules de calcul pour l’examen.', enTexte(R.formules));
     Array.prototype.forEach.call(app.querySelectorAll('details.correction'), function (d, i) {

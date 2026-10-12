@@ -12,7 +12,7 @@ var Jeu = (function () {
 
   function vierge() {
     return { xp: 0, jours: { dernier: '', serie: 0, max: 0 }, lues: {}, best: {}, badges: {}, corr: {},
-             srs: {}, jour: { date: '', c: {}, missions: [], faites: {} }, duelNoms: null, reglages: {}, parFiche: {}, notes: {}, favoris: {}, semaine: { id: '', c: {}, jours: {}, fait: false },
+             srs: {}, cartes: {}, jour: { date: '', c: {}, missions: [], faites: {} }, duelNoms: null, reglages: {}, parFiche: {}, notes: {}, favoris: {}, semaine: { id: '', c: {}, jours: {}, fait: false },
              stats: { bonnes: 0, reponses: 0, qcm: 0, defis: 0, record: 0, comboMax: 0, missions: 0 } };
   }
   var E = vierge();
@@ -415,6 +415,15 @@ var Jeu = (function () {
 
   // ---------- Page Révision des erreurs ----------
 
+  // Cartes mémo dues aujourd'hui, par matière (elles ont leur propre répétition espacée).
+  function cartesARevoir() {
+    if (typeof Activites === 'undefined') return '';
+    var l = R.matieres.map(function (m) { var s = Activites.etatCartes(m); return { m: m, n: s.dues.length }; }).filter(function (x) { return x.n; });
+    return l.length ? '<h2 class="titre-section">Cartes mémo à revoir</h2><div class="activites">' + l.map(function (x) {
+      return '<a class="activite" href="#/' + x.m.id + '/cartes" style="--c:' + x.m.couleur + '"><span class="activite-ico">🃏</span><span><b>' + esc(x.m.nom) + '</b><span>' + x.n + ' carte' + (x.n > 1 ? 's' : '') + ' à revoir aujourd’hui</span></span></a>';
+    }).join('') + '</div>' : '';
+  }
+
   function pageRevoir(app) {
     document.title = 'Révision des erreurs · Révisions BTS MCO';
     var dus = aRevoir(), bx = boites();
@@ -431,7 +440,7 @@ var Jeu = (function () {
         (dus.length
           ? '<button type="button" class="defi-go">Réviser ' + Math.min(dus.length, 15) + ' question' + (dus.length > 1 ? 's' : '') + '</button>'
           : '<p class="vide">' + (Object.keys(E.srs).length ? 'Rien à revoir aujourd’hui. Reviens demain !' : 'Fais quelques QCM ou un Défi éclair : tes erreurs arriveront ici.') + '</p>') +
-      '</section>';
+      '</section>' + cartesARevoir();
     var go = app.querySelector('.defi-go');
     if (go) go.addEventListener('click', function () {
       Activites.serie(app, {
@@ -659,7 +668,8 @@ var Jeu = (function () {
   return {
     // données
     questions: questions, questionsDe: questionsDe, questionsMatiere: questionsMatiere, aRevoir: aRevoir,
-    etat: function () { return E; }, sauver: sauver, jour: jour, niveau: niveau, semaineId: semaineId,
+    etat: function () { return E; }, sauver: sauver, jour: jour, dansJours: dansJours, niveau: niveau, semaineId: semaineId,
+    empreinte: empreinte, ECARTS: ECARTS,
     // événements
     reponse: reponse, qcmFini: qcmFini, ficheLue: ficheLue, correction: correction, compter: compter,
     gagner: gagner, debloquer: debloquer, toast: toast, confettis: confettis,

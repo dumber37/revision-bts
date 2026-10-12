@@ -35,7 +35,8 @@ R.cas = [
         corrige: `<p>35 h normales : 35 × 12,50 = 437,50 €<br>5 h supplémentaires à +25 % : 5 × 12,50 × 1,25 = 78,13 €<br>
           Commission : 6 000 × 1,5 % = 90,00 €<br><b>Salaire brut = 605,63 €</b><br>
           Salaire net = 605,63 × (1 − 0,22) = <b>472,39 €</b></p>
-          <p class="attention">Les cotisations salariales sont retenues sur le salaire de Yanis : elles ne sont pas payées en plus par l’entreprise.</p>` },
+          <p class="attention">Les cotisations salariales sont retenues sur le salaire de Yanis : elles ne sont pas payées en plus par l’entreprise.</p>
+          <div data-calc="paie" data-titre="À toi de jouer : la paie de Yanis" data-valeurs="taux=12,5;h=40;ca=6000;com=1,5;cs=22"></div>` },
       { q: 'Proposez deux leviers pour relancer la motivation de l’équipe, en vous appuyant sur une théorie.', points: 6,
         corrige: `<ul><li><b>Un challenge collectif</b> sur le panier moyen pendant la rentrée (tous ceux qui atteignent l’objectif sont récompensés, par exemple une sortie d’équipe) : stimule sans mettre les vendeurs en concurrence.</li>
           <li><b>La reconnaissance et la délégation</b> : confier à chaque vendeur la responsabilité d’un univers (référent running, référent textile…), féliciter en réunion.</li>
@@ -234,6 +235,7 @@ R.cas = [
           <p><b>Critère déterminant</b> : labels puis qualité (poids 5) : QualiDat est devant sur les deux.</p>
           <p><b>Conjonctif</b> (seuil fixé à 5/10) : QualiDat et OrientExpres passent, Délices Sucrés est éliminé (aucun label, livraison trop lente).</p>
           <p><b>Les trois modèles désignent QualiDat.</b></p>
+          <div data-calc="scoring" data-titre="Le scoring en direct (notes sur 10, règlement corrigé à 10)" data-config='{"sur":10,"crit":[["Labels",5],["Qualité",5],["Livraison",4],["Règlement",3]],"four":[["QualiDat",[10,10,10,10]],["Délices Sucrés",[0,8,3.75,10]],["OrientExpres",[5,7,5,10]]]}'></div>
           <div class="attention"><b>Deux remarques sur ta copie :</b> les trois fournisseurs proposent le même délai de règlement (30 j) : avec ta règle « le meilleur = 10 », ils devraient avoir 10 (30 points chacun), pas 5. Le classement ne change pas (170, 85 et 110 points). Ensuite, le magasin exige une livraison <b>sous 5 jours</b> : si on prend ce seuil dans le modèle conjonctif, OrientExpres (6 jours) est éliminé lui aussi, et seul QualiDat reste.</div>` },
       { q: 'Quel est le rôle des conditions générales de vente (CGV) ?', points: 4,
         corrige: `<ul><li>Informer l’acheteur avant toute transaction (prix, remises, logistique, règlement).</li><li>Servir de socle à la négociation (envoyées avant le 30 novembre).</li>
@@ -259,11 +261,15 @@ R.cas = [
             <tr><td>Marge globale</td><td>1,04 × 78 = 81,12 €</td><td>− 0,11 × 135 ≈ − 14,85 €</td></tr>
             <tr><td>Taux de marge</td><td>1,04 ÷ 8,43 = 12,3 %</td><td>négatif</td></tr>
             <tr><td>Taux de marque</td><td>1,04 ÷ 9,47 = 11,0 %</td><td>négatif</td></tr></table>
-          <p>Avec ce prix d’achat, l’opération ferait vendre <b>sous le prix d’achat</b> : c’est de la revente à perte, interdite. Ce serait un bon point à soulever dans ta copie (ou le signe qu’il faut un autre prix d’achat).</p>` },
+          <p>Avec ce prix d’achat, l’opération ferait vendre <b>sous le prix d’achat</b> : c’est de la revente à perte, interdite. Ce serait un bon point à soulever dans ta copie (ou le signe qu’il faut un autre prix d’achat).</p>
+          <p>Change le prix d’achat dans les calculatrices pour tester d’autres hypothèses :</p>
+          <div data-calc="marge" data-titre="Avant l’opération (par kg)" data-valeurs="pa=8,43;pv=9,47;tva=5,5"></div>
+          <div data-calc="marge" data-titre="Pendant l’opération (par kg)" data-valeurs="pa=7,68;pv=7,57;tva=5,5"></div>` },
       { q: 'Calculez et interprétez l’élasticité-prix pendant l’opération, puis concluez.', points: 6,
         corrige: `<p>Variation des quantités : (135 − 78) ÷ 78 = <b>+ 73,08 %</b><br>Variation du prix TTC : (7,99 − 9,99) ÷ 9,99 = <b>− 20,02 %</b><br>
           Élasticité = 73,08 ÷ (− 20,02) = <b>− 3,65</b>, soit 3,65 en valeur absolue.</p>
           <p>La demande est <b>très élastique</b> : une baisse de prix de 1 % fait augmenter les ventes d’environ 3,65 %. Le CA TTC passe de 779,22 € à 1 078,65 € (+ 38,4 %).</p>
+          <div data-calc="elasticite" data-titre="L’élasticité des dattes" data-valeurs="p0=9,99;p1=7,99;d0=78;d1=135"></div>
           <p>Pour le magasin : opération de trafic et de fidélisation qui renforce l’image prix bas, à condition de respecter le seuil de revente à perte et de limiter la durée. Pour le fournisseur : il concède 0,75 €/kg mais vend 73 % de volume en plus et gagne en visibilité.</p>` },
       { q: 'Quels sont les intérêts d’un partenariat durable ? Rédigez une note à Mme Naïa.', points: 6,
         corrige: `<p><b>Intérêts</b> : pour Auchan, moins de ruptures, approvisionnement sûr, meilleures conditions, moins de stocks ; pour le fournisseur, débouchés stables, volumes prévisibles, visibilité, moins de risque de déréférencement. Le partenariat doit rester équilibré.</p>

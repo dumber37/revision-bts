@@ -19,7 +19,8 @@ var Bonus = (function () {
   function voix() { var v = (Jeu.etat().reglages || {}).voix; return VOIX[v] && R.audioVoix && R.audioVoix[v] ? v : 'siwis'; }
   function durees() { return (R.audioVoix && R.audioVoix[voix()]) || R.audio || {}; }
   function aAudio(id) { return !!(R.audio && R.audio[id]); }
-  function src(id) { return VOIX[voix()].dossier + id + '.mp3'; }
+  // La durée sert de numéro de version : une fiche réenregistrée change d'adresse, l'ancienne copie hors-ligne n'est plus utilisée.
+  function src(id, v) { v = v || voix(); return VOIX[v].dossier + id + '.mp3?d=' + (((R.audioVoix && R.audioVoix[v]) || R.audio || {})[id] || 0); }
   function dureeFiche(id) { return durees()[id] || (R.audio || {})[id] || 0; }
   // Durée réelle si le navigateur la connaît, sinon celle enregistrée (certains serveurs ne la donnent pas).
   function duree() {
@@ -39,6 +40,7 @@ var Bonus = (function () {
       if (enCours) audio.play().catch(function () {});
     }
     Array.prototype.forEach.call(document.querySelectorAll('[data-voix]'), function (b) { b.classList.toggle('actif', b.dataset.voix === v); });
+    Array.prototype.forEach.call(document.querySelectorAll('[data-audio-horsligne]'), etatHorsLigne);
     majTout();
   }
   function choixVoix() {
@@ -151,6 +153,47 @@ var Bonus = (function () {
     majTout();
   }
 
+  // ---------- Audio hors-ligne ----------
+  // Les MP3 d'une voix sont rangés dans un cache à part (« rbts-audio »), que le service worker lit quand il n'y a pas de réseau.
+  var CACHE_AUDIO = 'rbts-audio';
+  function urlsVoix(v) {
+    return Object.keys(R.audio || {}).filter(function (id) { return fiche(id); }).map(function (id) { return new URL(src(id, v), location.href).href; });
+  }
+  function etatHorsLigne(btn) {
+    var v = voix(), urls = urlsVoix(v), mo = Math.max(1, Math.round(Object.keys(durees()).reduce(function (s, id) { return s + durees()[id]; }, 0) * 6 / 1024));
+    btn.disabled = false;
+    btn.textContent = '⬇ Écouter sans réseau : télécharger la voix ' + VOIX[v].nom + ' (≈ ' + mo + ' Mo)';
+    caches.open(CACHE_AUDIO).then(function (c) { return c.keys(); }).then(function (cles) {
+      var deja = cles.map(function (r) { return r.url; });
+      if (urls.every(function (u) { return deja.indexOf(u) >= 0; })) { btn.textContent = '✓ Voix ' + VOIX[v].nom + ' disponible sans réseau'; btn.disabled = true; }
+    }).catch(function () {});
+  }
+  function telechargerAudio(btn) {
+    var v = voix(), urls = urlsVoix(v), faits = 0, erreurs = 0;
+    btn.disabled = true;
+    caches.open(CACHE_AUDIO).then(function (c) {
+      function maj() { btn.textContent = 'Téléchargement de la voix ' + VOIX[v].nom + '… ' + Math.round(faits / urls.length * 100) + ' %'; }
+      maj();
+      var file = urls.slice();
+      return new Promise(function (fini) {
+        function suivant() {
+          var u = file.shift();
+          if (!u) return;
+          c.add(u).catch(function () { erreurs++; }).then(function () { faits++; maj(); if (faits === urls.length) fini(); else suivant(); });
+        }
+        suivant(); suivant(); // 2 à la fois : ce sont de gros fichiers
+      }).then(function () {
+        // On retire les anciennes versions (fiches réenregistrées) des deux voix.
+        var gardees = urlsVoix('siwis').concat(R.audioVoix && R.audioVoix.tom ? urlsVoix('tom') : []);
+        return c.keys().then(function (cles) { return Promise.all(cles.filter(function (r) { return gardees.indexOf(r.url) < 0; }).map(function (r) { return c.delete(r); })); });
+      });
+    }).then(function () {
+      if (erreurs) { btn.disabled = false; btn.textContent = '⚠ ' + erreurs + ' fichier(s) non téléchargé(s) : réessayer'; return; }
+      Jeu.toast('🎧 Fiches audio disponibles sans réseau', 'grand');
+      etatHorsLigne(btn);
+    }).catch(function () { btn.disabled = false; btn.textContent = '⚠ Téléchargement impossible : réessayer'; });
+  }
+
   function pageEcoute(app) {
     document.title = 'Écouter les fiches · Révisions BTS MCO';
     var total = 0;
@@ -167,8 +210,11 @@ var Bonus = (function () {
     }).join('');
     app.innerHTML = fil('Écouter les fiches') +
       '<section class="express-tete"><div class="defi-eclair">🎧</div><h1>Écouter les fiches</h1>' +
-      '<p>Chaque fiche lue par une voix naturelle, avec l’essentiel en premier. ' + Math.round(total / 60) + ' minutes au total : idéal dans le bus ou en marchant. La lecture continue si tu changes de page.</p>' + choixVoix() + '</section>' +
+      '<p>Chaque fiche lue par une voix naturelle, avec l’essentiel en premier. ' + Math.round(total / 60) + ' minutes au total : idéal dans le bus ou en marchant. La lecture continue si tu changes de page.</p>' + choixVoix() +
+      ('caches' in window ? '<p class="calc-boutons"><button type="button" class="installer-btn secondaire" data-audio-horsligne></button></p>' : '') + '</section>' +
       '<div class="pistes">' + (html || '<p class="vide">Pas encore de fiche audio.</p>') + '</div>';
+    var bh = app.querySelector('[data-audio-horsligne]');
+    if (bh) { etatHorsLigne(bh); bh.addEventListener('click', function () { telechargerAudio(bh); }); }
     // Écouteur posé sur la liste (recréée à chaque visite), pas sur #app qui reste en place : sinon il s'accumulerait.
     app.querySelector('.pistes').addEventListener('click', function (e) {
       var p = e.target.closest('.piste'), t = e.target.closest('.tout-ecouter');
@@ -275,6 +321,8 @@ var Bonus = (function () {
     app.innerHTML = fil(c.titre, ['Études de cas', '#/cas']) +
       '<article class="fiche" style="--c:' + m.couleur + '"><span class="defi-tag">' + esc(m.nom) + (c.exemple ? ' · cas d’exemple' : c.source ? ' · d’après ta copie' : '') + '</span><h1>' + esc(c.titre) + '</h1>' +
         '<div class="contenu">' + c.contexte + (c.annexes ? '<details class="annexes" open><summary>📎 Annexes</summary>' + c.annexes + '</details>' : '') + '</div></article>' +
+      '<p class="calc-boutons cas-outils"><button type="button" class="imprimer-btn" data-imp="sujet">🖨️ Imprimer le sujet</button><button type="button" class="imprimer-btn" data-imp="corrige">🖨️ Sujet + corrigé</button></p>' +
+      '<a class="lien-profil cas-examen-lien" href="#/cas/' + c.id + '/examen"><span class="ico">⏱</span><span><b>Mode sujet d’examen</b><span>' + dureeExamen(c) + ' minutes chrono, sans corrigé, puis note de toute ta copie par Claude</span></span></a>' +
       c.questions.map(function (q, i) {
         var cle = 'cas:' + c.id + ':' + i;
         return '<section class="cas-q" data-i="' + i + '"><div class="cas-q-tete"><span class="cas-num">' + (i + 1) + '</span><b>' + esc(q.q) + '</b>' + (q.points ? '<span class="cas-pts">' + q.points + ' pts</span>' : '') + '</div>' +
@@ -285,6 +333,15 @@ var Bonus = (function () {
       }).join('') +
       (total ? '<p class="astuce">Barème total : ' + total + ' points.</p>' : '');
     Composants.activer(app);
+    Array.prototype.forEach.call(app.querySelectorAll('[data-imp]'), function (b) {
+      b.addEventListener('click', function () {
+        var corrige = b.dataset.imp === 'corrige';
+        Composants.imprimer(esc(c.titre), esc(m.nom) + ' · étude de cas' + (total ? ' · ' + total + ' points' : ''),
+          c.contexte + (c.annexes ? '<h2>Annexes</h2>' + c.annexes : '') + '<h2>Questions</h2>' + c.questions.map(function (q, i) {
+            return '<h3>' + (i + 1) + '. ' + esc(q.q) + (q.points ? ' (' + q.points + ' pts)' : '') + '</h3>' + (corrige ? '<div class="imp-corrige">' + q.corrige + '</div>' : '<div class="imp-lignes"></div>');
+          }).join(''));
+      });
+    });
     Array.prototype.forEach.call(app.querySelectorAll('.cas-q'), function (sec) {
       var i = +sec.dataset.i, q = c.questions[i], zone = sec.querySelector('textarea'), cle = 'cas:' + c.id + ':' + i, minut;
       zone.addEventListener('input', function () {
@@ -301,18 +358,123 @@ var Bonus = (function () {
         if (!zone.value.trim()) { zone.focus(); zone.classList.add('ia-vide'); return; }
         var tmp = document.createElement('div');
         tmp.innerHTML = c.contexte + (c.annexes || '');
-        var ctx = tmp.textContent.replace(/\s+/g, ' ').trim(), url;
-        // On raccourcit le contexte (jamais la question ni la réponse) jusqu'à ce que l'adresse passe.
-        for (var n = 0; n < 12; n++) {
-          url = 'https://claude.ai/new?q=' + encodeURIComponent('Je révise le BTS MCO (2e année). Corrige ma réponse à une question d’étude de cas, comme un correcteur d’examen.\n\n' +
-            'Contexte et annexes :\n' + ctx + '\n\nQuestion' + (q.points ? ' (' + q.points + ' points)' : '') + ' : ' + q.q + '\n\nMa réponse :\n' + zone.value.trim() +
-            '\n\nDonne-moi une note sur ' + (q.points || 'le barème') + ', ce qui est juste, ce qui manque (notions du cours, utilisation des annexes, justification), et une version améliorée de ma réponse. Réponds en français, simplement.');
-          if (url.length <= 7000) break;
-          ctx = ctx.slice(0, Math.floor(ctx.length * 0.75)).replace(/\s+\S*$/, '') + ' […]';
-        }
-        window.open(url, '_blank', 'noopener');
+        var msg = sec.querySelector('.cas-msg');
+        if (!msg) { msg = document.createElement('p'); msg.className = 'transfert-msg cas-msg'; sec.querySelector('.calc-boutons').after(msg); }
+        ouvrirClaude('Je révise le BTS MCO (2e année). Corrige ma réponse à une question d’étude de cas, comme un correcteur d’examen.\n\nContexte et annexes :\n',
+          tmp.textContent.replace(/\s+/g, ' ').trim(),
+          '\n\nQuestion' + (q.points ? ' (' + q.points + ' points)' : '') + ' : ' + q.q + '\n\nMa réponse :\n' + zone.value.trim() +
+          '\n\nDonne-moi une note sur ' + (q.points || 'le barème') + ', ce qui est juste, ce qui manque (notions du cours, utilisation des annexes, justification), et une version améliorée de ma réponse. Réponds en français, simplement.', msg);
       });
     });
+  }
+
+  // ---------- Mode sujet d'examen ----------
+  // Toutes les questions d'un cas, chronométrées (2 minutes par point, 20 minutes minimum), sans corrigé.
+  // Les réponses sont gardées à part (casx:…) pour ne pas mélanger avec l'entraînement. À la fin : corrigés et note par Claude.
+  function dureeExamen(c) { return Math.max(20, c.questions.reduce(function (s, q) { return s + (q.points || 0); }, 0) * 2); }
+  var chronoCas = null;
+  function stopCas() { if (chronoCas) { clearInterval(chronoCas); chronoCas = null; } }
+  Activites.surQuitter(stopCas);
+
+  function pageCasExamen(app, c) {
+    var m = Activites.matiere(c.matiere), E = Jeu.etat(), duree = dureeExamen(c) * 60, total = c.questions.reduce(function (s, q) { return s + (q.points || 0); }, 0);
+    function cle(i) { return 'casx:' + c.id + ':' + i; }
+    document.title = 'Sujet d’examen · ' + c.titre;
+    app.innerHTML = fil('Mode examen', ['Études de cas', '#/cas']) +
+      '<section class="defi defi-accueil"><div class="defi-eclair">⏱</div><h1>Sujet d’examen</h1>' +
+        '<p><b>' + esc(c.titre) + '</b> · ' + c.questions.length + ' questions · ' + total + ' points</p>' +
+        '<ul><li><b>' + dureeExamen(c) + ' minutes</b> pour tout le sujet</li><li>Pas de corrigé pendant l’épreuve, comme le jour J</li><li>À la fin : les corrigés et la note de toute ta copie par Claude</li></ul>' +
+        (c.questions.some(function (q, i) { return (E.notes || {})[cle(i)]; })
+          ? '<p class="calc-boutons"><button type="button" class="defi-go" data-nouveau>Nouvelle copie</button><button type="button" class="defi-go secondaire" data-go>Reprendre ma dernière copie</button></p>'
+          : '<button type="button" class="defi-go" data-go>Commencer l’épreuve</button>') + '</section>';
+    var nouveau = app.querySelector('[data-nouveau]');
+    if (nouveau) nouveau.addEventListener('click', function () {
+      c.questions.forEach(function (q, i) { delete E.notes[cle(i)]; });
+      Jeu.sauver();
+      app.querySelector('[data-go]').click();
+    });
+    app.querySelector('[data-go]').addEventListener('click', function () {
+      var debut = Date.now();
+      app.innerHTML = fil('Mode examen', ['Études de cas', '#/cas']) +
+        '<div class="cas-chrono"><span>⏱ <b></b></span><button type="button" class="installer-btn" data-rendre>Rendre ma copie</button></div>' +
+        '<article class="fiche" style="--c:' + m.couleur + '"><span class="defi-tag">' + esc(m.nom) + ' · sujet d’examen</span><h1>' + esc(c.titre) + '</h1>' +
+          '<div class="contenu">' + c.contexte + (c.annexes ? '<details class="annexes" open><summary>📎 Annexes</summary>' + c.annexes + '</details>' : '') + '</div></article>' +
+        c.questions.map(function (q, i) {
+          return '<section class="cas-q" data-i="' + i + '"><div class="cas-q-tete"><span class="cas-num">' + (i + 1) + '</span><b>' + esc(q.q) + '</b>' + (q.points ? '<span class="cas-pts">' + q.points + ' pts</span>' : '') + '</div>' +
+            '<textarea rows="5" placeholder="Ta réponse…">' + esc((E.notes || {})[cle(i)] || '') + '</textarea></section>';
+        }).join('') +
+        '<p class="calc-boutons"><button type="button" class="defi-go" data-rendre>Rendre ma copie</button></p>';
+      Array.prototype.forEach.call(app.querySelectorAll('.cas-q textarea'), function (z, i) {
+        var minut;
+        z.addEventListener('input', function () {
+          clearTimeout(minut);
+          minut = setTimeout(function () { var n = E.notes = E.notes || {}; if (z.value.trim()) n[cle(i)] = z.value; else delete n[cle(i)]; Jeu.sauver(); }, 500);
+        });
+      });
+      var aff = app.querySelector('.cas-chrono b');
+      function tic() {
+        var reste = duree - (Date.now() - debut) / 1000;
+        aff.textContent = Math.floor(Math.max(0, reste) / 60) + ':' + ('0' + Math.floor(Math.max(0, reste) % 60)).slice(-2);
+        aff.parentNode.classList.toggle('urgent', reste < 300);
+        if (reste <= 0) rendre(true);
+      }
+      stopCas(); tic(); chronoCas = setInterval(tic, 1000);
+      Array.prototype.forEach.call(app.querySelectorAll('[data-rendre]'), function (b) {
+        b.addEventListener('click', function () { if (confirm('Rendre ta copie maintenant ?')) rendre(false); });
+      });
+      function rendre(tempsEcoule) {
+        stopCas();
+        var reps = Array.prototype.map.call(app.querySelectorAll('.cas-q textarea'), function (z) { return z.value.trim(); });
+        var n = E.notes = E.notes || {};
+        reps.forEach(function (r, i) { if (r) n[cle(i)] = r; else delete n[cle(i)]; });
+        var min = Math.round((Date.now() - debut) / 60000);
+        Activites.stat('sujets');
+        Jeu.compter('cas');
+        Jeu.gagner(10 + 3 * reps.filter(Boolean).length, 'sujet d’examen');
+        app.innerHTML = fil('Mode examen', ['Études de cas', '#/cas']) +
+          '<section class="defi defi-fin"><div class="defi-eclair">📝</div><h1>Copie rendue</h1>' +
+            '<p>' + (tempsEcoule ? 'Temps écoulé. ' : min < 1 ? 'En moins d’une minute. ' : 'En ' + min + ' minute' + (min > 1 ? 's' : '') + '. ') + reps.filter(Boolean).length + '/' + reps.length + ' questions traitées.</p>' +
+            '<p class="calc-boutons"><button type="button" class="defi-go" data-noter>Faire noter ma copie par Claude ↗</button></p><p class="transfert-msg" aria-live="polite"></p></section>' +
+          '<h2 class="titre-section">Ta copie et le corrigé</h2>' +
+          c.questions.map(function (q, i) {
+            return '<section class="cas-q"><div class="cas-q-tete"><span class="cas-num">' + (i + 1) + '</span><b>' + esc(q.q) + '</b>' + (q.points ? '<span class="cas-pts">' + q.points + ' pts</span>' : '') + '</div>' +
+              '<p class="cas-copie">' + (reps[i] ? esc(reps[i]).replace(/\n/g, '<br>') : '<i>Pas de réponse.</i>') + '</p>' +
+              '<details class="correction"><summary>Voir le corrigé</summary><div class="qcm-expl">' + q.corrige + '</div></details></section>';
+          }).join('') +
+          '<p><a class="defi-go secondaire" href="#/cas/' + c.id + '">Retour au cas</a></p>';
+        Composants.activer(app);
+        app.querySelector('[data-noter]').addEventListener('click', function () {
+          var copie = c.questions.map(function (q, i) { return 'Question ' + (i + 1) + (q.points ? ' (' + q.points + ' points)' : '') + ' : ' + q.q + '\nMa réponse : ' + (reps[i] || '(pas de réponse)'); }).join('\n\n');
+          var tmp = document.createElement('div');
+          tmp.innerHTML = c.contexte + (c.annexes || '');
+          ouvrirClaude('Je révise le BTS MCO (2e année). Voici ma copie d’un sujet d’étude de cas. Corrige-la comme un correcteur d’examen.\n\nContexte et annexes :\n',
+            tmp.textContent.replace(/\s+/g, ' ').trim(),
+            '\n\n' + copie + '\n\nPour chaque question : une note sur son barème, ce qui est juste, ce qui manque (notions du cours, utilisation des annexes, justification). Puis ma note totale sur ' + total + ' et mes 3 priorités pour progresser. Réponds en français, simplement.',
+            app.querySelector('.transfert-msg'));
+        });
+      }
+    });
+  }
+
+  // Ouvre Claude avec un message déjà écrit. Le contexte (jamais la question ni la réponse) est raccourci si l'adresse est trop longue ;
+  // si c'est encore trop long, le texte est copié et il suffit de le coller.
+  function ouvrirClaude(debut, ctx, fin, msg) {
+    var url;
+    for (var n = 0; n < 12; n++) {
+      url = 'https://claude.ai/new?q=' + encodeURIComponent(debut + ctx + fin);
+      if (url.length <= 7000 || ctx.length < 200) break;
+      ctx = ctx.slice(0, Math.floor(ctx.length * 0.75)).replace(/\s+\S*$/, '') + ' […]';
+    }
+    if (url.length <= 7000) { window.open(url, '_blank', 'noopener'); return; }
+    // Le nouvel onglet est ouvert par un second clic : ouvert tout de suite, il ferait perdre la main au presse-papiers.
+    var texte = debut + ctx + fin;
+    function afficher(ok) {
+      if (!msg) return;
+      msg.innerHTML = ok ? '📋 Ta copie est trop longue pour un lien : elle est copiée. <a href="https://claude.ai/new" target="_blank" rel="noopener">Ouvre Claude ↗</a> puis colle-la (Ctrl+V ou appui long › Coller).'
+        : 'Copie automatique impossible : sélectionne tes réponses, copie-les, puis <a href="https://claude.ai/new" target="_blank" rel="noopener">ouvre Claude ↗</a>.';
+    }
+    if (navigator.clipboard) navigator.clipboard.writeText(texte).then(function () { afficher(true); }, function () { afficher(false); });
+    else afficher(false);
   }
 
   // ---------- Défi de la semaine ----------
@@ -363,7 +525,11 @@ var Bonus = (function () {
 
   Activites.ajouterPageGlobale('ecoute', pageEcoute);
   Activites.ajouterPageGlobale('methodo', function (app) { pageMethodo(app, location.hash.split('/')[2]); });
-  Activites.ajouterPageGlobale('cas', function (app) { var id = location.hash.split('/')[2]; if (id) pageCas(app, decodeURIComponent(id)); else pageCasListe(app); });
+  Activites.ajouterPageGlobale('cas', function (app) {
+    var p = location.hash.split('/'), id = p[2] && decodeURIComponent(p[2]);
+    var c = id && (R.cas || []).filter(function (x) { return x.id === id; })[0];
+    if (c && p[3] === 'examen') pageCasExamen(app, c); else if (id) pageCas(app, id); else pageCasListe(app);
+  });
   Jeu.ajouterBadges([
     ['semaine', '🏁', 'Champion de la semaine', 'Réussir un défi de la semaine'],
     ['semaine-4', '🗓️', 'Régularité de pro', 'Réussir 4 défis de la semaine'],

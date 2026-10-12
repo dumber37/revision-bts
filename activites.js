@@ -172,10 +172,10 @@ var Activites = (function () {
   function ajouterActivite(fn) { activitesExtra.push(fn); }
 
   function hub(m) {
-    var nq = Jeu.questionsMatiere(m.id).length, nc = cartesDe(m).length, nl = listesDe(m).length, nt = trousDe(m).length;
-    var best = (Jeu.etat().best['examen:' + m.id] || null);
+    var nq = Jeu.questionsMatiere(m.id).length, st = etatCartes(m), nc = st.toutes.length, nl = listesDe(m).length, nt = trousDe(m).length;
+    var best = (Jeu.etat().best['examen:' + m.id] || null), aFaire = st.dues.length + st.nouvelles.length;
     var items = [
-      { ico: '🃏', titre: 'Cartes mémo', txt: nc + ' cartes : devine, retourne, dis si tu savais', lien: '#/' + m.id + '/cartes', n: nc },
+      { ico: '🃏', titre: 'Cartes mémo', txt: nc + ' cartes · ' + (aFaire ? [st.dues.length ? st.dues.length + ' à revoir' : '', st.nouvelles.length ? st.nouvelles.length + ' nouvelle' + (st.nouvelles.length > 1 ? 's' : '') : ''].filter(Boolean).join(', ') : 'rien à revoir aujourd’hui ✓'), lien: '#/' + m.id + '/cartes', n: nc },
       { ico: '🔢', titre: 'Remettre dans l’ordre', txt: nl + ' liste' + (nl > 1 ? 's' : '') + ' d’étapes à reclasser', lien: '#/' + m.id + '/ordre', n: nl },
       { ico: '✏️', titre: 'Textes à trous', txt: nt + ' phrases à compléter', lien: '#/' + m.id + '/trous', n: nt },
       { ico: '📝', titre: 'Examen blanc', txt: Math.min(20, nq) + ' questions chronométrées, note sur 20' + (best ? ' · record ' + best[0] + '/20' : ''), lien: '#/' + m.id + '/examen', n: nq }
@@ -191,16 +191,46 @@ var Activites = (function () {
 
   // ---------- Cartes mémo ----------
 
+  // Répétition espacée des cartes (comme la révision des erreurs) : E.cartes[id] = [boîte, prochaine date].
+  // Recto et verso : deux cartes peuvent avoir le même recto (les deux « S » de SONCASE).
+  function idCarte(c) { return c.f.id + '#' + Jeu.empreinte(sansBalises(c.recto) + '|' + sansBalises(c.verso)); }
+  function sansBalises(h) { var d = document.createElement('div'); d.innerHTML = h; return d.textContent; }
+  function etatCartes(m) {
+    var auj = Jeu.jour(), S = Jeu.etat().cartes || {}, dues = [], nouvelles = [], toutes = cartesDe(m);
+    toutes.forEach(function (c) {
+      c.id = idCarte(c);
+      var s = S[c.id];
+      if (!s) nouvelles.push(c); else if (s[1] <= auj) dues.push(c);
+    });
+    dues.sort(function (a, b) { return S[a.id][0] - S[b.id][0]; });
+    return { toutes: toutes, dues: dues, nouvelles: nouvelles };
+  }
+  function planifierCarte(id, boite) {
+    var E = Jeu.etat();
+    E.cartes = E.cartes || {};
+    E.cartes[id] = [boite, Jeu.dansJours(Jeu.ECARTS[boite])];
+  }
+
   function pageCartes(app, m) {
     document.title = 'Cartes mémo · ' + m.nom;
-    var paquet = melanger(cartesDe(m)), total = paquet.length, sues = 0, premiers = 0, vues = {};
-    if (!total) { app.innerHTML = fil(m, 'Cartes mémo') + '<p class="vide">Pas de cartes pour cette matière.</p>'; return; }
+    var st = etatCartes(m), libre = /\/cartes\/tout$/.test(location.hash);
+    if (!st.toutes.length) { app.innerHTML = fil(m, 'Cartes mémo') + '<p class="vide">Pas de cartes pour cette matière.</p>'; return; }
+    if (!libre && !st.dues.length && !st.nouvelles.length) {
+      var S = Jeu.etat().cartes, prochaine = st.toutes.map(function (c) { return S[c.id][1]; }).sort()[0];
+      app.innerHTML = fil(m, 'Cartes mémo') +
+        '<section class="defi defi-fin"><div class="defi-eclair">🃏</div><h1>Rien à revoir aujourd’hui</h1>' +
+          '<p>Tes ' + st.toutes.length + ' cartes sont rangées. Prochaine révision : <b>' + prochaine.split('-').reverse().join('/') + '</b>.</p>' +
+          '<p><a class="defi-go secondaire" href="#/' + m.id + '/cartes/tout">Revoir tout le paquet quand même</a></p></section>';
+      return;
+    }
+    // Révision du jour : d'abord les cartes dues (les plus fragiles en premier), puis les nouvelles. Mode libre : tout le paquet.
+    var paquet = libre ? melanger(st.toutes) : st.dues.concat(melanger(st.nouvelles)), total = paquet.length, sues = 0, premiers = 0, vues = {};
 
     function afficher() {
       var c = paquet[0];
       app.innerHTML = fil(m, 'Cartes mémo') +
         '<section class="memo" style="--c:' + m.couleur + '">' +
-          '<div class="defi-haut"><span>🃏 Cartes mémo</span><span class="defi-score">' + sues + '/' + total + ' sues</span></div>' +
+          '<div class="defi-haut"><span>🃏 ' + (libre ? 'Tout le paquet' : st.dues.length + ' à revoir · ' + st.nouvelles.length + ' nouvelle' + (st.nouvelles.length > 1 ? 's' : '')) + '</span><span class="defi-score">' + sues + '/' + total + ' sues</span></div>' +
           '<div class="serie-avance"><i style="width:' + Math.round(sues / total * 100) + '%"></i></div>' +
           '<button type="button" class="memo-carte" aria-label="Retourner la carte">' +
             '<span class="memo-in"><span class="memo-face memo-recto"><small>' + esc(c.ctx) + '</small><b>' + c.recto + '</b><em>Touche pour retourner</em></span>' +
@@ -224,8 +254,13 @@ var Activites = (function () {
       };
     }
     function decider(ok) {
-      var c = paquet.shift(), cle = c.recto + c.ctx;
-      if (ok) { sues++; if (!vues[cle]) premiers++; }
+      var c = paquet.shift(), cle = c.id;
+      if (ok) {
+        sues++;
+        if (!vues[cle]) premiers++;
+        // Sue du premier coup : elle monte d'une boîte (une nouvelle part à 3 jours). Ratée puis apprise : demain.
+        if (!libre) { var s = (Jeu.etat().cartes || {})[cle]; planifierCarte(cle, vues[cle] ? 1 : s ? Math.min(s[0] + 1, 5) : 2); Jeu.sauver(); }
+      }
       else { vues[cle] = true; paquet.splice(Math.min(paquet.length, 3), 0, c); } // revient 3 cartes plus loin
       if (paquet.length) afficher(); else fin();
     }
@@ -235,10 +270,14 @@ var Activites = (function () {
       Jeu.compter('cartes');
       Jeu.gagner(premiers * 2 + 10, 'cartes mémo');
       if (premiers === total) Jeu.confettis();
+      var reste = etatCartes(m);
       app.innerHTML = fil(m, 'Cartes mémo') +
         '<section class="defi defi-fin"><div class="defi-eclair">🃏</div><h1>' + premiers + ' / ' + total + '</h1>' +
           '<p>cartes sues du premier coup. Les autres sont revenues jusqu’à ce que tu les saches.</p>' +
-          '<p><a class="defi-go" href="#/' + m.id + '/cartes" data-rejouer>Rejouer le paquet</a></p></section>';
+          (libre ? '' : '<p>Les cartes sues reviendront dans 3, 7, 14 puis 30 jours ; celles que tu as ratées, dès demain.</p>') +
+          (reste.dues.length || reste.nouvelles.length
+            ? '<p><a class="defi-go" href="#/' + m.id + '/cartes" data-rejouer>Continuer (' + (reste.dues.length + reste.nouvelles.length) + ' cartes)</a></p>'
+            : '<p><a class="defi-go secondaire" href="#/' + m.id + '/cartes/tout">Revoir tout le paquet</a></p>') + '</section>';
       relancer(app, '#/' + m.id + '/cartes');
     }
     afficher();
@@ -432,8 +471,10 @@ var Activites = (function () {
     }).join('');
     app.innerHTML = '<nav class="fil"><a href="#/">Matières</a> › L’essentiel en 1 minute</nav>' +
       '<section class="express-tete"><div class="defi-eclair">⏱</div><h1>L’essentiel en 1 minute</h1>' +
-      '<p>Les 3 choses à retenir de chaque fiche. Parfait juste avant l’épreuve.</p></section>' + html +
+      '<p>Les 3 choses à retenir de chaque fiche. Parfait juste avant l’épreuve.</p>' +
+      '<p><button type="button" class="imprimer-btn">🖨️ Imprimer / PDF</button></p></section>' + html +
       '<p class="express-fin"><button type="button" class="defi-go">J’ai tout relu ✓</button></p>';
+    app.querySelector('.imprimer-btn').addEventListener('click', function () { Composants.imprimer('L’essentiel en 1 minute', 'Les 3 points clés de chaque fiche', html); });
     app.querySelector('.express-fin button').addEventListener('click', function (e) {
       Jeu.compter('express');
       Jeu.debloquer('express');
@@ -481,7 +522,7 @@ var Activites = (function () {
     surQuitter: function (fn) { arrets.push(fn); },
     quitterTout: function () { quitter(); clavier = null; arrets.forEach(function (fn) { fn(); }); },
     serie: serie, matiere: matiere, quitter: quitter, hub: hub, ajouterActivite: ajouterActivite, lienEntrainement: LIEN_ENT,
-    cartesDe: cartesDe, listesDe: listesDe, trousDe: trousDe, fil: fil, stat: stat, relancer: relancer,
+    cartesDe: cartesDe, etatCartes: etatCartes, listesDe: listesDe, trousDe: trousDe, fil: fil, stat: stat, relancer: relancer,
     pageCartes: pageCartes, pageOrdre: pageOrdre, pageTrous: pageTrous, pageExamen: pageExamen,
     pageExpress: pageExpress, encadreEssentiel: encadreEssentiel,
     definirClavier: function (fn) { clavier = fn; }

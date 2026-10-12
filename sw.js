@@ -2,7 +2,7 @@
 // - Pages, scripts et styles : réseau d'abord (on a toujours la dernière version), cache si hors-ligne.
 // - Images et PDF : cache d'abord (ils ne changent pas), réseau sinon.
 // À chaque mise en ligne : augmenter VERSION en même temps que le ?v= de index.html.
-var VERSION = 27;
+var VERSION = 28;
 var CACHE = 'revision-bts-v' + VERSION;
 var V = '?v=' + VERSION;
 var COEUR = [
@@ -32,7 +32,23 @@ self.addEventListener('fetch', function (e) {
   if (req.method !== 'GET') return;
   var url = new URL(req.url);
   if (url.origin !== self.location.origin) return; // polices Google, claude.ai… : on ne s'en mêle pas
-  if (/\.mp3$/i.test(url.pathname)) return; // audio : le navigateur gère seul la lecture par morceaux
+  // Audio : copie téléchargée (page « Écouter les fiches ») si elle existe, sinon le réseau.
+  // Le lecteur demande des morceaux (en-tête Range) : on découpe la copie pour lui répondre (obligatoire sur iPhone).
+  if (/\.mp3$/i.test(url.pathname)) {
+    e.respondWith(caches.open('rbts-audio').then(function (c) { return c.match(req.url); }).then(function (r) {
+      if (!r) return fetch(req);
+      var plage = req.headers.get('range');
+      if (!plage) return r;
+      return r.blob().then(function (b) {
+        var m = /bytes=(\d*)-(\d*)/.exec(plage), debut = m && m[1] ? +m[1] : 0, fin = m && m[2] ? +m[2] : b.size - 1;
+        if (m && !m[1] && m[2]) { debut = Math.max(0, b.size - m[2]); fin = b.size - 1; } // « les N derniers octets »
+        fin = Math.min(fin, b.size - 1);
+        return new Response(b.slice(debut, fin + 1), { status: 206, statusText: 'Partial Content', headers: {
+          'Content-Type': 'audio/mpeg', 'Content-Range': 'bytes ' + debut + '-' + fin + '/' + b.size, 'Content-Length': String(fin - debut + 1), 'Accept-Ranges': 'bytes' } });
+      });
+    }));
+    return;
+  }
 
   var statique = /\.(jpg|jpeg|png|webp|svg|pdf)$/i.test(url.pathname);
   if (statique) {

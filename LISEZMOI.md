@@ -13,8 +13,9 @@ En ligne : https://dumber37.github.io/revision-bts/ (installable sur téléphone
 - `entrainement.js` contient aussi le lexique (`R.lexique`) ; `cas.js` : les études de cas ; `audio.js` : durées des fiches audio.
 
 ## Audio
-`audio/<id-fiche>.mp3` : chaque fiche lue par la voix neuronale Piper « fr_FR-siwis-medium » (générée hors-ligne, MP3 48 kbit/s).
-Si le texte d'une fiche change, il faut régénérer son MP3 et mettre à jour sa durée dans `data/audio.js`.
+`audio/<id-fiche>.mp3` (voix Piper « Siwis », par défaut) et `audio/tom/<id-fiche>.mp3` (voix « Tom ») : chaque fiche lue par une voix neuronale (générée hors-ligne, MP3 48 kbit/s).
+Si le texte d'une fiche change, il faut régénérer ses deux MP3 et mettre à jour ses durées dans `data/audio.js` (`R.audio` et `R.audioVoix.tom`).
+La durée sert aussi de numéro de version dans l'adresse du MP3 (`?d=`) : l'ancienne copie téléchargée pour l'écoute hors-ligne (cache `rbts-audio`) n'est alors plus utilisée.
 
 ## Code
 - `jeu.js` : progression (XP, grades, flamme, étoiles, badges, missions du jour, révision des erreurs, Défi éclair).

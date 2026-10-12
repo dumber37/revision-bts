@@ -195,6 +195,14 @@ var Carnet = (function () {
       a.className = 'hero-decompte'; a.href = '#/planning';
       a.innerHTML = p ? '📅 <b>J-' + p.j + '</b> avant ' + esc(p.e.nom.split(' (')[0]) : '📅 Ajouter mes dates d’examen';
       salut.appendChild(a);
+      // Rappel de sauvegarde quand il y a de quoi perdre et que la dernière date de plus de 2 semaines.
+      var der = (E().reglages || {}).sauvegarde;
+      if (E().xp >= 300 && (!der || joursEntre(der, Jeu.jour()) > 14)) {
+        var s = document.createElement('a');
+        s.className = 'hero-decompte'; s.href = '#/profil';
+        s.innerHTML = '💾 Pense à <b>sauvegarder</b> ta progression';
+        salut.appendChild(s);
+      }
     }
     var fv = R.fiches.filter(function (f) { return estFavori(f.id); }), titre = app.querySelector('.titre-section');
     if (fv.length && titre) {

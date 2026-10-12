@@ -998,3 +998,62 @@ body.avec-lecteur .toasts { bottom: 86px; }
   .recto { background: none; color: inherit; padding-bottom: 0; text-align: left; }
   .verso { border: 0; padding-top: 0; text-align: left; }
 }
+
+/* ---------- Recherche globale ---------- */
+.res-titre { margin: 14px 0 8px; font-size: .8rem; text-transform: uppercase; letter-spacing: .06em; color: var(--doux); }
+.res-lexique .lex-entree span { color: var(--doux); }
+
+/* ---------- Études de cas : outils, mode examen ---------- */
+.imprimer-btn { border: 1px solid var(--bord); background: var(--surface); color: var(--texte); border-radius: 999px; padding: 3px 11px; font: inherit; font-size: .82rem; cursor: pointer; }
+.imprimer-btn:hover { border-color: var(--or); }
+.cas-outils { justify-content: flex-start; gap: 6px; margin: 12px 0 0; }
+.cas-examen-lien { margin-top: 12px; }
+.cas-chrono { position: sticky; top: 56px; z-index: 5; display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-bottom: 12px; padding: 8px 14px; border-radius: 12px; background: var(--surface); border: 1px solid var(--bord); box-shadow: 0 4px 14px rgba(0, 0, 0, .08); }
+.cas-chrono b { font-size: 1.15rem; font-variant-numeric: tabular-nums; }
+.cas-chrono .urgent b { color: #c4462b; }
+.cas-chrono .installer-btn { margin: 0; }
+.cas-q textarea { width: 100%; font: inherit; }
+.cas-copie { margin: 0 0 8px; padding: 10px 12px; border-radius: 8px; background: var(--bg); white-space: normal; }
+.cas-corrige .calc, .correction .calc { margin-top: 12px; }
+.transfert-der { font-size: .9rem; }
+.transfert-der.alerte { color: var(--rouille); font-weight: 700; }
+.transfert-msg input { width: 100%; margin-top: 6px; font: inherit; font-size: .8rem; padding: 6px; }
+
+/* ---------- Impression d'une fiche, d'un cas, des formules ---------- */
+#impression { display: none; }
+@media print {
+  body.imprime > *:not(#impression) { display: none !important; }
+  body.imprime { background: #fff; color: #111; padding: 0; }
+  body.imprime #impression { display: block; font: 10.5pt/1.45 "DM Sans", system-ui, sans-serif; color: #111; }
+  .mini-lecteur, .toasts, .imprimer-btn, .notes, #qcm, .cas-chrono { display: none !important; }
+  #impression, #impression * { color: #111 !important; }
+  #impression .imp-tete { display: flex; justify-content: space-between; font-size: 8.5pt; color: #666; border-bottom: 1px solid #ccc; padding-bottom: 4px; }
+  #impression h1 { font-size: 17pt; margin: 10px 0 8px; }
+  #impression h2 { font-size: 12.5pt; margin: 14px 0 6px; padding-bottom: 2px; border-bottom: 2px solid #b85c1e; break-after: avoid; }
+  #impression h3 { font-size: 11pt; margin: 10px 0 4px; break-after: avoid; }
+  #impression p, #impression li { margin: 3px 0; }
+  #impression table { width: 100%; border-collapse: collapse; margin: 6px 0; break-inside: avoid; }
+  #impression th, #impression td { border: 1px solid #bbb; padding: 3px 6px; text-align: left; vertical-align: top; }
+  #impression th { background: #eee; }
+  #impression .cartes { display: grid; grid-template-columns: 1fr 1fr; gap: 4px 12px; }
+  #impression .cartes > div, #impression .chiffres > div { break-inside: avoid; border-left: 3px solid #b85c1e; padding-left: 8px; }
+  #impression .cartes p { margin: 0; }
+  #impression .chiffres { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; }
+  #impression .chiffres strong, #impression .chiffres span, #impression .chiffres b { display: block; }
+  #impression ol.etapes li p, #impression ol.pyramide li p { display: inline; margin-left: 4px; }
+  #impression ol.etapes li p::before, #impression ol.pyramide li p::before { content: "· "; }
+  #impression .formule, #impression .retenir, #impression .attention, #impression .situation, #impression .exemple, #impression .essentiel, #impression .fil-rouge, #impression .cas { border: 1px solid #ccc; border-radius: 6px; padding: 6px 9px; margin: 6px 0; break-inside: avoid; }
+  #impression .formule, #impression .essentiel, #impression .fil-rouge, #impression .retenir, #impression .situation, #impression .exemple, #impression .attention { background: #fff !important; color: #111 !important; box-shadow: none !important; }
+  #impression .formule *, #impression .essentiel *, #impression .fil-rouge *, #impression .retenir *, #impression .attention * { color: #111 !important; }
+  #impression .formule { font-weight: 700; background: #f6f2ea !important; }
+  #impression .attention { border-color: #c4462b; }
+  #impression .essentiel-titre { font-weight: 700; }
+  #impression details > summary { font-weight: 700; list-style: none; }
+  #impression .imp-lignes { height: 7.5em; border-bottom: 1px dotted #aaa; background: repeating-linear-gradient(transparent 0 1.45em, #ddd 1.45em calc(1.45em + 1px)); }
+  #impression .imp-corrige { border-left: 3px solid #2fa36b; padding-left: 8px; }
+  #impression .express-fiche { break-inside: avoid; margin-bottom: 6px; }
+  #impression .express-fiche a { color: #111; text-decoration: none; }
+  #impression .titre-matiere { font-size: 12.5pt; }
+  #impression a { color: #111; }
+  @page { margin: 14mm 12mm; }
+}

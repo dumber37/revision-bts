@@ -195,11 +195,58 @@ var Outils = (function () {
     if (!o || typeof o !== 'object' || typeof o.xp !== 'number') throw new Error('format');
     return o;
   }
+  // Lien de transfert : la progression compressée (gzip) voyage dans l'adresse, #/importer/<code>.
+  // Ouvrir ce lien sur l'autre appareil propose de l'importer : aucun code à copier-coller.
+  function b64url(octets) {
+    var s = '';
+    for (var i = 0; i < octets.length; i += 0x8000) s += String.fromCharCode.apply(null, octets.subarray(i, i + 0x8000));
+    return btoa(s).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+  }
+  function depuisB64url(t) {
+    var s = atob(t.replace(/-/g, '+').replace(/_/g, '/')), o = new Uint8Array(s.length);
+    for (var i = 0; i < s.length; i++) o[i] = s.charCodeAt(i);
+    return o;
+  }
+  function lienProgression() {
+    var json = JSON.stringify(Jeu.etat()), base = location.origin + location.pathname + '#/importer/';
+    if (typeof CompressionStream === 'undefined') return Promise.resolve(base + encodeURIComponent(exporter()));
+    var flux = new Blob([json]).stream().pipeThrough(new CompressionStream('gzip'));
+    return new Response(flux).arrayBuffer().then(function (b) { return base + 'z.' + b64url(new Uint8Array(b)); });
+  }
+  function lireLien(code) {
+    if (code.indexOf('z.') !== 0) return Promise.resolve(lire(decodeURIComponent(code)));
+    var flux = new Blob([depuisB64url(code.slice(2))]).stream().pipeThrough(new DecompressionStream('gzip'));
+    return new Response(flux).text().then(function (t) {
+      var o = JSON.parse(t);
+      if (!o || typeof o !== 'object' || typeof o.xp !== 'number') throw new Error('format');
+      return o;
+    });
+  }
+  function marquerSauvegarde() { var E = Jeu.etat(); E.reglages = E.reglages || {}; E.reglages.sauvegarde = Jeu.jour(); Jeu.sauver(); }
+
+  function pageImporter(app) {
+    document.title = 'Importer une progression · Révisions BTS MCO';
+    var code = location.hash.split('/').slice(2).join('/');
+    app.innerHTML = fil('Importer une progression') + '<section class="defi defi-accueil"><div class="defi-eclair">📲</div><h1>Importer une progression</h1><p class="transfert-msg">Lecture du lien…</p></section>';
+    var msg = app.querySelector('.transfert-msg');
+    Promise.resolve().then(function () { return lireLien(code); }).then(function (o) { // erreurs de décodage comprises
+      msg.innerHTML = 'Ce lien contient une progression de <b>' + o.xp + ' XP</b> (' + Object.keys(o.badges || {}).length + ' badges). Sur cet appareil : ' + Jeu.etat().xp + ' XP.';
+      msg.insertAdjacentHTML('afterend', '<p class="calc-boutons"><button type="button" class="defi-go" data-oui>Remplacer par celle du lien</button><a class="defi-go secondaire" href="#/">Annuler</a></p>');
+      app.querySelector('[data-oui]').addEventListener('click', function () {
+        try { localStorage.setItem('revision-bts-jeu', JSON.stringify(o)); } catch (e) { msg.textContent = '❌ Impossible d’enregistrer.'; return; }
+        location.replace(location.pathname + '#/profil');
+        location.reload();
+      });
+    }).catch(function () { msg.textContent = '❌ Ce lien est abîmé ou incomplet. Renvoie-le depuis l’autre appareil (bouton « Envoyer par lien » du profil).'; });
+  }
+
   function transfert(cible) {
     if (!cible) return;
-    cible.innerHTML = '<section class="transfert"><h2 class="titre-section">Changer d’appareil</h2>' +
-      '<p>Ta progression est gardée dans ce navigateur. Pour la retrouver sur ton téléphone ou ton ordinateur : exporte ici, puis importe là-bas.</p>' +
-      '<p class="calc-boutons"><button type="button" class="installer-btn" data-copier>📋 Copier mon code</button>' +
+    var der = (Jeu.etat().reglages || {}).sauvegarde, jours = der ? Math.round((new Date(Jeu.jour() + 'T12:00') - new Date(der + 'T12:00')) / 864e5) : null;
+    cible.innerHTML = '<section class="transfert"><h2 class="titre-section">Sauvegarder et changer d’appareil</h2>' +
+      '<p>Ta progression est gardée dans ce navigateur. Envoie-toi le lien (par message ou par mail) : l’ouvrir sur ton autre appareil y importe tout. Garde aussi ce message comme sauvegarde.</p>' +
+      '<p class="transfert-der' + (jours === null || jours > 7 ? ' alerte' : '') + '">' + (jours === null ? '⚠ Aucune sauvegarde pour l’instant.' : jours === 0 ? '✓ Sauvegardée aujourd’hui.' : (jours > 7 ? '⚠ ' : '') + 'Dernière sauvegarde il y a ' + jours + ' jour' + (jours > 1 ? 's' : '') + '.') + '</p>' +
+      '<p class="calc-boutons"><button type="button" class="installer-btn" data-lien>🔗 Envoyer par lien</button><button type="button" class="installer-btn secondaire" data-copier>📋 Copier mon code</button>' +
       '<button type="button" class="installer-btn secondaire" data-fichier>💾 Télécharger un fichier</button></p>' +
       '<details class="correction"><summary>Importer une progression</summary>' +
         '<textarea id="codeImport" rows="3" placeholder="Colle ici ton code (il commence par RBTS1.)"></textarea>' +
@@ -207,12 +254,26 @@ var Outils = (function () {
         '<label class="installer-btn secondaire fichier">📂 Choisir un fichier<input type="file" accept=".json,.txt,application/json,text/plain" hidden data-fichier-import></label></p>' +
         '<p class="transfert-msg" aria-live="polite"></p></details></section>';
     var msg = cible.querySelector('.transfert-msg');
+    // Le lien est préparé à l'avance : le partage doit partir directement du clic (sinon iPhone le refuse).
+    var lienPret = null;
+    lienProgression().then(function (u) { lienPret = u; });
+    cible.querySelector('[data-lien]').addEventListener('click', function (e) {
+      var b = e.target, url = lienPret;
+      if (!url) return;
+      var txt = 'Ma progression Révisions BTS MCO (' + Jeu.etat().xp + ' XP) : ouvre ce lien pour la récupérer.';
+      function fait(t) { b.textContent = t; marquerSauvegarde(); }
+      function montrer() { msg.innerHTML = 'Copie ce lien et envoie-le-toi :<br><input readonly value="' + esc(url) + '" onclick="this.select()">'; cible.querySelector('details').open = true; }
+      if (navigator.share) navigator.share({ title: 'Ma progression', text: txt, url: url }).then(function () { fait('✓ Lien envoyé'); }, function (err) { if (!err || err.name !== 'AbortError') montrer(); });
+      else if (navigator.clipboard) navigator.clipboard.writeText(txt + '\n' + url).then(function () { fait('✓ Lien copié : colle-le dans un message'); }, montrer);
+      else montrer();
+    });
     cible.querySelector('[data-copier]').addEventListener('click', function (e) {
       var code = exporter(), b = e.target;
-      if (navigator.clipboard) navigator.clipboard.writeText(code).then(function () { b.textContent = '✓ Code copié'; }, function () { b.textContent = 'Copie impossible : utilise le fichier'; });
+      if (navigator.clipboard) navigator.clipboard.writeText(code).then(function () { b.textContent = '✓ Code copié'; marquerSauvegarde(); }, function () { b.textContent = 'Copie impossible : utilise le fichier'; });
       else b.textContent = 'Copie impossible : utilise le fichier';
     });
     cible.querySelector('[data-fichier]').addEventListener('click', function () {
+      marquerSauvegarde();
       var a = document.createElement('a');
       a.href = URL.createObjectURL(new Blob([exporter()], { type: 'text/plain' }));
       a.download = 'progression-revisions-bts-' + Jeu.jour() + '.txt';
@@ -326,6 +387,7 @@ var Outils = (function () {
     pageCalculs(app, t);
   });
   Activites.ajouterPageGlobale('oral', pageOral);
+  Activites.ajouterPageGlobale('importer', pageImporter);
   Jeu.ajouterBadges([
     ['calculs-10', '🧮', 'Calculatrice humaine', 'Réussir 10 exercices de calcul'],
     ['oral', '🎙️', 'À l’oral !', 'Faire un oral blanc avec Claude']

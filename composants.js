@@ -178,7 +178,12 @@ var Composants = (function () {
       return '<label><span>' + d[1] + '</span><input inputmode="decimal" name="' + d[0] + '" value="' + d[2] + '"></label>';
     }).join('') + '</div>';
   }
+  // Valeurs de départ propres à une page : data-valeurs="p0=9,99;p1=7,99" et titre : data-titre="…".
   function calculatrice(div, titre, def, calcul) {
+    var perso = {};
+    (div.dataset.valeurs || '').split(';').forEach(function (x) { var p = x.split('='); if (p[1] != null) perso[p[0].trim()] = p[1].trim(); });
+    def = def.map(function (d) { return perso[d[0]] != null ? [d[0], d[1], perso[d[0]]] : d; });
+    if (div.dataset.titre) titre = div.dataset.titre;
     div.className = 'calc';
     div.innerHTML = '<div class="calc-titre">' + titre + '</div>' + champs(def) + '<div class="calc-res"></div>';
     var res = div.querySelector('.calc-res');
@@ -248,11 +253,14 @@ var Composants = (function () {
         });
     },
     scoring: function (div) {
-      var crit = [['Qualité', 2], ['Prix', 2], ['Délais', 1], ['Service', 1]];
-      var four = [['A', [4, 3, 5, 2]], ['B', [3, 5, 2, 4]], ['C', [5, 4, 3, 3]]];
+      // data-config='{"crit":[["Qualité",2],…],"four":[["A",[4,3,5,2]],…],"sur":10}' pour un autre jeu de données.
+      var conf = {};
+      try { conf = JSON.parse(div.dataset.config || '{}'); } catch (e) {}
+      var crit = conf.crit || [['Qualité', 2], ['Prix', 2], ['Délais', 1], ['Service', 1]];
+      var four = conf.four || [['A', [4, 3, 5, 2]], ['B', [3, 5, 2, 4]], ['C', [5, 4, 3, 3]]];
       div.className = 'calc';
-      div.innerHTML = '<div class="calc-titre">Calculatrice : scoring fournisseurs</div>' +
-        '<p class="calc-aide">Change les coefficients et les notes (sur 5) : le total se recalcule.</p>' +
+      div.innerHTML = '<div class="calc-titre">' + (div.dataset.titre || 'Calculatrice : scoring fournisseurs') + '</div>' +
+        '<p class="calc-aide">Change les coefficients et les notes (sur ' + (conf.sur || 5) + ') : le total se recalcule.</p>' +
         '<div class="table-wrap"><table class="calc-table scoring"><tr><th>Critère</th><th>Coef.</th>' +
         four.map(function (f) { return '<th>' + f[0] + '</th>'; }).join('') + '</tr>' +
         crit.map(function (c, i) {
@@ -359,6 +367,27 @@ var Composants = (function () {
     tirer();
   }
 
+  // ---------- Impression (ou « Enregistrer en PDF ») ----------
+  // On imprime le HTML d'origine (pas les composants interactifs) dans un bloc à part, mis en page pour le papier.
+  function imprimer(titre, sousTitre, html) {
+    var d = document.getElementById('impression');
+    if (!d) { d = el('div'); d.id = 'impression'; document.body.appendChild(d); }
+    d.innerHTML = '<header class="imp-tete"><span>Révisions BTS MCO</span>' + (sousTitre ? '<span>' + sousTitre + '</span>' : '') + '</header><h1>' + titre + '</h1>' + html;
+    Array.prototype.forEach.call(d.querySelectorAll('[data-calc], script, button'), function (x) { x.remove(); });
+    Array.prototype.forEach.call(d.querySelectorAll('details'), function (x) { x.open = true; });
+    // La barre de répartition devient une liste lisible sur papier.
+    Array.prototype.forEach.call(d.querySelectorAll('div.barre'), function (b) {
+      b.outerHTML = '<ul>' + b.dataset.parts.split(';').map(function (s) {
+        var p = s.split('|');
+        return '<li><b>' + p[0] + ' : ' + p[1] + ' %</b>' + (p[2] ? ' · ' + p[2] : '') + '</li>';
+      }).join('') + '</ul>';
+    });
+    document.body.classList.add('imprime');
+    function fin() { document.body.classList.remove('imprime'); window.removeEventListener('afterprint', fin); }
+    window.addEventListener('afterprint', fin);
+    window.print();
+  }
+
   function activer(root) {
     Array.prototype.forEach.call(root.querySelectorAll('ol.etapes'), etapes);
     Array.prototype.forEach.call(root.querySelectorAll('ol.pyramide'), pyramide);
@@ -369,5 +398,5 @@ var Composants = (function () {
     });
   }
 
-  return { activer: activer, qcm: qcm };
+  return { activer: activer, qcm: qcm, imprimer: imprimer };
 })();
