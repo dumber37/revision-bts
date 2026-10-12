@@ -32,6 +32,7 @@ var Bonus = (function () {
     var E = Jeu.etat(), enCours = pos >= 0 && !audio.paused, ratio = duree() ? audio.currentTime / duree() : 0;
     E.reglages = E.reglages || {}; E.reglages.voix = v; Jeu.sauver();
     if (pos >= 0 && audio.src) {
+      audio.preload = 'metadata'; // même en pause, il faut la durée de la nouvelle voix pour reprendre au bon endroit
       audio.src = src(liste[pos]);
       audio.addEventListener('loadedmetadata', function reprise() { audio.removeEventListener('loadedmetadata', reprise); audio.currentTime = ratio * duree(); }, { once: true });
       audio.playbackRate = vitesse;
@@ -66,6 +67,8 @@ var Bonus = (function () {
     majTout();
   }
   function suivant() { if (pos + 1 < liste.length) jouer(liste, pos + 1); }
+  // Lecture refusée (fichier introuvable, hors-ligne, navigateur qui bloque) : pas d'erreur dans la console.
+  function lire() { audio.play().catch(function () {}); }
   audio.addEventListener('ended', function () {
     var f = fiche(liste[pos]);
     if (f) { Jeu.compter('ecoute'); Activites.stat('ecoutes'); Jeu.gagner(10, 'fiche écoutée'); }
@@ -109,7 +112,7 @@ var Bonus = (function () {
   document.addEventListener('click', function (e) {
     var b = e.target.closest('#mini-lecteur [data-a]');
     if (b) {
-      if (b.dataset.a === 'play') { if (audio.paused) audio.play(); else audio.pause(); }
+      if (b.dataset.a === 'play') { if (audio.paused) lire(); else audio.pause(); }
       else { audio.pause(); audio.currentTime = 0; pos = -1; majTout(); }
     }
   });
@@ -131,7 +134,7 @@ var Bonus = (function () {
     el.addEventListener('click', function (e) {
       var actif = fiche(liste[pos]) && liste[pos] === f.id;
       if (e.target.closest('.ecoute-play')) {
-        if (!actif) jouer([f.id], 0); else if (audio.paused) audio.play(); else audio.pause();
+        if (!actif) jouer([f.id], 0); else if (audio.paused) lire(); else audio.pause();
       } else if (e.target.closest('[data-saut]')) {
         if (!actif) return;
         audio.currentTime = Math.max(0, Math.min(duree(), audio.currentTime + +e.target.closest('[data-saut]').dataset.saut));
@@ -170,7 +173,7 @@ var Bonus = (function () {
     app.querySelector('.pistes').addEventListener('click', function (e) {
       var p = e.target.closest('.piste'), t = e.target.closest('.tout-ecouter');
       if (p) {
-        if (fiche(liste[pos]) && liste[pos] === p.dataset.id) { if (audio.paused) audio.play(); else audio.pause(); return; }
+        if (fiche(liste[pos]) && liste[pos] === p.dataset.id) { if (audio.paused) lire(); else audio.pause(); return; }
         var ids = R.fiches.filter(function (f) { return f.matiere === fiche(p.dataset.id).matiere && aAudio(f.id); }).map(function (f) { return f.id; });
         jouer(ids, ids.indexOf(p.dataset.id));
       } else if (t) {
@@ -298,10 +301,16 @@ var Bonus = (function () {
         if (!zone.value.trim()) { zone.focus(); zone.classList.add('ia-vide'); return; }
         var tmp = document.createElement('div');
         tmp.innerHTML = c.contexte + (c.annexes || '');
-        var prompt = 'Je révise le BTS MCO (2e année). Corrige ma réponse à une question d’étude de cas, comme un correcteur d’examen.\n\n' +
-          'Contexte et annexes :\n' + tmp.textContent.replace(/\s+/g, ' ').trim() + '\n\nQuestion' + (q.points ? ' (' + q.points + ' points)' : '') + ' : ' + q.q + '\n\nMa réponse :\n' + zone.value.trim() +
-          '\n\nDonne-moi une note sur ' + (q.points || 'le barème') + ', ce qui est juste, ce qui manque (notions du cours, utilisation des annexes, justification), et une version améliorée de ma réponse. Réponds en français, simplement.';
-        window.open('https://claude.ai/new?q=' + encodeURIComponent(prompt.slice(0, 5500)), '_blank', 'noopener');
+        var ctx = tmp.textContent.replace(/\s+/g, ' ').trim(), url;
+        // On raccourcit le contexte (jamais la question ni la réponse) jusqu'à ce que l'adresse passe.
+        for (var n = 0; n < 12; n++) {
+          url = 'https://claude.ai/new?q=' + encodeURIComponent('Je révise le BTS MCO (2e année). Corrige ma réponse à une question d’étude de cas, comme un correcteur d’examen.\n\n' +
+            'Contexte et annexes :\n' + ctx + '\n\nQuestion' + (q.points ? ' (' + q.points + ' points)' : '') + ' : ' + q.q + '\n\nMa réponse :\n' + zone.value.trim() +
+            '\n\nDonne-moi une note sur ' + (q.points || 'le barème') + ', ce qui est juste, ce qui manque (notions du cours, utilisation des annexes, justification), et une version améliorée de ma réponse. Réponds en français, simplement.');
+          if (url.length <= 7000) break;
+          ctx = ctx.slice(0, Math.floor(ctx.length * 0.75)).replace(/\s+\S*$/, '') + ' […]';
+        }
+        window.open(url, '_blank', 'noopener');
       });
     });
   }
@@ -312,8 +321,8 @@ var Bonus = (function () {
     { id: 'calculs', ico: '🧮', titre: 'Semaine des calculs', txt: 'Réussir 10 exercices de calcul', cle: 'calculEx', obj: 10, lien: '#/calculs' },
     { id: 'marathon', ico: '🏃', titre: 'Semaine marathon', txt: 'Réviser 5 jours différents', jours: true, obj: 5, lien: '#/planning' },
     { id: 'sansfaute', ico: '💯', titre: 'Semaine sans faute', txt: 'Réussir 3 QCM sans faute', cle: 'parfait', obj: 3, lien: '#/' },
-    { id: 'memoire', ico: '🃏', titre: 'Semaine mémoire', txt: 'Faire 4 paquets de cartes mémo', cle: 'cartes', obj: 4, lien: '#/' },
-    { id: 'boss', ico: '👑', titre: 'Semaine des boss', txt: 'Battre 2 boss', cle: 'bossGagne', obj: 2, lien: '#/' },
+    { id: 'memoire', ico: '🃏', titre: 'Semaine mémoire', txt: 'Faire 4 paquets de cartes mémo', cle: 'cartes', obj: 4, lien: Activites.lienEntrainement },
+    { id: 'boss', ico: '👑', titre: 'Semaine des boss', txt: 'Battre 2 boss', cle: 'bossGagne', obj: 2, lien: Activites.lienEntrainement },
     { id: 'eclair', ico: '⚡', titre: 'Semaine éclair', txt: 'Jouer 5 Défis éclair', cle: 'defi', obj: 5, lien: '#/defi' },
     { id: 'cent', ico: '💪', titre: 'Semaine des 100', txt: 'Donner 100 bonnes réponses', cle: 'bonnes', obj: 100, lien: '#/defi' },
     { id: 'oral', ico: '🎙️', titre: 'Semaine de l’oral', txt: 'Faire 2 oraux blancs avec Claude', cle: 'oral', obj: 2, lien: '#/oral' },

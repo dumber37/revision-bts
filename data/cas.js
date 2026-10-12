@@ -233,11 +233,12 @@ R.cas = [
             <tr><td>Note /10</td><td>9,12</td><td>4,12</td><td>5,59</td></tr></table>
           <p><b>Critère déterminant</b> : labels puis qualité (poids 5) : QualiDat est devant sur les deux.</p>
           <p><b>Conjonctif</b> (seuil fixé à 5/10) : QualiDat et OrientExpres passent, Délices Sucrés est éliminé (aucun label, livraison trop lente).</p>
-          <p><b>Les trois modèles désignent QualiDat.</b></p>` },
+          <p><b>Les trois modèles désignent QualiDat.</b></p>
+          <div class="attention"><b>Deux remarques sur ta copie :</b> les trois fournisseurs proposent le même délai de règlement (30 j) : avec ta règle « le meilleur = 10 », ils devraient avoir 10 (30 points chacun), pas 5. Le classement ne change pas (170, 85 et 110 points). Ensuite, le magasin exige une livraison <b>sous 5 jours</b> : si on prend ce seuil dans le modèle conjonctif, OrientExpres (6 jours) est éliminé lui aussi, et seul QualiDat reste.</div>` },
       { q: 'Quel est le rôle des conditions générales de vente (CGV) ?', points: 4,
         corrige: `<ul><li>Informer l’acheteur avant toute transaction (prix, remises, logistique, règlement).</li><li>Servir de socle à la négociation (envoyées avant le 30 novembre).</li>
-          <li>Éviter les malentendus : chacun connaît ses engagements.</li><li>Protéger le fournisseur : non obligatoires en B to B mais fortement recommandées (sinon présomption de discrimination).</li>
-          <li>Rappeler qu’un prix de revente ne peut pas être imposé (article L. 442-5 du Code de commerce) : seulement un prix conseillé.</li></ul>` },
+          <li>Éviter les malentendus : chacun connaît ses engagements.</li><li>Protéger le fournisseur : il n’est pas obligé d’en rédiger, mais s’il en a, il doit les communiquer à tout acheteur professionnel qui les demande.</li>
+          <li>Rappeler qu’un prix de revente ne peut pas être imposé (article L. 442-6 du Code de commerce depuis 2019, L. 442-5 avant) : seulement un prix conseillé.</li></ul>` },
       { q: 'Calculez le coût réel de la première commande après remise et coopération commerciale, et expliquez cette pratique.', points: 6,
         corrige: `<table><tr><th>Calcul</th><th>Résultat</th></tr>
             <tr><td>150 kg × 9,92 €</td><td>1 488,00 € HT</td></tr>
@@ -249,12 +250,21 @@ R.cas = [
       { q: 'Calculez les marges avant et pendant l’opération anniversaire.', points: 6,
         corrige: `<p><b>Formules</b> : marge unitaire = PV HT − prix d’achat HT ; marge globale = marge unitaire × quantités ; taux de marge = marge ÷ prix d’achat HT ; taux de marque = marge ÷ PV HT.</p>
           <p>Prix de vente HT (TVA 5,5 %) : 9,99 ÷ 1,055 = <b>9,47 €</b> avant ; 7,99 ÷ 1,055 = <b>7,57 €</b> pendant.</p>
-          <div class="attention"><b>À vérifier dans le sujet :</b> ta copie utilise deux prix d’achat différents (8,43 € dans le tableau, 4,46 € dans les calculs) et un prix de vente de 9,92 € qui est en fait le prix d’achat proposé. Les marges ne sont donc pas cohérentes. Reprends le prix d’achat net donné dans l’énoncé, puis applique les formules ci-dessus.</div>` },
+          <div class="attention"><b>À vérifier dans le sujet :</b> ta copie utilise deux prix d’achat différents (8,43 € dans le tableau, 4,46 € dans les calculs) et un prix de vente de 9,92 € qui est en fait le prix d’achat proposé. Les marges ne sont donc pas cohérentes.</div>
+          <p><b>Piste de correction</b> (8,43 € = 9,92 × 0,85, soit le prix d’achat après la remise de 15 % ; à confirmer avec l’énoncé) :</p>
+          <table><tr><th></th><th>Avant</th><th>Pendant</th></tr>
+            <tr><td>PV HT</td><td>9,47 €</td><td>7,57 €</td></tr>
+            <tr><td>Prix d’achat HT</td><td>8,43 €</td><td>8,43 − 0,75 = 7,68 €</td></tr>
+            <tr><td>Marge unitaire</td><td>1,04 €</td><td><b>− 0,11 €</b></td></tr>
+            <tr><td>Marge globale</td><td>1,04 × 78 = 81,12 €</td><td>− 0,11 × 135 ≈ − 14,85 €</td></tr>
+            <tr><td>Taux de marge</td><td>1,04 ÷ 8,43 = 12,3 %</td><td>négatif</td></tr>
+            <tr><td>Taux de marque</td><td>1,04 ÷ 9,47 = 11,0 %</td><td>négatif</td></tr></table>
+          <p>Avec ce prix d’achat, l’opération ferait vendre <b>sous le prix d’achat</b> : c’est de la revente à perte, interdite. Ce serait un bon point à soulever dans ta copie (ou le signe qu’il faut un autre prix d’achat).</p>` },
       { q: 'Calculez et interprétez l’élasticité-prix pendant l’opération, puis concluez.', points: 6,
         corrige: `<p>Variation des quantités : (135 − 78) ÷ 78 = <b>+ 73,08 %</b><br>Variation du prix TTC : (7,99 − 9,99) ÷ 9,99 = <b>− 20,02 %</b><br>
           Élasticité = 73,08 ÷ (− 20,02) = <b>− 3,65</b>, soit 3,65 en valeur absolue.</p>
           <p>La demande est <b>très élastique</b> : une baisse de prix de 1 % fait augmenter les ventes d’environ 3,65 %. Le CA TTC passe de 779,22 € à 1 078,65 € (+ 38,4 %).</p>
-          <p>Pour le magasin : opération de trafic et de fidélisation qui renforce l’image prix bas, à condition de respecter le seuil de revente à perte et de limiter la durée. Pour le fournisseur : il concède 0,75 €/kg mais vend presque deux fois plus et gagne en visibilité.</p>` },
+          <p>Pour le magasin : opération de trafic et de fidélisation qui renforce l’image prix bas, à condition de respecter le seuil de revente à perte et de limiter la durée. Pour le fournisseur : il concède 0,75 €/kg mais vend 73 % de volume en plus et gagne en visibilité.</p>` },
       { q: 'Quels sont les intérêts d’un partenariat durable ? Rédigez une note à Mme Naïa.', points: 6,
         corrige: `<p><b>Intérêts</b> : pour Auchan, moins de ruptures, approvisionnement sûr, meilleures conditions, moins de stocks ; pour le fournisseur, débouchés stables, volumes prévisibles, visibilité, moins de risque de déréférencement. Le partenariat doit rester équilibré.</p>
           <p><b>Note (extrait)</b> : objet « Proposition de partenariat avec QualiDat ». Contenu : opérations promotionnelles communes préparées à l’avance (ramadan, anniversaire), coopération merchandising (18 m linéaires, merchandiser, ILV/PLV), logistique commune (prévisions partagées pour livrer sous 5 jours). Justification : demande très élastique (− 3,65) ; on formalise l’existant ; l’ECR et la GPA sont trop lourds pour une seule famille de produits au début. Vigilance : engagements écrits, seuil de revente à perte, services de coopération réellement rendus.</p>` }

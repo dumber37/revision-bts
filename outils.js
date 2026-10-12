@@ -96,7 +96,7 @@ var Outils = (function () {
         correction: 'Taux horaire = ' + fr(s, 0) + ' ÷ 151,67 = <b>' + fr(th) + ' €</b><br>Heure sup = ' + fr(th) + ' × 1,25 = <b>' + fr(th * 1.25) + ' €</b>' };
     } },
     marge: { titre: 'Marge, taux et coefficient', gen: function () {
-      var prod = choisir(PRODUITS), pa = alea(10, 120), k = choisir([1.4, 1.5, 1.6, 1.75, 1.8, 2, 2.2]), pv = arr(pa * k), tva = choisir([20, 20, 20, 5.5]);
+      var prod = choisir(PRODUITS), pa = alea(10, 120), k = choisir([1.4, 1.5, 1.6, 1.75, 1.8, 2, 2.2]), pv = arr(pa * k), tva = 20; // articles de sport : taux normal
       var m = pv - pa, ttc = pv * (1 + tva / 100);
       return { situation: 'Léa achète des ' + prod + ' <b>' + fr(pa) + ' € HT</b> pièce et les revend <b>' + fr(pv) + ' € HT</b> (TVA ' + fr(tva, tva % 1 ? 1 : 0) + ' %).',
         champs: [['Marge (€)', m, '€'], ['Taux de marge (%)', m / pa * 100, '%'], ['Taux de marque (%)', m / pv * 100, '%'], ['Coefficient multiplicateur', ttc / pa, '']],
@@ -127,7 +127,9 @@ var Outils = (function () {
   function pageCalculs(app, type) {
     document.title = 'Calculs à l’infini · Révisions BTS MCO';
     var cles = Object.keys(EXOS), choisi = EXOS[type] ? type : null, session = (pageCalculs.session = pageCalculs.session || { ok: 0, faits: 0 });
-    var k = choisi || choisir(cles), ex = EXOS[k].gen(), essais = 0, reussi = false;
+    var k = choisi || choisir(cles), ex = EXOS[k].gen(), essais = 0, reussi = false, vu = false, compte = false;
+    // Un exercice compte une seule fois dans le score de la session ; réussi seulement si la correction n'a pas été vue avant.
+    function compter(ok) { if (compte) return; compte = true; session.faits++; if (ok) session.ok++; }
     app.innerHTML = fil('Calculs à l’infini') +
       '<section class="defi calculs">' +
         '<div class="defi-haut"><span>🧮 Calculs à l’infini</span><span class="defi-score">' + session.ok + '/' + session.faits + ' réussis</span></div>' +
@@ -146,7 +148,7 @@ var Outils = (function () {
         '<p class="astuce">Arrondis à 2 décimales. Virgule ou point, comme tu veux.</p>' +
       '</section>';
     var form = app.querySelector('.calc-form'), corr = app.querySelector('.calc-correction'), suite = app.querySelector('.calc-suivant');
-    function montrerCorrection() { corr.hidden = false; suite.hidden = false; }
+    function montrerCorrection() { if (!reussi) { vu = true; compter(false); } corr.hidden = false; suite.hidden = false; }
     form.addEventListener('submit', function (e) {
       e.preventDefault();
       essais++;
@@ -158,9 +160,12 @@ var Outils = (function () {
       });
       var sel = form.querySelector('[data-choix]');
       if (sel) { var okc = sel.value === ex.choix[1]; sel.classList.toggle('ok', okc); sel.classList.toggle('ko', !okc); if (!okc) tout = false; }
-      if (tout && !reussi) {
+      if (tout && !reussi && vu) {
+        reussi = true; // juste, mais après avoir vu la correction : pas de points
+        Jeu.sonner('bon');
+      } else if (tout && !reussi) {
         reussi = true;
-        session.faits++; session.ok++;
+        compter(true);
         Jeu.sonner('bon');
         Activites.stat('calculsOk');
         Jeu.compter('calculEx');
@@ -172,11 +177,7 @@ var Outils = (function () {
         if (essais >= 2) montrerCorrection();
       }
     });
-    app.querySelector('.voir').addEventListener('click', function () {
-      if (!reussi && !corr.hidden) return;
-      if (!reussi && corr.hidden) session.faits++;
-      montrerCorrection();
-    });
+    app.querySelector('.voir').addEventListener('click', montrerCorrection);
     Activites.relancer(app, '#/calculs' + (choisi ? '/' + choisi : ''));
   }
 

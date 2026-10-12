@@ -42,7 +42,7 @@ R.fiche({
     <p>Un <b>tableau annuel</b> établi par le manager de l'unité commerciale. Il recense : les besoins individuels et collectifs, les actions prévues et leurs objectifs, les salariés concernés, les modalités (interne ou externe), la durée et le coût de chaque formation.</p>
     <div class="cartes">
       <div><b>Coût d'une formation interne</b><p>Salaire du formateur (selon les heures dispensées) + frais d'organisation.</p></div>
-      <div><b>Coût d'une formation externe</b><p>Transport, hébergement, repas des stagiaires, supports et matériel.</p></div>
+      <div><b>Coût d'une formation externe</b><p>Prix facturé par l'organisme + transport, hébergement, repas des stagiaires, supports et matériel.</p></div>
     </div>
 
     <h2>4. Évaluer : à chaud puis à froid</h2>
@@ -170,8 +170,8 @@ R.fiche({
     <table>
       <tr><th></th><th>Fixe (sécurité)</th><th>Commission (résultats)</th><th>Prime (efforts)</th></tr>
       <tr><td>Principe</td><td>Versé quels que soient les résultats, selon formation, expérience et ancienneté</td><td>Montant par produit vendu, ou % (taux) sur les ventes, donc sur le CA</td><td>Somme versée à chaque commercial qui atteint un objectif, individuelle ou collective</td></tr>
-      <tr><td>Avantage</td><td>Revenu minimum, permet les missions hors vente</td><td>Stimule les ventes ; versée seulement si l'objectif de CA est atteint</td><td>Rémunère le qualitatif</td></tr>
-      <tr><td>Limite</td><td>Ne favorise pas les meilleurs vendeurs</td><td>—</td><td>Complexe, nombreux indicateurs</td></tr>
+      <tr><td>Avantage</td><td>Revenu minimum, permet les missions hors vente</td><td>Stimule les ventes : plus le vendeur vend, plus il gagne</td><td>Rémunère le qualitatif</td></tr>
+      <tr><td>Limite</td><td>Ne favorise pas les meilleurs vendeurs</td><td>Revenu irrégulier ; peut pousser à forcer la vente</td><td>Complexe, nombreux indicateurs</td></tr>
     </table>
 
     <h2>Avantages et éléments périphériques</h2>
@@ -190,7 +190,7 @@ R.fiche({
       <div><b>8 premières heures sup</b><strong>+25 %</strong><span>de la 36<sup>e</sup> à la 43<sup>e</sup> heure.</span></div>
       <div><b>À partir de la 44<sup>e</sup> heure</b><strong>+50 %</strong><span>ou repos compensateur.</span></div>
       <div><b>Exonération d'impôt</b><strong>7 500 €</strong><span>d'heures sup par an exonérés d'impôt sur le revenu.</span></div>
-      <div><b>Cotisations salariales</b><strong>11,31 %</strong><span>exonérés sur les heures sup (cotisations vieillesse et veuvage).</span></div>
+      <div><b>Cotisations salariales</b><strong>11,31 %</strong><span>de réduction au maximum sur les heures sup (cotisations vieillesse et veuvage).</span></div>
     </div>
     <div class="formule"><b>Taux horaire</b> = salaire mensuel ÷ 151,67<br><b>Heure supplémentaire</b> = taux horaire × (1 + 25 % ou 50 %)</div>
 

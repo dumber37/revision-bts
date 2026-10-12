@@ -566,12 +566,15 @@
     var file = urls.slice();
     function suivant() {
       var u = file.shift();
-      if (!u) {
-        btn.textContent = '✓ Visuels disponibles hors-ligne';
-        Jeu.toast('✓ Tout est disponible hors-ligne', 'grand');
-        return;
-      }
-      fetch(u).catch(function () {}).then(function () { faits++; maj(); suivant(); });
+      if (!u) return;
+      fetch(u).catch(function () {}).then(function () {
+        faits++; maj();
+        // Message de fin une seule fois, quand le dernier téléchargement (pas le premier qui s'arrête) est terminé.
+        if (faits === urls.length) {
+          btn.textContent = '✓ Visuels disponibles hors-ligne';
+          Jeu.toast('✓ Tout est disponible hors-ligne', 'grand');
+        } else suivant();
+      });
     }
     for (var k = 0; k < 4; k++) suivant(); // 4 téléchargements en parallèle
   }

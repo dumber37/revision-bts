@@ -159,7 +159,7 @@ var Composants = (function () {
       s.type = 'button';
       s.style.flex = p.val;
       s.style.background = c;
-      s.title = p.nom + ' ' + p.val + ' %';
+      s.title = p.nom + ' ' + fr(p.val, p.val % 1 ? 1 : 0) + ' %';
       s.addEventListener('click', function () { choisir(i); });
       piste.appendChild(s);
       var l = el('button', 'barre-cle', '<i style="background:' + c + '"></i>' + p.nom + ' <b>' + fr(p.val, p.val % 1 ? 1 : 0) + ' %</b>');
