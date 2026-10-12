@@ -93,6 +93,8 @@ var Jeux = (function () {
       panneau.hidden = !panneau.hidden;
       if (!panneau.hidden) remplirPanneau();
     });
+    // Un seul écouteur sur le panneau (posé une fois) : le contenu, lui, est redessiné à chaque choix.
+    panneau.addEventListener('click', clic);
     function remplirPanneau() {
       var r = reglagesMag();
       panneau.innerHTML =
@@ -106,14 +108,12 @@ var Jeux = (function () {
           return '<button type="button" data-sport="' + x.id + '"' + ((r.sport || 'running') === x.id ? ' class="actif"' : '') + (ok ? '' : ' disabled') + '>' + (ok ? '' : '🔒 ') + x.nom + (ok ? '' : ' · niv. ' + x.niv) + '</button>';
         }).join('') + '</div></div>' +
         '<label class="mag-choix"><b>Nom du magasin</b><input maxlength="14" value="' + esc(r.nom || '') + '" placeholder="Sport’Tours"></label>';
-      panneau.addEventListener('click', clic);
       panneau.querySelector('input').addEventListener('input', function (e) { enregistrer({ nom: e.target.value.trim() }); });
     }
     function clic(e) {
       var b = e.target.closest('[data-couleur],[data-sport]');
       if (!b || b.disabled) return;
       enregistrer(b.dataset.couleur ? { couleur: b.dataset.couleur } : { sport: b.dataset.sport });
-      panneau.removeEventListener('click', clic);
       remplirPanneau();
     }
     function enregistrer(o) {

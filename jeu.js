@@ -36,7 +36,8 @@ var Jeu = (function () {
     d = d || new Date();
     return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2);
   }
-  function dansJours(n) { return jour(new Date(Date.now() + n * 864e5)); }
+  // Par le calendrier (et non en ajoutant 24 h) : juste même les nuits de changement d'heure.
+  function dansJours(n) { var d = new Date(); return jour(new Date(d.getFullYear(), d.getMonth(), d.getDate() + n, 12)); }
   function melanger(t) {
     t = t.slice();
     for (var i = t.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)), x = t[i]; t[i] = t[j]; t[j] = x; }
@@ -64,7 +65,11 @@ var Jeu = (function () {
   }
   function questionsDe(ficheId) { return questions().filter(function (x) { return x.f.id === ficheId; }); }
   function questionsMatiere(mid) { return questions().filter(function (x) { return x.f.matiere === mid; }); }
-  function parId(id) { return questions().filter(function (x) { return x.id === id; })[0]; }
+  var indexQ = null;
+  function parId(id) {
+    if (!indexQ) { indexQ = {}; questions().forEach(function (x) { indexQ[x.id] = x; }); }
+    return indexQ[id];
+  }
 
   // ---------- Niveau et flamme ----------
 
@@ -183,7 +188,8 @@ var Jeu = (function () {
       'serie-10': E.stats.comboMax >= 10,
       'lecteur-5': Object.keys(E.lues).length >= 5,
       'toutes-fiches': R.fiches.length > 0 && R.fiches.every(function (f) { return E.lues[f.id]; }),
-      'calculs': Object.keys(E.corr).length >= 9,
+      // Seules les 9 corrections de la page Formules comptent (pas les révisions express ni les études de cas).
+      'calculs': Object.keys(E.corr).filter(function (k) { return /^\d+$/.test(k); }).length >= 9,
       'eclair': E.stats.defis >= 1,
       'flamme-3': E.jours.max >= 3,
       'flamme-7': E.jours.max >= 7,
@@ -290,12 +296,12 @@ var Jeu = (function () {
     if (!E.semaine || E.semaine.id !== sid) E.semaine = { id: sid, c: {}, jours: {}, fait: false };
     E.semaine.c[cle] = (E.semaine.c[cle] || 0) + (n || 1);
     E.semaine.jours[jour()] = true;
-    var defs = MISSIONS(), toutes = true, nouvelle = false;
+    var defs = MISSIONS(), toutes = true, nouvelle = 0;
     E.jour.missions.forEach(function (id) {
       var d = defs.filter(function (x) { return x.id === id; })[0];
       if (!d) return;
       if (!E.jour.faites[id] && (E.jour.c[d.cle] || 0) >= d.obj) {
-        E.jour.faites[id] = true; nouvelle = true;
+        E.jour.faites[id] = true; nouvelle++;
         E.stats.missions++;
         setTimeout(function () { toast('✅ Mission accomplie : ' + d.txt, 'grand'); }, 300);
       }
@@ -303,7 +309,7 @@ var Jeu = (function () {
     });
     sauver();
     if (nouvelle) {
-      gagner(30, 'mission', true);
+      gagner(30 * nouvelle, 'mission', true); // 30 XP par mission, même si plusieurs se terminent en même temps
       if (toutes && E.jour.missions.length) { debloquer('journee'); gagner(50, 'journée parfaite', true); confettis(); }
     }
     prevenir();

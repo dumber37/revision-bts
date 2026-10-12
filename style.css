@@ -514,6 +514,13 @@ body.avec-lecteur .toasts { bottom: 86px; }
 .piste-duree { color: var(--doux); font-size: .85rem; font-variant-numeric: tabular-nums; }
 .tout-ecouter { margin-left: 8px; padding: 3px 10px; border-radius: 999px; border: 1px solid var(--bord); background: var(--surface); color: var(--texte); cursor: pointer; font-size: .72rem; letter-spacing: 0; text-transform: none; vertical-align: middle; }
 
+.choix-voix { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 6px; margin-top: 10px; font-size: .85rem; }
+.choix-voix button { padding: 5px 12px; border-radius: 999px; border: 1px solid var(--bord); background: var(--surface); color: var(--texte); cursor: pointer; font-size: .85rem; }
+.choix-voix button small { opacity: .7; }
+.choix-voix button.actif { background: var(--or); border-color: var(--or); color: #172340; font-weight: 700; }
+.ecoute .choix-voix { flex-basis: 100%; justify-content: flex-start; margin-top: 0; }
+.ecoute .choix-voix button { background: rgba(255, 255, 255, .08); border-color: rgba(255, 255, 255, .25); color: inherit; }
+.ecoute .choix-voix button.actif { background: var(--or); color: #172340; }
 .methodo-onglets { margin-top: 12px; }
 .annexes { margin-top: 14px; padding: 10px 14px; border-radius: 10px; background: var(--bg); border: 1px dashed var(--bord); }
 .annexes summary { cursor: pointer; font-weight: 700; }

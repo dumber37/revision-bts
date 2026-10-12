@@ -14,13 +14,39 @@ var Bonus = (function () {
 
   var audio = new Audio(), liste = [], pos = -1, vitesse = 1;
   audio.preload = 'none';
+  // Deux voix au choix : Siwis (par défaut, audio/<id>.mp3) et Tom (audio/tom/<id>.mp3).
+  var VOIX = { siwis: { nom: 'Siwis', genre: 'voix féminine', dossier: 'audio/' }, tom: { nom: 'Tom', genre: 'voix masculine', dossier: 'audio/tom/' } };
+  function voix() { var v = (Jeu.etat().reglages || {}).voix; return VOIX[v] && R.audioVoix && R.audioVoix[v] ? v : 'siwis'; }
+  function durees() { return (R.audioVoix && R.audioVoix[voix()]) || R.audio || {}; }
   function aAudio(id) { return !!(R.audio && R.audio[id]); }
-  function src(id) { return 'audio/' + id + '.mp3'; }
+  function src(id) { return VOIX[voix()].dossier + id + '.mp3'; }
+  function dureeFiche(id) { return durees()[id] || (R.audio || {})[id] || 0; }
   // Durée réelle si le navigateur la connaît, sinon celle enregistrée (certains serveurs ne la donnent pas).
   function duree() {
     if (isFinite(audio.duration) && audio.duration > 0) return audio.duration;
-    return (R.audio && R.audio[liste[pos]]) || 0;
+    return dureeFiche(liste[pos]);
   }
+  // Change de voix ; si une fiche est en cours, elle reprend au même endroit (en proportion) avec la nouvelle voix.
+  function choisirVoix(v) {
+    if (!VOIX[v]) return;
+    var E = Jeu.etat(), enCours = pos >= 0 && !audio.paused, ratio = duree() ? audio.currentTime / duree() : 0;
+    E.reglages = E.reglages || {}; E.reglages.voix = v; Jeu.sauver();
+    if (pos >= 0 && audio.src) {
+      audio.src = src(liste[pos]);
+      audio.addEventListener('loadedmetadata', function reprise() { audio.removeEventListener('loadedmetadata', reprise); audio.currentTime = ratio * duree(); }, { once: true });
+      audio.playbackRate = vitesse;
+      if (enCours) audio.play().catch(function () {});
+    }
+    Array.prototype.forEach.call(document.querySelectorAll('[data-voix]'), function (b) { b.classList.toggle('actif', b.dataset.voix === v); });
+    majTout();
+  }
+  function choixVoix() {
+    if (!R.audioVoix) return '';
+    return '<div class="choix-voix"><span>Voix :</span>' + Object.keys(VOIX).filter(function (k) { return R.audioVoix[k]; }).map(function (k) {
+      return '<button type="button" data-voix="' + k + '"' + (voix() === k ? ' class="actif"' : '') + '>' + VOIX[k].nom + ' <small>' + VOIX[k].genre + '</small></button>';
+    }).join('') + '</div>';
+  }
+  document.addEventListener('click', function (e) { var b = e.target.closest('[data-voix]'); if (b) choisirVoix(b.dataset.voix); });
 
   function jouer(ids, i) {
     liste = ids; pos = i;
@@ -73,7 +99,7 @@ var Bonus = (function () {
       el.classList.toggle('en-cours', actif && joue);
       el.querySelector('.ecoute-play').textContent = actif && joue ? '⏸' : '▶';
       el.querySelector('.ecoute-barre i').style.width = (actif ? audio.currentTime / (duree() || 1) * 100 : 0) + '%';
-      el.querySelector('.ecoute-temps').textContent = actif ? mmss(audio.currentTime) + ' / ' + mmss(duree()) : mmss(R.audio[el.dataset.id]);
+      el.querySelector('.ecoute-temps').textContent = actif ? mmss(audio.currentTime) + ' / ' + mmss(duree()) : mmss(dureeFiche(el.dataset.id));
     });
     Array.prototype.forEach.call(document.querySelectorAll('.piste'), function (el) {
       el.classList.toggle('en-cours', !!(f && el.dataset.id === f.id && joue));
@@ -92,11 +118,11 @@ var Bonus = (function () {
     if (!aAudio(f.id)) return '';
     return '<div class="ecoute" data-id="' + f.id + '">' +
       '<button type="button" class="ecoute-play" aria-label="Écouter la fiche">▶</button>' +
-      '<div class="ecoute-info"><b>🎧 Écouter la fiche</b><span class="ecoute-temps">' + mmss(R.audio[f.id]) + '</span>' +
+      '<div class="ecoute-info"><b>🎧 Écouter la fiche</b><span class="ecoute-temps">' + mmss(dureeFiche(f.id)) + '</span>' +
         '<span class="ecoute-barre"><i></i></span></div>' +
       '<div class="ecoute-outils"><button type="button" data-saut="-15" aria-label="Reculer de 15 secondes">↺ 15</button>' +
         '<button type="button" data-saut="15" aria-label="Avancer de 15 secondes">15 ↻</button>' +
-        '<button type="button" class="ecoute-vitesse" aria-label="Vitesse de lecture">' + vitesse + '×</button></div>' +
+        '<button type="button" class="ecoute-vitesse" aria-label="Vitesse de lecture">' + vitesse + '×</button></div>' + choixVoix() +
     '</div>';
   }
   function activerLecteur(app, f) {
@@ -128,17 +154,17 @@ var Bonus = (function () {
     var html = R.matieres.map(function (m) {
       var fs = R.fiches.filter(function (f) { return f.matiere === m.id && aAudio(f.id); });
       if (!fs.length) return '';
-      fs.forEach(function (f) { total += R.audio[f.id]; });
+      fs.forEach(function (f) { total += dureeFiche(f.id); });
       return '<h2 class="titre-section titre-matiere" style="--c:' + m.couleur + '">' + esc(m.nom) +
         ' <button type="button" class="tout-ecouter" data-m="' + m.id + '">▶ Tout écouter</button></h2>' +
         fs.map(function (f) {
           return '<button type="button" class="piste" data-id="' + f.id + '" style="--c:' + m.couleur + '"><span class="piste-play">▶</span>' +
-            '<span class="piste-titre">' + esc(f.titre) + '</span><span class="piste-duree">' + mmss(R.audio[f.id]) + '</span></button>';
+            '<span class="piste-titre">' + esc(f.titre) + '</span><span class="piste-duree">' + mmss(dureeFiche(f.id)) + '</span></button>';
         }).join('');
     }).join('');
     app.innerHTML = fil('Écouter les fiches') +
       '<section class="express-tete"><div class="defi-eclair">🎧</div><h1>Écouter les fiches</h1>' +
-      '<p>Chaque fiche lue par une voix naturelle, avec l’essentiel en premier. ' + Math.round(total / 60) + ' minutes au total : idéal dans le bus ou en marchant. La lecture continue si tu changes de page.</p></section>' +
+      '<p>Chaque fiche lue par une voix naturelle, avec l’essentiel en premier. ' + Math.round(total / 60) + ' minutes au total : idéal dans le bus ou en marchant. La lecture continue si tu changes de page.</p>' + choixVoix() + '</section>' +
       '<div class="pistes">' + (html || '<p class="vide">Pas encore de fiche audio.</p>') + '</div>';
     // Écouteur posé sur la liste (recréée à chaque visite), pas sur #app qui reste en place : sinon il s'accumulerait.
     app.querySelector('.pistes').addEventListener('click', function (e) {
@@ -233,7 +259,7 @@ var Bonus = (function () {
       (cas.length ? '<div class="activites">' + cas.map(function (c) {
         var m = Activites.matiere(c.matiere);
         return '<a class="activite" href="#/cas/' + c.id + '" style="--c:' + m.couleur + '"><span class="activite-ico">🗂️</span><span><b>' + esc(c.titre) + '</b>' +
-          '<span>' + esc(m.nom) + ' · ' + c.questions.length + ' questions' + (c.exemple ? ' · exemple' : '') + '</span></span></a>';
+          '<span>' + esc(m.nom) + ' · ' + c.questions.length + ' questions' + (c.exemple ? ' · exemple' : c.source ? ' · ta copie' : '') + '</span></span></a>';
       }).join('') + '</div>' : '<p class="vide">Pas encore d’étude de cas.</p>') +
       '<p class="astuce">Envoie tes études de cas vues en cours : elles seront ajoutées ici avec leur corrigé.</p>';
   }
@@ -244,7 +270,7 @@ var Bonus = (function () {
     var m = Activites.matiere(c.matiere), E = Jeu.etat(), total = c.questions.reduce(function (s, q) { return s + (q.points || 0); }, 0);
     document.title = c.titre + ' · Études de cas';
     app.innerHTML = fil(c.titre, ['Études de cas', '#/cas']) +
-      '<article class="fiche" style="--c:' + m.couleur + '"><span class="defi-tag">' + esc(m.nom) + (c.exemple ? ' · cas d’exemple' : '') + '</span><h1>' + esc(c.titre) + '</h1>' +
+      '<article class="fiche" style="--c:' + m.couleur + '"><span class="defi-tag">' + esc(m.nom) + (c.exemple ? ' · cas d’exemple' : c.source ? ' · d’après ta copie' : '') + '</span><h1>' + esc(c.titre) + '</h1>' +
         '<div class="contenu">' + c.contexte + (c.annexes ? '<details class="annexes" open><summary>📎 Annexes</summary>' + c.annexes + '</details>' : '') + '</div></article>' +
       c.questions.map(function (q, i) {
         var cle = 'cas:' + c.id + ':' + i;
