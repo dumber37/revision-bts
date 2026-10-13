@@ -63,6 +63,31 @@ R.essentiel = {
     'Sélection en 8 étapes, des critères jusqu’au début de la relation.',
     'Scoring : note pondérée = Σ (note × coefficient), la plus haute gagne.',
     'Interdits : revente à perte, prix imposés, refus de vente à un particulier.'
+  ],
+  'vocabulaire-anglais': [
+    'turnover = chiffre d’affaires ; staff turnover = rotation du personnel ; market share = part de marché.',
+    'Clients : customer journey (parcours), loyalty (fidélité), retention (rétention), expectations (attentes).',
+    'Pièges : to MAKE a decision ; adjectif + ness = nom (awareness) ; relevant = pertinent.'
+  ],
+  'verbes-commerce': [
+    'handle (traiter), deal with (s’occuper de), promote, target (cibler), boost (stimuler), retain (fidéliser).',
+    'He / she / it, the company, the store : verbe + s (The store stocks…).',
+    'Avec does / doesn’t, le verbe perd son s : Does she handle? She doesn’t handle.'
+  ],
+  'temps-anglais': [
+    'Present simple = habitude (usually) ; present progressive = en cours (now, at the moment).',
+    'Past simple = passé terminé et daté (yesterday, last, ago) : didn’t / Did + base verbale.',
+    'Present perfect = have / has + participe passé, avec already, yet, for (durée), since (date).'
+  ],
+  'verbes-irreguliers': [
+    'buy-bought-bought, make-made-made, sell-sold-sold, take-took-taken, write-wrote-written, become-became-become, be-was/were-been.',
+    'Après did : base verbale (Did he buy). Après have / has : participe passé (Has he bought).',
+    'Orthographe : stopped, tried, studies / studied. LOOK : at (regarder), for (chercher), forward to (avoir hâte).'
+  ],
+  'passif': [
+    'Passif = BE + participe passé ; le temps se met sur BE (is sold, was sold, has been sold, will be sold).',
+    'Le COD de l’actif devient le sujet ; « by » seulement si c’est utile.',
+    'On l’utilise quand l’auteur est inconnu, sans importance, évident, ou en langage pro (Free delivery is offered).'
   ]
 };
 
@@ -138,6 +163,38 @@ R.trous = {
     ['Note pondérée = somme des (notes × ___).', 'coefficients', ['prix', 'quantités', 'délais']],
     ['Dans les promotions alimentaires, on dit « offert » et pas « ___ ».', 'gratuit', ['remise', 'promo', 'réduit']],
     ['L’___ automatise l’échange des commandes et des factures.', 'EDI', ['ECR', 'SCM', 'SRM']]
+  ],
+  'vocabulaire-anglais': [
+    ['« Part de marché » se dit market ___.', 'share', ['part', 'research', 'target']],
+    ['« Notoriété de marque » se dit brand ___.', 'awareness', ['image', 'loyalty', 'value']],
+    ['« Prendre une décision » se dit to ___ a decision.', 'make', ['do', 'take', 'have']],
+    ['« Panier moyen » se dit average ___ value.', 'basket', ['cart', 'bag', 'price']],
+    ['« Chaîne d’approvisionnement » se dit supply ___.', 'chain', ['line', 'channel', 'road']]
+  ],
+  'verbes-commerce': [
+    ['She ___ customer complaints. (handle)', 'handles', ['handle', 'handling', 'is handle']],
+    ['___ the store stock a wide range of products?', 'Does', ['Do', 'Is', 'Has']],
+    ['The company doesn’t ___ its products on TV.', 'promote', ['promotes', 'promoting', 'promoted']],
+    ['Loyalty cards help retailers ___ customers (fidéliser).', 'retain', ['remain', 'return', 'refund']]
+  ],
+  'temps-anglais': [
+    ['He hasn’t used the Tube ___ 2020.', 'since', ['for', 'ago', 'during']],
+    ['Many cities introduced rental scooters two years ___.', 'ago', ['since', 'for', 'yet']],
+    ['I am ___ right now. (work)', 'working', ['work', 'worked', 'works']],
+    ['___ Federico enjoy the experience?', 'Did', ['Does', 'Has', 'Is']],
+    ['The government hasn’t changed the law ___.', 'yet', ['already', 'ago', 'since']]
+  ],
+  'verbes-irreguliers': [
+    ['Federico ___ a new scooter last year. (buy)', 'bought', ['buyed', 'buy', 'brought']],
+    ['She has ___ the report. (write)', 'written', ['wrote', 'write', 'writed']],
+    ['Did the company ___ a profit?', 'make', ['made', 'makes', 'making']],
+    ['I’m looking ___ to meeting you (avoir hâte).', 'forward', ['for', 'at', 'up']]
+  ],
+  'passif': [
+    ['These products ___ sold online.', 'are', ['is', 'have', 'do']],
+    ['A new product ___ launched by the company last year.', 'was', ['is', 'has', 'were']],
+    ['The campaign has ___ approved.', 'been', ['be', 'being', 'was']],
+    ['Products are sold online ___ the company.', 'by', ['from', 'with', 'of']]
   ]
 };
 
@@ -209,6 +266,34 @@ R.chasse = {
     ['Les promotions alimentaires sont limitées à 34 % du prix.', 'Les promotions alimentaires peuvent atteindre 70 % du prix.'],
     ['Le mot « gratuit » est interdit dans les promotions alimentaires.', 'Le mot « offert » est interdit dans les promotions alimentaires.'],
     ['L’ECR vise le bon produit, au bon moment, au bon prix.', 'L’ECR est un logiciel de caisse.']
+  ],
+  'vocabulaire-anglais': [
+    ['« Turnover » signifie chiffre d’affaires.', '« Turnover » signifie bénéfice net.'],
+    ['On dit « to make a decision ».', 'On dit « to do a decision ».'],
+    ['« Retailer » signifie détaillant.', '« Retailer » signifie fournisseur.'],
+    ['« Relevant » signifie pertinent.', '« Relevant » signifie relevé.']
+  ],
+  'verbes-commerce': [
+    ['She doesn’t handle customer complaints.', 'She doesn’t handles customer complaints.'],
+    ['Does the campaign target young consumers?', 'Do the campaign target young consumers?'],
+    ['The store stocks a wide range of products.', 'The store stock a wide range of products.']
+  ],
+  'temps-anglais': [
+    ['He hasn’t used the Tube since 2020.', 'He didn’t use the Tube since 2020.'],
+    ['More people are buying electric scooters at the moment.', 'More people buys electric scooters at the moment.'],
+    ['The UK government launched a trial in 2020.', 'The UK government has launched a trial in 2020.'],
+    ['Did Federico enjoy the experience?', 'Did Federico enjoyed the experience?']
+  ],
+  'verbes-irreguliers': [
+    ['Did Federico buy a new scooter?', 'Did Federico bought a new scooter?'],
+    ['Has she written the report yet?', 'Has she wrote the report yet?'],
+    ['The project wasn’t very successful.', 'The project didn’t be very successful.'],
+    ['Federico stopped using public transport.', 'Federico stoped using public transport.']
+  ],
+  'passif': [
+    ['Free delivery is offered.', 'Free delivery is offer.'],
+    ['The products are being sold.', 'The products are be sold.'],
+    ['The campaign has been approved.', 'The campaign has be approved.']
   ]
 };
 

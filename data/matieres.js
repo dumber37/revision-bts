@@ -6,7 +6,8 @@ var R = {
     { id: 'drcv',       code: 'E41', nom: 'DRCV',                     long: 'Développement de la relation client et vente conseil', couleur: '#2f5fb3' },
     { id: 'adoc',       code: 'E42', nom: 'ADOC',                     long: 'Animation et dynamisation de l’offre commerciale', couleur: '#c8742a' },
     { id: 'management', code: 'E6',  nom: 'Management',               long: 'Management de l’équipe commerciale',              couleur: '#1d6b6b' },
-    { id: 'gestion',    code: 'E5',  nom: 'Gestion opérationnelle',   long: 'Assurer la gestion opérationnelle',                   couleur: '#6b4fa0' }
+    { id: 'gestion',    code: 'E5',  nom: 'Gestion opérationnelle',   long: 'Assurer la gestion opérationnelle',                   couleur: '#6b4fa0' },
+    { id: 'anglais',    code: 'E2',  nom: 'Anglais',                  long: 'Langue vivante étrangère : anglais professionnel',     couleur: '#b03a48' }
   ],
   fiches: [],
   visuels: [],

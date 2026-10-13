@@ -53,7 +53,9 @@
     // Management : une équipe
     management: '<circle cx="12" cy="7.5" r="2.8"/><path d="M6.5 19.5v-1.2A4.3 4.3 0 0 1 10.8 14h2.4a4.3 4.3 0 0 1 4.3 4.3v1.2"/><circle cx="5" cy="9.5" r="2"/><path d="M2 18v-.8A3 3 0 0 1 5 14.2h.8"/><circle cx="19" cy="9.5" r="2"/><path d="M22 18v-.8a3 3 0 0 0-3-3h-.8"/>',
     // Gestion : graphique en barres avec tendance
-    gestion: '<path d="M4 4v16h16"/><path d="M8 16v-4M12 16V9M16 16v-6"/><path d="m7 9.5 4-3.5 3 2 5-4.5"/><path d="M16.5 3.5H19V6"/>'
+    gestion: '<path d="M4 4v16h16"/><path d="M8 16v-4M12 16V9M16 16v-6"/><path d="m7 9.5 4-3.5 3 2 5-4.5"/><path d="M16.5 3.5H19V6"/>',
+    // Anglais : un globe
+    anglais: '<circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17"/><path d="M12 3.5c2.6 2.4 3.8 5.3 3.8 8.5s-1.2 6.1-3.8 8.5c-2.6-2.4-3.8-5.3-3.8-8.5s1.2-6.1 3.8-8.5z"/><path d="M5.2 7.5h13.6M5.2 16.5h13.6"/>'
   };
   function icone(id) {
     return ICONES[id] ? '<svg class="carte-ico" viewBox="0 0 24 24" aria-hidden="true">' + ICONES[id] + '</svg>' : '';

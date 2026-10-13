@@ -19,7 +19,8 @@ var Carnet = (function () {
     { id: 'e41', nom: 'E41 · DRCV (oral)', matieres: ['drcv'] },
     { id: 'e42', nom: 'E42 · ADOC (oral)', matieres: ['adoc'] },
     { id: 'e5', nom: 'E5 · Gestion opérationnelle (écrit)', matieres: ['gestion'] },
-    { id: 'e6', nom: 'E6 · Management (écrit)', matieres: ['management'] }
+    { id: 'e6', nom: 'E6 · Management (écrit)', matieres: ['management'] },
+    { id: 'e2', nom: 'E2 · Anglais', matieres: ['anglais'] }
   ];
   function dates() { var r = E().reglages || {}; return r.examens || {}; }
   function prochaine() {

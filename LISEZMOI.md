@@ -10,6 +10,7 @@ En ligne : https://dumber37.github.io/revision-bts/ (installable sur téléphone
 - `qcm.js` : banques de QCM par fiche (bonne réponse en premier).
 - `entrainement.js` : l'essentiel en 1 minute, les textes à trous et la chasse à l'erreur, par fiche.
 - `formules.js` : la page « Formules à retenir » (fil rouge Sport'Tours).
+- `anglais.js` : la matière Anglais (E2) ; le vocabulaire est en cartes, recto anglais, verso français. Pas d’udio pour l’instant (voix françaises).
 - `entrainement.js` contient aussi le lexique (`R.lexique`) ; `cas.js` : les études de cas ; `audio.js` : durées des fiches audio.
 
 ## Audio

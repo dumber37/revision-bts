@@ -133,7 +133,8 @@ var Jeux = (function () {
     drcv: ['😤', 'Le client impossible'],
     adoc: ['🧐', 'Le chef de rayon pointilleux'],
     management: ['🕴️', 'Le DRH exigeant'],
-    gestion: ['🕵️', 'Le contrôleur de gestion']
+    gestion: ['🕵️', 'Le contrôleur de gestion'],
+    anglais: ['💂', 'The British buyer']
   };
   function bossDe(m) { return BOSS[m.id] || ['👹', 'Le boss']; }
 

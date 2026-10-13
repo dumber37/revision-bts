@@ -152,5 +152,73 @@ R.qcm = {
     ['L’ECR, c’est…', ['Le bon produit, au bon moment, au bon prix', 'La gestion de la chaîne logistique', 'Un échange de factures', 'Une promotion en magasin'], 'Réponse optimale au consommateur.'],
     ['Le category management consiste à…', ['Regrouper les produits par univers', 'Choisir le fournisseur le moins cher', 'Baisser tous les prix', 'Supprimer les MDD'], 'À partir d’une segmentation (lieu, cible).'],
     ['Délai de paiement selon ton cours :', ['30 jours après réception, ou 45 jours fin de mois', '90 jours dans tous les cas', '7 jours après réception', 'Aucun délai légal'], 'Version du cours ; vérifie celle attendue par ton prof.']
+  ],
+
+  // ---------- Anglais ----------
+
+  'vocabulaire-anglais': [
+    ['« Turnover » signifie…', ['Chiffre d’affaires', 'Rotation du personnel', 'Bénéfice net', 'Retournement de situation'], 'Attention : staff turnover = rotation du personnel.'],
+    ['Comment dit-on « panier moyen » ?', ['Average basket value', 'Middle basket', 'Medium cart price', 'Mean shopping bag'], ''],
+    ['« Brand awareness » signifie…', ['Notoriété de marque', 'Image de marque', 'Fidélité à la marque', 'Prix de la marque'], 'Aware (adjectif) + ness = awareness (nom).'],
+    ['Comment dit-on « part de marché » ?', ['Market share', 'Market part', 'Sales share', 'Market research'], 'Market research = étude de marché.'],
+    ['« Customer retention » signifie…', ['Rétention client (garder ses clients)', 'Acquisition client', 'Réclamation client', 'Attente du client'], ''],
+    ['« Supply chain » signifie…', ['Chaîne d’approvisionnement', 'Chaîne de magasins', 'Gestion des ventes', 'Service client'], ''],
+    ['Comment dit-on « prendre une décision » ?', ['To make a decision', 'To do a decision', 'To take a decide', 'To have decision'], 'Make, pas do. A decision maker = un décisionnaire.'],
+    ['« Retailer » signifie…', ['Détaillant', 'Fournisseur', 'Grossiste', 'Client'], 'Supplier / provider = fournisseur.'],
+    ['« Relevant » signifie…', ['Pertinent', 'Relevé', 'Important', 'Relancé'], 'Faux ami : relevant ≠ relevé.'],
+    ['« Throughout the year » signifie…', ['Tout au long de l’année', 'À travers l’année', 'Après l’année', 'Avant la fin de l’année'], 'Through = à travers (3D), across = à travers (2D).'],
+    ['Comment dit-on « clientèle cible » ?', ['Target audience', 'Target customer service', 'Aimed public', 'Customer goal'], ''],
+    ['« Complaint » signifie…', ['Plainte, réclamation', 'Compliment', 'Achat complet', 'Remboursement'], '']
+  ],
+
+  'verbes-commerce': [
+    ['« To retain customers » signifie…', ['Fidéliser les clients', 'Retenir les clients de force', 'Rembourser les clients', 'Recruter des clients'], ''],
+    ['« To browse » signifie…', ['Parcourir (un site, des rayons)', 'Acheter', 'Comparer les prix', 'Réclamer'], ''],
+    ['Quelle phrase est correcte ?', ['She doesn’t handle complaints.', 'She doesn’t handles complaints.', 'She don’t handle complaints.', 'She not handle complaints.'], 'Avec doesn’t, le verbe perd son s.'],
+    ['Quelle question est correcte ?', ['Does the company promote its products online?', 'Does the company promotes its products online?', 'Do the company promote its products online?', 'The company does promote its products online?'], 'The company = it : Does + base verbale.'],
+    ['« The promotion ___ sales. »', ['boosts', 'boost', 'boosting', 'are boost'], 'The promotion = it : -s au present simple.'],
+    ['« Sales assistants ___ deal with suppliers. »', ['don’t', 'doesn’t', 'isn’t', 'not'], 'Sujet pluriel : don’t.'],
+    ['« To purchase » signifie…', ['Acheter', 'Poursuivre', 'Vendre', 'Promouvoir'], ''],
+    ['« The campaign targets young consumers » : « targets » signifie…', ['Cible', 'Vise à vendre', 'Recrute', 'Interroge'], '']
+  ],
+
+  'temps-anglais': [
+    ['Quel temps avec « at the moment » ?', ['Present progressive', 'Present simple', 'Past simple', 'Present perfect'], 'Action en cours : be + V-ing.'],
+    ['Quel temps avec « since 2020 » ?', ['Present perfect', 'Past simple', 'Present simple', 'Present progressive'], 'He hasn’t used the Tube since 2020.'],
+    ['Quel temps avec « two years ago » ?', ['Past simple', 'Present perfect', 'Present progressive', 'Present simple'], 'Passé terminé et daté.'],
+    ['« Federico usually ___ his scooter to work. »', ['takes', 'is taking', 'took', 'has taken'], 'Usually = habitude → present simple, -s à la 3e personne.'],
+    ['« The government ___ the law yet. »', ['hasn’t changed', 'didn’t change', 'doesn’t change', 'isn’t changing'], 'Yet → present perfect.'],
+    ['« More people ___ electric scooters at the moment. »', ['are buying', 'buy', 'bought', 'have bought'], ''],
+    ['« The UK government ___ a trial in 2020. »', ['launched', 'has launched', 'launches', 'is launching'], 'Date précise du passé → past simple.'],
+    ['Comment se forme la question au past simple ?', ['Did + sujet + base verbale', 'Did + sujet + V-ed', 'Have + sujet + participe passé', 'Do + sujet + V-ed'], 'Did Federico enjoy the experience?'],
+    ['« Federico has used his scooter ___ three years. »', ['for', 'since', 'ago', 'during'], 'For + durée, since + date.'],
+    ['Quelle phrase est au present perfect ?', ['The company has sold more than 10,000 scooters.', 'The company sold 10,000 scooters.', 'The company sells scooters.', 'The company is selling scooters.'], 'Have / has + participe passé.']
+  ],
+
+  'verbes-irreguliers': [
+    ['Le past simple de « buy » est…', ['bought', 'buyed', 'brought', 'buy'], 'buy, bought, bought.'],
+    ['Le participe passé de « write » est…', ['written', 'wrote', 'writed', 'writen'], 'write, wrote, written.'],
+    ['Le participe passé de « take » est…', ['taken', 'took', 'taked', 'take'], 'take, took, taken.'],
+    ['Quelle question est correcte ?', ['Did he buy a car?', 'Did he bought a car?', 'Does he bought a car?', 'Did he buys a car?'], 'Après did, base verbale.'],
+    ['Quelle question est correcte ?', ['Has she written the report?', 'Has she wrote the report?', 'Has she write the report?', 'Did she written the report?'], 'Have / has + participe passé, même dans la question.'],
+    ['Le past simple de « stop » s’écrit…', ['stopped', 'stoped', 'stopt', 'stopping'], 'Consonne finale doublée.'],
+    ['Le past simple de « try » s’écrit…', ['tried', 'tryed', 'tryd', 'trys'], 'Le y devient ied.'],
+    ['« Look forward to » signifie…', ['Avoir hâte de', 'Regarder devant', 'Chercher', 'Admirer'], ''],
+    ['« Look for » signifie…', ['Chercher', 'Regarder', 'Ressembler à', 'Mépriser'], 'Look at = regarder.'],
+    ['« Look up to someone » signifie…', ['Admirer quelqu’un', 'Mépriser quelqu’un', 'Chercher quelqu’un', 'Ressembler à quelqu’un'], 'Look down on = mépriser.'],
+    ['La négation de « The project was successful » est…', ['The project wasn’t successful.', 'The project didn’t be successful.', 'The project didn’t was successful.', 'The project not was successful.'], 'Be ne prend pas did.']
+  ],
+
+  'passif': [
+    ['Comment se forme le passif ?', ['BE + participe passé', 'HAVE + participe passé', 'BE + V-ing', 'DO + base verbale'], 'Le temps se met sur BE.'],
+    ['Le passif de « sells » est…', ['is sold', 'was sold', 'has sold', 'is selling'], ''],
+    ['Le passif de « is selling » est…', ['is being sold', 'is sold', 'has been sold', 'was selling'], ''],
+    ['Le passif de « has sold » est…', ['has been sold', 'has be sold', 'was sold', 'is sold'], ''],
+    ['« We offer free delivery » au passif :', ['Free delivery is offered.', 'Free delivery was offer.', 'Free delivery is offering.', 'Free delivery has offer.'], 'Le COD devient sujet ; présent → is + PP.'],
+    ['Quelle phrase est au passif ?', ['The campaign has been approved.', 'The manager has approved the campaign.', 'The company launched a new product.', 'Customers buy these products online.'], ''],
+    ['Quand utilise-t-on « by » au passif ?', ['Seulement si préciser qui fait l’action est utile', 'Toujours', 'Jamais', 'Seulement au futur'], ''],
+    ['« My order was delivered yesterday » : pourquoi le passif ?', ['On ne sait pas qui a fait l’action', 'C’est une habitude', 'C’est une action en cours', 'Le sujet est pluriel'], ''],
+    ['Le pluriel de « that » est…', ['those', 'these', 'thats', 'this'], 'This / these (proche), that / those (éloigné).'],
+    ['Le passif de « can sell » est…', ['can be sold', 'can sold', 'can been sold', 'can is sold'], '']
   ]
 };
