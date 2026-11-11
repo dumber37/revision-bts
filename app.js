@@ -44,22 +44,8 @@
 
   // ---------- Pages ----------
 
-  // Icônes dessinées des matières (traits, couleur de la matière).
-  var ICONES = {
-    // Relation client : deux bulles de dialogue
-    drcv: '<path d="M4 6.5A2.5 2.5 0 0 1 6.5 4h8A2.5 2.5 0 0 1 17 6.5v4a2.5 2.5 0 0 1-2.5 2.5H10l-3.5 3v-3h0A2.5 2.5 0 0 1 4 10.5z"/><path d="M19.5 9.5A2 2 0 0 1 21 11.4v3.6a2 2 0 0 1-2 2h-.5v2.5L15.5 17H13a2 2 0 0 1-1.7-1"/><path d="M8 8.5h5M8 11h3"/>',
-    // Offre commerciale : vitrine avec store
-    adoc: '<path d="M3.5 9 5 4.5h14L20.5 9"/><path d="M3.5 9a2.1 2.1 0 0 0 4.25 0 2.1 2.1 0 0 0 4.25 0 2.1 2.1 0 0 0 4.25 0 2.1 2.1 0 0 0 4.25 0"/><path d="M5 11.5V20h14v-8.5"/><path d="M10 20v-5h4v5"/>',
-    // Management : une équipe
-    management: '<circle cx="12" cy="7.5" r="2.8"/><path d="M6.5 19.5v-1.2A4.3 4.3 0 0 1 10.8 14h2.4a4.3 4.3 0 0 1 4.3 4.3v1.2"/><circle cx="5" cy="9.5" r="2"/><path d="M2 18v-.8A3 3 0 0 1 5 14.2h.8"/><circle cx="19" cy="9.5" r="2"/><path d="M22 18v-.8a3 3 0 0 0-3-3h-.8"/>',
-    // Gestion : graphique en barres avec tendance
-    gestion: '<path d="M4 4v16h16"/><path d="M8 16v-4M12 16V9M16 16v-6"/><path d="m7 9.5 4-3.5 3 2 5-4.5"/><path d="M16.5 3.5H19V6"/>',
-    // Anglais : un globe
-    anglais: '<circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17"/><path d="M12 3.5c2.6 2.4 3.8 5.3 3.8 8.5s-1.2 6.1-3.8 8.5c-2.6-2.4-3.8-5.3-3.8-8.5s1.2-6.1 3.8-8.5z"/><path d="M5.2 7.5h13.6M5.2 16.5h13.6"/>'
-  };
-  function icone(id) {
-    return ICONES[id] ? '<svg class="carte-ico" viewBox="0 0 24 24" aria-hidden="true">' + ICONES[id] + '</svg>' : '';
-  }
+  // Icônes dessinées des matières (traits, couleur de la matière) : dans icones.js.
+  function icone(id) { return Icone(id, 'carte-ico'); }
 
   function accueil() {
     document.title = 'Révisions BTS MCO';
@@ -77,28 +63,28 @@
 
     app.innerHTML =
       Jeu.hero() +
-      '<div class="recherche"><input id="q" type="search" placeholder="Chercher une notion, un cas, une formule (ex. élasticité, SONCASE)…" autocomplete="off"></div>' +
+      '<div class="recherche"><input id="q" type="search" placeholder="Chercher une notion, un cas, une formule" autocomplete="off"></div>' +
       '<div id="resultats"></div>' +
       '<h2 class="titre-section">Mes matières</h2>' +
       '<div class="grille-matieres">' + cartes + '</div>' +
       '<h2 class="titre-section">Réviser</h2>' +
       '<div class="raccourcis">' +
-        '<a class="lien-profil" href="#/planning"><span class="ico">📅</span><span><b>Mon planning</b><span>Compte à rebours et programme du jour</span></span></a>' +
-        '<a class="lien-profil" href="#/bilan"><span class="ico">🎯</span><span><b>Mes points faibles</b><span>Ce qu’il faut retravailler en priorité</span></span></a>' +
-        '<a class="lien-profil" href="#/express"><span class="ico">⏱</span><span><b>L’essentiel en 1 minute</b><span>Les 3 points clés de chaque fiche</span></span></a>' +
-        '<a class="lien-profil" href="#/calculs"><span class="ico">🧮</span><span><b>Calculs à l’infini</b><span>Paie, élasticité, marge… avec correction</span></span></a>' +
-        '<a class="lien-profil" href="#/oral"><span class="ico">🎙️</span><span><b>Simulateur d’oral</b><span>E41 et E42 avec Claude, noté sur 20</span></span></a>' +
-        '<a class="lien-profil" href="#/lexique"><span class="ico">📚</span><span><b>Lexique</b><span>Toutes les notions de A à Z</span></span></a>' +
-        '<a class="lien-profil" href="#/carnet"><span class="ico">📒</span><span><b>Mon carnet</b><span>Mes favoris et mes notes</span></span></a>' +
-        '<a class="lien-profil" href="#/ecoute"><span class="ico">🎧</span><span><b>Écouter les fiches</b><span>Voix naturelle, pour le bus ou en marchant</span></span></a>' +
-        '<a class="lien-profil" href="#/methodo"><span class="ico">🧭</span><span><b>Méthodologie</b><span>Écrits, oraux, calculs, pièges, jour J</span></span></a>' +
-        '<a class="lien-profil" href="#/cas"><span class="ico">🗂️</span><span><b>Études de cas</b><span>Comme à l’examen, avec corrigé</span></span></a>' +
+        '<a class="lien-profil" href="#/planning"><span class="ico">' + Icone('calendrier') + '</span><span><b>Mon planning</b><span>Compte à rebours et programme du jour</span></span></a>' +
+        '<a class="lien-profil" href="#/bilan"><span class="ico">' + Icone('cible') + '</span><span><b>Mes points faibles</b><span>Ce qu’il faut retravailler en priorité</span></span></a>' +
+        '<a class="lien-profil" href="#/express"><span class="ico">' + Icone('chrono') + '</span><span><b>L’essentiel en 1 minute</b><span>Les 3 points clés de chaque fiche</span></span></a>' +
+        '<a class="lien-profil" href="#/calculs"><span class="ico">' + Icone('calculatrice') + '</span><span><b>Calculs à l’infini</b><span>Paie, élasticité, marge… avec correction</span></span></a>' +
+        '<a class="lien-profil" href="#/oral"><span class="ico">' + Icone('micro') + '</span><span><b>Simulateur d’oral</b><span>E41 et E42 avec Claude, noté sur 20</span></span></a>' +
+        '<a class="lien-profil" href="#/lexique"><span class="ico">' + Icone('bibliotheque') + '</span><span><b>Lexique</b><span>Toutes les notions de A à Z</span></span></a>' +
+        '<a class="lien-profil" href="#/carnet"><span class="ico">' + Icone('carnet') + '</span><span><b>Mon carnet</b><span>Mes favoris et mes notes</span></span></a>' +
+        '<a class="lien-profil" href="#/ecoute"><span class="ico">' + Icone('casque') + '</span><span><b>Écouter les fiches</b><span>Voix naturelle, pour le bus ou en marchant</span></span></a>' +
+        '<a class="lien-profil" href="#/methodo"><span class="ico">' + Icone('boussole') + '</span><span><b>Méthodologie</b><span>Écrits, oraux, calculs, pièges, jour J</span></span></a>' +
+        '<a class="lien-profil" href="#/cas"><span class="ico">' + Icone('dossier') + '</span><span><b>Études de cas</b><span>Comme à l’examen, avec corrigé</span></span></a>' +
       '</div>' +
       '<h2 class="titre-section">Jouer</h2>' +
       '<div class="raccourcis">' +
-        '<a class="lien-defi" href="#/defi"><span class="ico">⚡</span><span><b>Défi éclair</b><span>10 questions chrono, à envoyer à un ami</span></span></a>' +
-        '<a class="lien-profil" href="#/duel"><span class="ico">⚔️</span><span><b>Duel</b><span>À deux sur le même téléphone</span></span></a>' +
-        '<a class="lien-profil" href="#/profil"><span class="ico">🏅</span><span><b>Mon profil</b><span>Niveau, badges et records</span></span></a>' +
+        '<a class="lien-defi" href="#/defi"><span class="ico">' + Icone('eclair') + '</span><span><b>Défi éclair</b><span>10 questions chrono, à envoyer à un ami</span></span></a>' +
+        '<a class="lien-profil" href="#/duel"><span class="ico">' + Icone('epees') + '</span><span><b>Duel</b><span>À deux sur le même téléphone</span></span></a>' +
+        '<a class="lien-profil" href="#/profil"><span class="ico">' + Icone('medaille') + '</span><span><b>Mon profil</b><span>Niveau, badges et records</span></span></a>' +
       '</div>' +
       '<p class="astuce">Cartes mémo, ordre, textes à trous, memory, chasse à l’erreur, boss et examen blanc : onglet <b>S’entraîner</b> de chaque matière.</p>' +
       (R.formules ? '<a class="lien-formules" href="#/formules"><b>Formules à retenir</b><span>Tous les calculs d’examen sur une page ›</span></a>' : '') +
@@ -143,7 +129,7 @@
     }).join('') + '</div>';
     if (cas.length) html += '<h3 class="res-titre">Études de cas</h3><div class="liste-fiches">' + cas.map(function (x) {
       var m = matiere(x.c.matiere);
-      return '<a class="carte-fiche" href="#/cas/' + x.c.id + '" style="--c:' + m.couleur + '"><span class="tag">🗂️ ' + esc(m.nom) + '</span><span class="titre">' + esc(x.c.titre) + '</span><span class="resume">' + esc(x.c.resume) + '</span></a>';
+      return '<a class="carte-fiche" href="#/cas/' + x.c.id + '" style="--c:' + m.couleur + '"><span class="tag">' + Icone('dossier') + ' ' + esc(m.nom) + '</span><span class="titre">' + esc(x.c.titre) + '</span><span class="resume">' + esc(x.c.resume) + '</span></a>';
     }).join('') + '</div>';
     if (formules) html += '<h3 class="res-titre">Formules</h3><a class="lien-formules" href="#/formules"><b>Formules à retenir</b><span>« ' + esc(brut) + ' » apparaît dans les calculs d’examen ›</span></a>';
     out.innerHTML = html || '<p class="vide">Rien ne contient « ' + esc(brut) + ' » (fiches, lexique, études de cas, formules).</p>';
@@ -226,7 +212,7 @@
         '<button class="lecteur-nav suiv" type="button" data-pas="1" aria-label="Diapo suivante">›</button>' +
       '</div>' +
       '<div class="lecteur-barre"><span class="lecteur-legende"></span><span class="lecteur-compteur"></span>' +
-        '<button class="lecteur-plein" type="button">⛶ Plein écran</button></div>' +
+        '<button class="lecteur-plein" type="button">' + Icone('agrandir') + ' Plein écran</button></div>' +
       (items.length > 1 ? '<div class="lecteur-miniatures">' + items.map(function (v, i) {
           return '<button type="button" data-i="' + i + '" aria-label="' + esc(v.legende || 'Diapo ' + (i + 1)) + '">' +
             '<img src="' + esc(v.mini || v.src) + '" alt="" loading="lazy" decoding="async"><span>' + (i + 1) + '</span></button>';
@@ -399,7 +385,7 @@
       '<nav class="fil"><a href="#/">Matières</a> › <a href="#/' + m.id + '">' + esc(m.nom) + '</a></nav>' +
       '<article class="fiche" style="--c:' + m.couleur + '">' +
         '<h1>' + esc(f.titre) + '</h1>' +
-        '<p class="meta">' + (f.date ? dateFr(f.date) + ' · ' : '') + '<button type="button" class="imprimer-btn">🖨️ Imprimer / PDF</button></p>' +
+        '<p class="meta">' + (f.date ? dateFr(f.date) + ' · ' : '') + '<button type="button" class="imprimer-btn">' + Icone('imprimante') + ' Imprimer / PDF</button></p>' +
         Activites.encadreEssentiel(f) +
         Bonus.lecteurFiche(f) +
         '<div class="contenu">' + f.contenu + '</div>' +
@@ -440,7 +426,7 @@
     app.innerHTML =
       '<nav class="fil"><a href="#/">Matières</a> › Formules</nav>' +
       '<article class="fiche" style="--c:var(--rouille)"><h1>Formules à retenir</h1>' +
-      '<p class="meta"><button type="button" class="imprimer-btn">🖨️ Imprimer / PDF</button></p>' +
+      '<p class="meta"><button type="button" class="imprimer-btn">' + Icone('imprimante') + ' Imprimer / PDF</button></p>' +
       '<div class="contenu">' + R.formules + '</div></article>' +
       boiteClaude();
     $('.imprimer-btn').addEventListener('click', function () { Composants.imprimer('Formules à retenir', 'Avec les corrections', R.formules); });
@@ -553,7 +539,7 @@
     var c = $('#installer');
     if (c) afficherInstallation(c);
   });
-  window.addEventListener('appinstalled', function () { invite = null; Jeu.toast('📲 Application installée !', 'grand'); });
+  window.addEventListener('appinstalled', function () { invite = null; Jeu.toast('Application installée', 'grand'); });
 
   function installee() {
     return (window.matchMedia && matchMedia('(display-mode: standalone)').matches) || navigator.standalone === true;
@@ -561,7 +547,7 @@
   function afficherInstallation(c) {
     if (!c) return;
     var ios = /iphone|ipad|ipod/i.test(navigator.userAgent);
-    var html = '<section class="installer"><div class="installer-ico">📲</div><div class="installer-txt">';
+    var html = '<section class="installer"><div class="installer-ico">' + Icone('telephone') + '</div><div class="installer-txt">';
     if (installee()) {
       html += '<b>Application installée</b><span>Tu peux aussi télécharger les visuels pour réviser sans réseau.</span>';
     } else if (invite) {

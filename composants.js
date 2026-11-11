@@ -302,7 +302,7 @@ var Composants = (function () {
     }
     return t;
   }
-  var BRAVO = ['Bonne réponse !', 'Exact !', 'Bien vu !', 'Dans le mille !', 'Parfait !', 'Yes !'];
+  var BRAVO = ['Bonne réponse', 'Exact', 'Bien vu', 'Dans le mille', 'Parfait', 'C’est ça'];
   var RATE = ['Raté.', 'Pas tout à fait.', 'Presque…', 'Non, mais tu vas la retenir.'];
   function auHasard(t) { return t[Math.floor(Math.random() * t.length)]; }
 
@@ -346,11 +346,11 @@ var Composants = (function () {
           faites++;
           if (juste) bonnes++;
           var serie = J ? J.reponse(juste, false, fs.dataset.id) : 0;
-          div.querySelector('.qcm-score').innerHTML = bonnes + ' / ' + faites + (serie >= 2 ? ' <span class="qcm-serie">🔥 ' + serie + '</span>' : '');
+          div.querySelector('.qcm-score').innerHTML = bonnes + ' / ' + faites + (serie >= 2 ? ' <span class="qcm-serie">' + Icone('flamme') + ' ' + serie + '</span>' : '');
           if (faites === items.length) {
             var fin = div.querySelector('.qcm-fin'), r = bonnes / items.length;
             fin.innerHTML = '<b>' + bonnes + ' / ' + items.length + '</b> · ' +
-              (r === 1 ? '★★★ Parfait, tout est su !' : r >= 0.8 ? '★★ Bien joué, presque parfait.' : r >= 0.6 ? '★ C’est en bonne voie, retente pour les étoiles.' : 'Relis la fiche, puis relance un QCM.') +
+              (r === 1 ? '★★★ Parfait, tout est su.' : r >= 0.8 ? '★★ Bien joué, presque parfait.' : r >= 0.6 ? '★ C’est en bonne voie, retente pour les étoiles.' : 'Relis la fiche, puis relance un QCM.') +
               ' <button type="button" class="qcm-nouveau">↻ Nouveau QCM</button>';
             fin.hidden = false;
             if (J && cle) J.qcmFini(cle, bonnes, items.length);

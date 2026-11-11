@@ -84,8 +84,8 @@ var Jeux = (function () {
     var nv = Jeu.niveau(Jeu.etat().xp).n, n = Math.min(nv, ETAPES.length);
     cible.innerHTML = '<div class="magasin' + (mini ? ' mini' : '') + '">' + magasinSVG(n) +
       '<div class="magasin-txt"><b>Ton magasin : ' + esc(ETAPES[n - 1]) + '</b>' +
-      (n < ETAPES.length ? '<span>Niveau ' + (n + 1) + ' : ' + esc(ETAPES[n]).toLowerCase() + '</span>' : '<span>Le magasin est au complet, bravo !</span>') +
-      (mini ? '' : '<button type="button" class="installer-btn secondaire mag-perso">🎨 Personnaliser</button>') +
+      (n < ETAPES.length ? '<span>Niveau ' + (n + 1) + ' : ' + esc(ETAPES[n]).toLowerCase() + '</span>' : '<span>Le magasin est au complet</span>') +
+      (mini ? '' : '<button type="button" class="installer-btn secondaire mag-perso">' + Icone('palette') + ' Personnaliser</button>') +
       '</div></div>' + (mini ? '' : '<div class="mag-panneau" hidden></div>');
     if (mini) return;
     var panneau = cible.querySelector('.mag-panneau');
@@ -101,11 +101,11 @@ var Jeux = (function () {
         '<div class="mag-choix"><b>Couleur de l’enseigne</b><div class="mag-pastilles">' + COULEURS_MAG.map(function (x) {
           var ok = nv >= x.niv;
           return '<button type="button" data-couleur="' + x.id + '" class="pastille' + ((r.couleur || 'nuit') === x.id ? ' actif' : '') + '"' + (ok ? '' : ' disabled') +
-            ' style="--p:' + x.c + '" title="' + x.nom + (ok ? '' : ' (niveau ' + x.niv + ')') + '">' + (ok ? '' : '🔒') + '</button>';
+            ' style="--p:' + x.c + '" title="' + x.nom + (ok ? '' : ' (niveau ' + x.niv + ')') + '">' + (ok ? '' : Icone('cadenas')) + '</button>';
         }).join('') + '</div></div>' +
         '<div class="mag-choix"><b>Sport en vitrine</b><div class="mag-sports">' + SPORTS_MAG.map(function (x) {
           var ok = nv >= x.niv;
-          return '<button type="button" data-sport="' + x.id + '"' + ((r.sport || 'running') === x.id ? ' class="actif"' : '') + (ok ? '' : ' disabled') + '>' + (ok ? '' : '🔒 ') + x.nom + (ok ? '' : ' · niv. ' + x.niv) + '</button>';
+          return '<button type="button" data-sport="' + x.id + '"' + ((r.sport || 'running') === x.id ? ' class="actif"' : '') + (ok ? '' : ' disabled') + '>' + (ok ? '' : Icone('cadenas') + ' ') + x.nom + (ok ? '' : ' · niv. ' + x.niv) + '</button>';
         }).join('') + '</div></div>' +
         '<label class="mag-choix"><b>Nom du magasin</b><input maxlength="14" value="' + esc(r.nom || '') + '" placeholder="Sport’Tours"></label>';
       panneau.querySelector('input').addEventListener('input', function (e) { enregistrer({ nom: e.target.value.trim() }); });
@@ -130,24 +130,24 @@ var Jeux = (function () {
   // ---------- Boss de matière ----------
 
   var BOSS = {
-    drcv: ['😤', 'Le client impossible'],
-    adoc: ['🧐', 'Le chef de rayon pointilleux'],
-    management: ['🕴️', 'Le DRH exigeant'],
-    gestion: ['🕵️', 'Le contrôleur de gestion'],
-    anglais: ['💂', 'The British buyer']
+    drcv: ['drcv', 'Le client impossible'],
+    adoc: ['adoc', 'Le chef de rayon pointilleux'],
+    management: ['management', 'Le DRH exigeant'],
+    gestion: ['gestion', 'Le contrôleur de gestion'],
+    anglais: ['anglais', 'The British buyer']
   };
-  function bossDe(m) { return BOSS[m.id] || ['👹', 'Le boss']; }
+  function bossDe(m) { var b = BOSS[m.id] || ['couronne', 'Le boss']; return [Icone(b[0]), b[1]]; }
 
   function pageBoss(app, m) {
     var b = bossDe(m), banque = Jeu.questionsMatiere(m.id), n = Math.min(10, banque.length);
     document.title = 'Boss · ' + m.nom;
     var battu = Jeu.etat().badges['boss-' + m.id];
     app.innerHTML = fil(m, 'Boss') +
-      '<section class="defi defi-accueil boss">' +
+      '<section class="defi defi-accueil boss" style="--c:' + m.couleur + '">' +
         '<div class="boss-ico">' + b[0] + '</div><h1>' + esc(b[1]) + '</h1>' +
         '<p>' + n + ' questions de ' + esc(m.nom) + '. <b>Une seule erreur et c’est perdu.</b></p>' +
         '<p>Bats-le pour gagner <b>100 XP</b> et le badge « Maître ' + esc(m.nom) + ' ».</p>' +
-        (battu ? '<p class="defi-record">👑 Déjà battu le ' + battu.split('-').reverse().join('/') + '</p>' : '') +
+        (battu ? '<p class="defi-record">' + Icone('couronne') + ' Déjà battu le ' + battu.split('-').reverse().join('/') + '</p>' : '') +
         '<button type="button" class="defi-go">Affronter le boss</button>' +
       '</section>';
     app.querySelector('.defi-go').addEventListener('click', function () {
@@ -155,7 +155,7 @@ var Jeux = (function () {
         titre: b[1], m: m, items: melanger(banque).slice(0, n), stopErreur: true, rejouer: '#/' + m.id + '/boss', pasDeListe: false,
         bandeau: function (r) {
           var pv = Math.round((n - r.bonnes) / n * 100);
-          return '<div class="boss-barre"><span class="boss-ico petit">' + b[0] + '</span><span class="boss-pv"><i style="width:' + pv + '%"></i></span><b>' + (n - r.bonnes) + ' PV</b></div>';
+          return '<div class="boss-barre" style="--c:' + m.couleur + '"><span class="boss-ico petit">' + b[0] + '</span><span class="boss-pv"><i style="width:' + pv + '%"></i></span><b>' + (n - r.bonnes) + ' PV</b></div>';
         },
         fin: function (r) {
           stat('boss');
@@ -165,10 +165,10 @@ var Jeux = (function () {
             Jeu.compter('bossGagne');
             Jeu.gagner(100, 'boss vaincu');
             Jeu.confettis();
-            return '<p class="boss-victoire">👑 ' + esc(b[1]) + ' est vaincu !</p>';
+            return '<p class="boss-victoire">' + Icone('couronne') + ' ' + esc(b[1]) + ' est vaincu</p>';
           }
           Jeu.gagner(r.bonnes * 3, 'combat');
-          return '<p>' + b[0] + ' ' + esc(b[1]) + ' t’a eu à la question ' + r.total + '. Il lui restait ' + (n - r.bonnes) + ' PV.</p>';
+          return '<p>' + esc(b[1]) + ' t’a eu à la question ' + r.total + '. Il lui restait ' + (n - r.bonnes) + ' PV.</p>';
         }
       });
     });
@@ -184,11 +184,11 @@ var Jeux = (function () {
       .map(function (m) { return '<option value="' + m.id + '">' + esc(m.nom) + '</option>'; }).join('');
     app.innerHTML = '<nav class="fil"><a href="#/">Matières</a> › Duel</nav>' +
       '<section class="defi defi-accueil duel-accueil">' +
-        '<div class="defi-eclair">⚔️</div><h1>Duel</h1>' +
+        '<div class="defi-eclair">' + Icone('epees') + '</div><h1>Duel</h1>' +
         '<p>Deux joueurs, un seul téléphone. Chacun répond à son tour, 20 secondes par question. Le plus rapide et le plus juste gagne.</p>' +
         '<div class="duel-form">' +
-          '<label><span>🔵 Joueur 1</span><input id="j1" maxlength="16" value="' + esc(noms[0]) + '"></label>' +
-          '<label><span>🟠 Joueur 2</span><input id="j2" maxlength="16" value="' + esc(noms[1]) + '"></label>' +
+          '<label><span><i class="point-j j0"></i>Joueur 1</span><input id="j1" maxlength="16" value="' + esc(noms[0]) + '"></label>' +
+          '<label><span><i class="point-j j1"></i>Joueur 2</span><input id="j2" maxlength="16" value="' + esc(noms[1]) + '"></label>' +
           '<label><span>Matière</span><select id="dm">' + options + '</select></label>' +
           '<label><span>Questions par joueur</span><select id="dn"><option>3</option><option selected>5</option><option>8</option></select></label>' +
         '</div>' +
@@ -212,9 +212,9 @@ var Jeux = (function () {
       app.innerHTML = '<nav class="fil"><a href="#/">Matières</a> › Duel</nav>' +
         '<section class="defi duel">' +
           '<div class="duel-scores">' + [0, 1].map(function (p) {
-            return '<div class="duel-j j' + p + (p === t ? ' actif' : '') + '"><span>' + (p ? '🟠 ' : '🔵 ') + esc(joueurs[p]) + '</span><b>' + scores[p] + '</b></div>';
+            return '<div class="duel-j j' + p + (p === t ? ' actif' : '') + '"><span>' + '<i class="point-j j' + p + '"></i>' + esc(joueurs[p]) + '</span><b>' + scores[p] + '</b></div>';
           }).join('') + '</div>' +
-          '<p class="duel-tour">À toi, <b>' + esc(joueurs[t]) + '</b> ! · question ' + (Math.floor(i / 2) + 1) + '/' + (qs.length / 2) + '</p>' +
+          '<p class="duel-tour">À toi, <b>' + esc(joueurs[t]) + '</b> · question ' + (Math.floor(i / 2) + 1) + '/' + (qs.length / 2) + '</p>' +
           '<div class="defi-temps"><i></i></div>' +
           '<span class="defi-tag" style="--c:' + m.couleur + '">' + esc(m.nom) + '</span>' +
           '<h2 class="defi-q">' + it.q[0] + '</h2>' +
@@ -246,7 +246,7 @@ var Jeux = (function () {
       app.querySelector('.defi-reps').addEventListener('click', function (e) { var b = e.target.closest('button[data-ok]'); if (b) repondre(b); });
       minuteur = setInterval(function () {
         var s = (Date.now() - debut) / 1000;
-        barre.style.width = Math.max(0, 100 - s / DUREE_DUEL * 100) + '%';
+        barre.style.transform = 'scaleX(' + Math.max(0, 1 - s / DUREE_DUEL) + ')';
         barre.classList.toggle('urgent', s > DUREE_DUEL - 5);
         if (s >= DUREE_DUEL) repondre(null);
       }, 100);
@@ -259,12 +259,12 @@ var Jeux = (function () {
       Jeu.confettis();
       var g = scores[0] === scores[1] ? -1 : scores[0] > scores[1] ? 0 : 1;
       app.innerHTML = '<nav class="fil"><a href="#/">Matières</a> › Duel</nav>' +
-        '<section class="defi defi-fin duel-fin"><div class="defi-eclair">' + (g < 0 ? '🤝' : '🏆') + '</div>' +
-          '<h1>' + (g < 0 ? 'Égalité parfaite !' : esc(joueurs[g]) + ' gagne !') + '</h1>' +
+        '<section class="defi defi-fin duel-fin"><div class="defi-eclair">' + (g < 0 ? Icone('egalite') : Icone('trophee')) + '</div>' +
+          '<h1>' + (g < 0 ? 'Égalité parfaite' : esc(joueurs[g]) + ' gagne') + '</h1>' +
           '<div class="duel-scores">' + [0, 1].map(function (p) {
-            return '<div class="duel-j j' + p + (p === g ? ' actif' : '') + '"><span>' + (p ? '🟠 ' : '🔵 ') + esc(joueurs[p]) + '</span><b>' + scores[p] + '</b><small>' + bonnes[p] + '/' + qs.length / 2 + ' justes</small></div>';
+            return '<div class="duel-j j' + p + (p === g ? ' actif' : '') + '"><span>' + '<i class="point-j j' + p + '"></i>' + esc(joueurs[p]) + '</span><b>' + scores[p] + '</b><small>' + bonnes[p] + '/' + qs.length / 2 + ' justes</small></div>';
           }).join('') + '</div>' +
-          '<p><a class="defi-go" href="#/duel" data-rejouer>Revanche !</a></p></section>';
+          '<p><a class="defi-go" href="#/duel" data-rejouer>Revanche</a></p></section>';
       relancer(app, '#/duel');
     }
     if (!qs.length) { app.innerHTML = '<p class="vide">Pas de questions disponibles.</p>'; return; }
@@ -287,7 +287,7 @@ var Jeux = (function () {
     items.forEach(function (x, i) { x.truque = truques.indexOf(i) >= 0; x.choisi = false; });
     app.innerHTML = fil(m, 'Chasse à l’erreur') +
       '<section class="defi chasse" style="--c:' + m.couleur + '">' +
-        '<div class="defi-haut"><span>🔍 Chasse à l’erreur</span><span class="defi-score">' + k + ' erreurs cachées</span></div>' +
+        '<div class="defi-haut"><span>' + Icone('loupe') + ' Chasse à l’erreur</span><span class="defi-score">' + k + ' erreurs cachées</span></div>' +
         '<p class="ordre-aide">Une fiche a été truquée : <b>' + k + ' affirmations sont fausses</b>. Touche celles que tu crois fausses, puis valide.</p>' +
         '<div class="chasse-liste">' + items.map(function (x, i) {
           return '<button type="button" class="chasse-item" data-i="' + i + '"><span class="chasse-case"></span><span>' + esc(x.truque ? x.faux : x.vrai) + '</span></button>';
@@ -316,7 +316,7 @@ var Jeux = (function () {
         else etat = 'ok';
         b.classList.add(etat);
         b.disabled = true;
-        if (x.truque) b.insertAdjacentHTML('beforeend', '<span class="chasse-vrai">' + (etat === 'trouvee' ? '✓ Bien vu ! ' : '✗ Erreur ratée. ') + 'Vrai : ' + esc(x.vrai) + '</span>');
+        if (x.truque) b.insertAdjacentHTML('beforeend', '<span class="chasse-vrai">' + (etat === 'trouvee' ? '✓ Bien vu. ' : '✗ Erreur ratée. ') + 'Vrai : ' + esc(x.vrai) + '</span>');
         else if (x.choisi) b.insertAdjacentHTML('beforeend', '<span class="chasse-vrai">C’était vrai.</span>');
       });
       valider.hidden = true;
@@ -326,7 +326,7 @@ var Jeux = (function () {
       Jeu.gagner(trouvees * 5 + (parfait ? 15 : 0), parfait ? 'chasse parfaite' : 'chasse à l’erreur');
       if (parfait) { Jeu.debloquer('detective'); Jeu.confettis(); }
       app.querySelector('.serie-retour').innerHTML = '<p class="qcm-expl"><b>' + trouvees + '/' + k + ' erreurs trouvées</b>' +
-        (alertes ? ', ' + alertes + ' fausse' + (alertes > 1 ? 's' : '') + ' alerte' + (alertes > 1 ? 's' : '') : '') + (parfait ? ' : enquête parfaite 🕵️' : '') + '.</p>' +
+        (alertes ? ', ' + alertes + ' fausse' + (alertes > 1 ? 's' : '') + ' alerte' + (alertes > 1 ? 's' : '') : '') + (parfait ? ' : enquête parfaite' : '') + '.</p>' +
         '<a class="defi-go" href="#/' + m.id + '/chasse" data-rejouer>Nouvelle enquête</a>';
       relancer(app, '#/' + m.id + '/chasse');
     });
@@ -355,7 +355,7 @@ var Jeux = (function () {
     var retournees = [], trouvees = 0, coups = 0, debut = Date.now(), bloque = false;
     app.innerHTML = fil(m, 'Memory') +
       '<section class="defi memory" style="--c:' + m.couleur + '">' +
-        '<div class="defi-haut"><span>🧠 Memory</span><span class="memory-coups">0 coup</span><span class="defi-score memory-temps">0 s</span></div>' +
+        '<div class="defi-haut"><span>' + Icone('memory') + ' Memory</span><span class="memory-coups">0 coup</span><span class="defi-score memory-temps">0 s</span></div>' +
         '<p class="ordre-aide">Retrouve les ' + paires.length + ' paires : une notion et sa définition.</p>' +
         '<div class="memory-grille">' + tuiles.map(function (t, i) {
           return '<button type="button" class="tuile ' + t.type + '" data-i="' + i + '"><span class="tuile-dos">?</span><span class="tuile-face">' + esc(t.txt) + '</span></button>';
@@ -401,8 +401,8 @@ var Jeux = (function () {
       if (coups <= paires.length + 3) Jeu.debloquer('memory');
       Jeu.gagner(20 + (coups <= paires.length + 3 ? 10 : 0), 'memory');
       Jeu.confettis();
-      app.querySelector('.serie-retour').innerHTML = '<p class="qcm-expl"><b>Bravo ! ' + coups + ' coups en ' + s + ' s.</b>' +
-        (record ? ' Nouveau record pour cette matière !' : ' Record : ' + best[0] + ' coups.') + '</p>' +
+      app.querySelector('.serie-retour').innerHTML = '<p class="qcm-expl"><b>Bravo, ' + coups + ' coups en ' + s + ' s.</b>' +
+        (record ? ' Nouveau record pour cette matière.' : ' Record : ' + best[0] + ' coups.') + '</p>' +
         '<a class="defi-go" href="#/' + m.id + '/memory" data-rejouer>Rejouer</a>';
       relancer(app, '#/' + m.id + '/memory');
     }
@@ -421,19 +421,19 @@ var Jeux = (function () {
   });
   Activites.ajouterActivite(function (m) {
     var n = chasseDe(m).length;
-    return { ico: '🔍', titre: 'Chasse à l’erreur', txt: 'Une fiche truquée : trouve les erreurs', lien: '#/' + m.id + '/chasse', n: n >= 2 ? n : 0 };
+    return { ico: Icone('loupe'), titre: 'Chasse à l’erreur', txt: 'Une fiche truquée : trouve les erreurs', lien: '#/' + m.id + '/chasse', n: n >= 2 ? n : 0 };
   });
   Activites.ajouterActivite(function (m) {
     var n = pairesDe(m).length, best = Jeu.etat().best['memory:' + m.id];
-    return { ico: '🧠', titre: 'Memory', txt: 'Retrouve les paires notion ↔ définition' + (best ? ' · record ' + best[0] + ' coups' : ''), lien: '#/' + m.id + '/memory', n: n >= 3 ? n : 0 };
+    return { ico: Icone('memory'), titre: 'Memory', txt: 'Retrouve les paires notion ↔ définition' + (best ? ' · record ' + best[0] + ' coups' : ''), lien: '#/' + m.id + '/memory', n: n >= 3 ? n : 0 };
   });
 
   Jeu.ajouterBadges(R.matieres.filter(function (m) { return Jeu.questionsMatiere(m.id).length >= 5; }).map(function (m) {
-    return ['boss-' + m.id, '👑', 'Maître ' + m.nom, 'Battre le boss de ' + m.nom];
+    return ['boss-' + m.id, Icone('couronne'), 'Maître ' + m.nom, 'Battre le boss de ' + m.nom];
   }).concat([
-    ['detective', '🕵️', 'Détective', 'Trouver toutes les erreurs d’une chasse, sans fausse alerte'],
-    ['memory', '🧠', 'Mémoire photographique', 'Finir un memory en peu de coups'],
-    ['duel', '⚔️', 'Esprit de compétition', 'Jouer un duel']
+    ['detective', Icone('loupe'), 'Détective', 'Trouver toutes les erreurs d’une chasse, sans fausse alerte'],
+    ['memory', Icone('memory'), 'Mémoire photographique', 'Finir un memory en peu de coups'],
+    ['duel', Icone('epees'), 'Esprit de compétition', 'Jouer un duel']
   ]), function (E) { return { 'duel': (E.stats.duels || 0) >= 1 }; });
   Jeu.ajouterMissions([
     { id: 'boss', txt: 'Affronter un boss', cle: 'boss', obj: 1, lien: Activites.lienEntrainement },

@@ -30,7 +30,7 @@ var Outils = (function () {
     }
 
     app.innerHTML = fil('Mes points faibles') +
-      '<section class="defi defi-accueil"><div class="defi-eclair">🎯</div><h1>Mes points faibles</h1>' +
+      '<section class="defi defi-accueil"><div class="defi-eclair">' + Icone('cible') + '</div><h1>Mes points faibles</h1>' +
         '<p>Ton taux de bonnes réponses par chapitre, sur tous les QCM, défis et révisions.</p>' +
         (totN ? '<p class="pf-global">Réussite globale : <b>' + Math.round(totB / totN * 100) + ' %</b> sur ' + totN + ' réponses</p>' : '') +
       '</section>' +
@@ -38,8 +38,8 @@ var Outils = (function () {
         var m = Activites.matiere(l.f.matiere);
         return '<div class="pf-carte" style="--c:' + m.couleur + '"><span class="defi-tag">' + esc(m.nom) + '</span><b>' + esc(l.f.titre) + '</b>' +
           '<span class="pf-carte-taux">' + Math.round(l.taux * 100) + ' % de réussite (' + l.b + '/' + l.n + ')</span>' +
-          '<span class="pf-actions"><a href="#/' + l.f.matiere + '/' + l.f.id + '">📖 Relire la fiche</a><a href="#/' + l.f.matiere + '/cartes">🃏 Cartes mémo</a><a href="#/revoir">🔁 Mes erreurs</a></span></div>';
-      }).join('') + '</div>' : (totN ? '<p class="vide">Aucun chapitre sous 80 % (avec au moins 3 réponses). Bravo !</p>' : '<p class="vide">Fais quelques QCM ou un Défi éclair : ton bilan apparaîtra ici.</p>')) +
+          '<span class="pf-actions"><a href="#/' + l.f.matiere + '/' + l.f.id + '">' + Icone('livre') + ' Relire la fiche</a><a href="#/' + l.f.matiere + '/cartes">' + Icone('cartes') + ' Cartes mémo</a><a href="#/revoir">' + Icone('repeter') + ' Mes erreurs</a></span></div>';
+      }).join('') + '</div>' : (totN ? '<p class="vide">Aucun chapitre sous 80 % (avec au moins 3 réponses).</p>' : '<p class="vide">Fais quelques QCM ou un Défi éclair : ton bilan apparaîtra ici.</p>')) +
       R.matieres.filter(function (m) { return fichesDe(m.id).length; }).map(function (m) {
         return '<h2 class="titre-section titre-matiere" style="--c:' + m.couleur + '">' + esc(m.nom) + '</h2><div class="pf-liste">' +
           lignes.filter(function (l) { return l.f.matiere === m.id; }).map(ligne).join('') + '</div>';
@@ -132,8 +132,8 @@ var Outils = (function () {
     function compter(ok) { if (compte) return; compte = true; session.faits++; if (ok) session.ok++; }
     app.innerHTML = fil('Calculs à l’infini') +
       '<section class="defi calculs">' +
-        '<div class="defi-haut"><span>🧮 Calculs à l’infini</span><span class="defi-score">' + session.ok + '/' + session.faits + ' réussis</span></div>' +
-        '<div class="calc-types">' + ['<a href="#/calculs"' + (!choisi ? ' class="actif"' : '') + '>🎲 Au hasard</a>'].concat(cles.map(function (c) {
+        '<div class="defi-haut"><span>' + Icone('calculatrice') + ' Calculs à l’infini</span><span class="defi-score">' + session.ok + '/' + session.faits + ' réussis</span></div>' +
+        '<div class="calc-types">' + ['<a href="#/calculs"' + (!choisi ? ' class="actif"' : '') + '>' + Icone('des') + ' Au hasard</a>'].concat(cles.map(function (c) {
           return '<a href="#/calculs/' + c + '"' + (choisi === c ? ' class="actif"' : '') + '>' + esc(EXOS[c].titre) + '</a>';
         })).join('') + '</div>' +
         '<h2 class="defi-q">' + esc(EXOS[k].titre) + '</h2>' +
@@ -227,17 +227,17 @@ var Outils = (function () {
   function pageImporter(app) {
     document.title = 'Importer une progression · Révisions BTS MCO';
     var code = location.hash.split('/').slice(2).join('/');
-    app.innerHTML = fil('Importer une progression') + '<section class="defi defi-accueil"><div class="defi-eclair">📲</div><h1>Importer une progression</h1><p class="transfert-msg">Lecture du lien…</p></section>';
+    app.innerHTML = fil('Importer une progression') + '<section class="defi defi-accueil"><div class="defi-eclair">' + Icone('telephone') + '</div><h1>Importer une progression</h1><p class="transfert-msg">Lecture du lien…</p></section>';
     var msg = app.querySelector('.transfert-msg');
     Promise.resolve().then(function () { return lireLien(code); }).then(function (o) { // erreurs de décodage comprises
       msg.innerHTML = 'Ce lien contient une progression de <b>' + o.xp + ' XP</b> (' + Object.keys(o.badges || {}).length + ' badges). Sur cet appareil : ' + Jeu.etat().xp + ' XP.';
       msg.insertAdjacentHTML('afterend', '<p class="calc-boutons"><button type="button" class="defi-go" data-oui>Remplacer par celle du lien</button><a class="defi-go secondaire" href="#/">Annuler</a></p>');
       app.querySelector('[data-oui]').addEventListener('click', function () {
-        try { localStorage.setItem('revision-bts-jeu', JSON.stringify(o)); } catch (e) { msg.textContent = '❌ Impossible d’enregistrer.'; return; }
+        try { localStorage.setItem('revision-bts-jeu', JSON.stringify(o)); } catch (e) { msg.textContent = 'Impossible d’enregistrer.'; return; }
         location.replace(location.pathname + '#/profil');
         location.reload();
       });
-    }).catch(function () { msg.textContent = '❌ Ce lien est abîmé ou incomplet. Renvoie-le depuis l’autre appareil (bouton « Envoyer par lien » du profil).'; });
+    }).catch(function () { msg.textContent = 'Ce lien est abîmé ou incomplet. Renvoie-le depuis l’autre appareil (bouton « Envoyer par lien » du profil).'; });
   }
 
   function transfert(cible) {
@@ -245,13 +245,13 @@ var Outils = (function () {
     var der = (Jeu.etat().reglages || {}).sauvegarde, jours = der ? Math.round((new Date(Jeu.jour() + 'T12:00') - new Date(der + 'T12:00')) / 864e5) : null;
     cible.innerHTML = '<section class="transfert"><h2 class="titre-section">Sauvegarder et changer d’appareil</h2>' +
       '<p>Ta progression est gardée dans ce navigateur. Envoie-toi le lien (par message ou par mail) : l’ouvrir sur ton autre appareil y importe tout. Garde aussi ce message comme sauvegarde.</p>' +
-      '<p class="transfert-der' + (jours === null || jours > 7 ? ' alerte' : '') + '">' + (jours === null ? '⚠ Aucune sauvegarde pour l’instant.' : jours === 0 ? '✓ Sauvegardée aujourd’hui.' : (jours > 7 ? '⚠ ' : '') + 'Dernière sauvegarde il y a ' + jours + ' jour' + (jours > 1 ? 's' : '') + '.') + '</p>' +
-      '<p class="calc-boutons"><button type="button" class="installer-btn" data-lien>🔗 Envoyer par lien</button><button type="button" class="installer-btn secondaire" data-copier>📋 Copier mon code</button>' +
-      '<button type="button" class="installer-btn secondaire" data-fichier>💾 Télécharger un fichier</button></p>' +
+      '<p class="transfert-der' + (jours === null || jours > 7 ? ' alerte' : '') + '">' + (jours === null ? Icone('alerte') + ' Aucune sauvegarde pour l’instant.' : jours === 0 ? '✓ Sauvegardée aujourd’hui.' : (jours > 7 ? Icone('alerte') + ' ' : '') + 'Dernière sauvegarde il y a ' + jours + ' jour' + (jours > 1 ? 's' : '') + '.') + '</p>' +
+      '<p class="calc-boutons"><button type="button" class="installer-btn" data-lien>' + Icone('lien') + ' Envoyer par lien</button><button type="button" class="installer-btn secondaire" data-copier>' + Icone('pressePapier') + ' Copier mon code</button>' +
+      '<button type="button" class="installer-btn secondaire" data-fichier>' + Icone('disquette') + ' Télécharger un fichier</button></p>' +
       '<details class="correction"><summary>Importer une progression</summary>' +
         '<textarea id="codeImport" rows="3" placeholder="Colle ici ton code (il commence par RBTS1.)"></textarea>' +
         '<p class="calc-boutons"><button type="button" class="installer-btn" data-importer>Importer le code</button>' +
-        '<label class="installer-btn secondaire fichier">📂 Choisir un fichier<input type="file" accept=".json,.txt,application/json,text/plain" hidden data-fichier-import></label></p>' +
+        '<label class="installer-btn secondaire fichier">' + Icone('dossierOuvert') + ' Choisir un fichier<input type="file" accept=".json,.txt,application/json,text/plain" hidden data-fichier-import></label></p>' +
         '<p class="transfert-msg" aria-live="polite"></p></details></section>';
     var msg = cible.querySelector('.transfert-msg');
     // Le lien est préparé à l'avance : le partage doit partir directement du clic (sinon iPhone le refuse).
@@ -282,9 +282,9 @@ var Outils = (function () {
     });
     function importer(code) {
       var o;
-      try { o = lire(code); } catch (e) { msg.textContent = '❌ Ce code n’est pas valide.'; return; }
+      try { o = lire(code); } catch (e) { msg.textContent = 'Ce code n’est pas valide.'; return; }
       if (!confirm('Remplacer la progression de cet appareil (' + Jeu.etat().xp + ' XP) par celle importée (' + o.xp + ' XP) ?')) return;
-      try { localStorage.setItem('revision-bts-jeu', JSON.stringify(o)); } catch (e) { msg.textContent = '❌ Impossible d’enregistrer.'; return; }
+      try { localStorage.setItem('revision-bts-jeu', JSON.stringify(o)); } catch (e) { msg.textContent = 'Impossible d’enregistrer.'; return; }
       msg.textContent = '✓ Progression importée, rechargement…';
       setTimeout(function () { location.reload(); }, 600);
     }
@@ -341,7 +341,7 @@ var Outils = (function () {
   function pageOral(app) {
     document.title = 'Simulateur d’oral · Révisions BTS MCO';
     app.innerHTML = fil('Simulateur d’oral') +
-      '<section class="defi defi-accueil oral"><div class="defi-eclair">🎙️</div><h1>Simulateur d’oral</h1>' +
+      '<section class="defi defi-accueil oral"><div class="defi-eclair">' + Icone('micro') + '</div><h1>Simulateur d’oral</h1>' +
         '<p>Claude joue le client (E41) ou le manager (E42) au magasin Sport’Tours. Tu réponds comme le jour J. Écris <b>FIN</b> quand tu as terminé : Claude sort du rôle et te note sur 20 avec une grille d’évaluation.</p>' +
         '<div class="duel-form">' +
           '<label><span>Épreuve</span><select id="oEp">' + Object.keys(ORAUX).map(function (k) { return '<option value="' + k + '">' + esc(ORAUX[k].nom) + '</option>'; }).join('') + '</select></label>' +
@@ -349,7 +349,7 @@ var Outils = (function () {
           '<label><span>Difficulté</span><select id="oNiv"><option value="facile">Facile</option><option value="normal" selected>Normal</option><option value="exigeant">Exigeant</option></select></label>' +
         '</div>' +
         '<p class="oral-desc"></p>' +
-        '<p class="calc-boutons"><button type="button" class="defi-go secondaire" data-hasard>🎲 Situation au hasard</button><button type="button" class="defi-go" data-lancer>Lancer l’oral avec Claude ↗</button></p>' +
+        '<p class="calc-boutons"><button type="button" class="defi-go secondaire" data-hasard>' + Icone('des') + ' Situation au hasard</button><button type="button" class="defi-go" data-lancer>Lancer l’oral avec Claude ↗</button></p>' +
         '<p class="astuce">Claude s’ouvre dans un nouvel onglet. Il faut être connecté à ton compte. Si la consigne n’est pas envoyée toute seule, appuie sur Entrée.</p>' +
       '</section>' +
       '<h2 class="titre-section">Ton mémo pendant l’oral</h2><div class="oral-memo"></div>';
@@ -389,8 +389,8 @@ var Outils = (function () {
   Activites.ajouterPageGlobale('oral', pageOral);
   Activites.ajouterPageGlobale('importer', pageImporter);
   Jeu.ajouterBadges([
-    ['calculs-10', '🧮', 'Calculatrice humaine', 'Réussir 10 exercices de calcul'],
-    ['oral', '🎙️', 'À l’oral !', 'Faire un oral blanc avec Claude']
+    ['calculs-10', Icone('calculatrice'), 'Calculatrice humaine', 'Réussir 10 exercices de calcul'],
+    ['oral', Icone('micro'), 'À l’oral', 'Faire un oral blanc avec Claude']
   ], function (E) { return { 'calculs-10': (E.stats.calculsOk || 0) >= 10 }; });
   Jeu.ajouterMissions([
     { id: 'calculex', txt: 'Réussir 2 exercices de calcul', cle: 'calculEx', obj: 2, lien: '#/calculs' },

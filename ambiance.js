@@ -40,7 +40,7 @@ var Ambiance = (function () {
   function majBouton() {
     var b = document.getElementById('sonBtn');
     if (!b) return;
-    b.textContent = actif() ? '🔊' : '🔇';
+    b.innerHTML = Icone(actif() ? 'sonOui' : 'sonNon');
     b.setAttribute('aria-label', actif() ? 'Couper les sons' : 'Activer les sons');
     b.title = b.getAttribute('aria-label');
   }

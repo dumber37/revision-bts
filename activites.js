@@ -33,7 +33,7 @@ var Activites = (function () {
       app.innerHTML = fil(opts.m, opts.titre) +
         '<section class="defi serie">' +
           '<div class="defi-haut"><span>' + esc(opts.titre) + ' · ' + (i + 1) + '/' + file.length + '</span>' +
-            (opts.limite ? '<span class="serie-chrono">⏱ <b>' + mmss(opts.limite - (Date.now() - debut) / 1000) + '</b></span>' : '') +
+            (opts.limite ? '<span class="serie-chrono">' + Icone('chrono') + ' <b>' + mmss(opts.limite - (Date.now() - debut) / 1000) + '</b></span>' : '') +
             (corrige ? '<span class="defi-score">' + res.bonnes + ' ✓</span>' : '') + '</div>' +
           '<div class="serie-avance"><i style="width:' + Math.round(i / file.length * 100) + '%"></i></div>' +
           (opts.bandeau ? opts.bandeau(res, i, file.length) : '') +
@@ -68,7 +68,7 @@ var Activites = (function () {
       var stop = !juste && opts.stopErreur;
       var retour = app.querySelector('.serie-retour');
       if (corrige) {
-        retour.innerHTML = '<p class="qcm-expl">' + (juste ? '<b>Bonne réponse !</b>' + (serieEnCours >= 3 ? ' 🔥 ' + serieEnCours : '') : '<b>Raté.</b> Réponse : ' + it.q[1][0] + '.') +
+        retour.innerHTML = '<p class="qcm-expl">' + (juste ? '<b>Bonne réponse.</b>' + (serieEnCours >= 3 ? ' ' + Icone('flamme') + ' ' + serieEnCours : '') : '<b>Raté.</b> Réponse : ' + it.q[1][0] + '.') +
           (it.q[2] ? ' ' + it.q[2] : '') + '</p>' +
           '<button type="button" class="defi-go suivant">' + (stop ? 'Voir le résultat' : i + 1 < file.length ? 'Question suivante ›' : 'Voir le bilan') + '</button>';
         var s = retour.querySelector('.suivant');
@@ -94,7 +94,7 @@ var Activites = (function () {
       var html = opts.fin ? opts.fin(res) : '';
       app.innerHTML = fil(opts.m, opts.titre) +
         '<section class="defi defi-fin">' +
-          '<div class="defi-eclair">' + (res.perdu ? '💥' : res.bonnes === res.total && !horsTemps ? '🏆' : '💡') + '</div>' +
+          '<div class="defi-eclair">' + (res.perdu ? Icone('rondCroix') : res.bonnes === res.total && !horsTemps ? Icone('trophee') : Icone('ampoule')) + '</div>' +
           (opts.pasDeScore ? '' : '<h1>' + res.bonnes + ' / ' + (horsTemps ? total : res.total) + '</h1>') + html +
           (opts.rejouer ? '<p><a class="defi-go" href="' + opts.rejouer + '" data-rejouer>Recommencer</a></p>' : '') +
         '</section>' +
@@ -175,10 +175,10 @@ var Activites = (function () {
     var nq = Jeu.questionsMatiere(m.id).length, st = etatCartes(m), nc = st.toutes.length, nl = listesDe(m).length, nt = trousDe(m).length;
     var best = (Jeu.etat().best['examen:' + m.id] || null), aFaire = st.dues.length + st.nouvelles.length;
     var items = [
-      { ico: '🃏', titre: 'Cartes mémo', txt: nc + ' cartes · ' + (aFaire ? [st.dues.length ? st.dues.length + ' à revoir' : '', st.nouvelles.length ? st.nouvelles.length + ' nouvelle' + (st.nouvelles.length > 1 ? 's' : '') : ''].filter(Boolean).join(', ') : 'rien à revoir aujourd’hui ✓'), lien: '#/' + m.id + '/cartes', n: nc },
-      { ico: '🔢', titre: 'Remettre dans l’ordre', txt: nl + ' liste' + (nl > 1 ? 's' : '') + ' d’étapes à reclasser', lien: '#/' + m.id + '/ordre', n: nl },
-      { ico: '✏️', titre: 'Textes à trous', txt: nt + ' phrases à compléter', lien: '#/' + m.id + '/trous', n: nt },
-      { ico: '📝', titre: 'Examen blanc', txt: Math.min(20, nq) + ' questions chronométrées, note sur 20' + (best ? ' · record ' + best[0] + '/20' : ''), lien: '#/' + m.id + '/examen', n: nq }
+      { ico: Icone('cartes'), titre: 'Cartes mémo', txt: nc + ' cartes · ' + (aFaire ? [st.dues.length ? st.dues.length + ' à revoir' : '', st.nouvelles.length ? st.nouvelles.length + ' nouvelle' + (st.nouvelles.length > 1 ? 's' : '') : ''].filter(Boolean).join(', ') : 'rien à revoir aujourd’hui ✓'), lien: '#/' + m.id + '/cartes', n: nc },
+      { ico: Icone('liste'), titre: 'Remettre dans l’ordre', txt: nl + ' liste' + (nl > 1 ? 's' : '') + ' d’étapes à reclasser', lien: '#/' + m.id + '/ordre', n: nl },
+      { ico: Icone('crayon'), titre: 'Textes à trous', txt: nt + ' phrases à compléter', lien: '#/' + m.id + '/trous', n: nt },
+      { ico: Icone('copie'), titre: 'Examen blanc', txt: Math.min(20, nq) + ' questions chronométrées, note sur 20' + (best ? ' · record ' + best[0] + '/20' : ''), lien: '#/' + m.id + '/examen', n: nq }
     ];
     activitesExtra.forEach(function (fn) { var x = fn(m); if (x) items.push(x); });
     items = items.filter(function (x) { return x.n > 0; });
@@ -218,7 +218,7 @@ var Activites = (function () {
     if (!libre && !st.dues.length && !st.nouvelles.length) {
       var S = Jeu.etat().cartes, prochaine = st.toutes.map(function (c) { return S[c.id][1]; }).sort()[0];
       app.innerHTML = fil(m, 'Cartes mémo') +
-        '<section class="defi defi-fin"><div class="defi-eclair">🃏</div><h1>Rien à revoir aujourd’hui</h1>' +
+        '<section class="defi defi-fin"><div class="defi-eclair">' + Icone('cartes') + '</div><h1>Rien à revoir aujourd’hui</h1>' +
           '<p>Tes ' + st.toutes.length + ' cartes sont rangées. Prochaine révision : <b>' + prochaine.split('-').reverse().join('/') + '</b>.</p>' +
           '<p><a class="defi-go secondaire" href="#/' + m.id + '/cartes/tout">Revoir tout le paquet quand même</a></p></section>';
       return;
@@ -230,7 +230,7 @@ var Activites = (function () {
       var c = paquet[0];
       app.innerHTML = fil(m, 'Cartes mémo') +
         '<section class="memo" style="--c:' + m.couleur + '">' +
-          '<div class="defi-haut"><span>🃏 ' + (libre ? 'Tout le paquet' : st.dues.length + ' à revoir · ' + st.nouvelles.length + ' nouvelle' + (st.nouvelles.length > 1 ? 's' : '')) + '</span><span class="defi-score">' + sues + '/' + total + ' sues</span></div>' +
+          '<div class="defi-haut"><span>' + Icone('cartes') + ' ' + (libre ? 'Tout le paquet' : st.dues.length + ' à revoir · ' + st.nouvelles.length + ' nouvelle' + (st.nouvelles.length > 1 ? 's' : '')) + '</span><span class="defi-score">' + sues + '/' + total + ' sues</span></div>' +
           '<div class="serie-avance"><i style="width:' + Math.round(sues / total * 100) + '%"></i></div>' +
           '<button type="button" class="memo-carte" aria-label="Retourner la carte">' +
             '<span class="memo-in"><span class="memo-face memo-recto"><small>' + esc(c.ctx) + '</small><b>' + c.recto + '</b><em>Touche pour retourner</em></span>' +
@@ -272,7 +272,7 @@ var Activites = (function () {
       if (premiers === total) Jeu.confettis();
       var reste = etatCartes(m);
       app.innerHTML = fil(m, 'Cartes mémo') +
-        '<section class="defi defi-fin"><div class="defi-eclair">🃏</div><h1>' + premiers + ' / ' + total + '</h1>' +
+        '<section class="defi defi-fin"><div class="defi-eclair">' + Icone('cartes') + '</div><h1>' + premiers + ' / ' + total + '</h1>' +
           '<p>cartes sues du premier coup. Les autres sont revenues jusqu’à ce que tu les saches.</p>' +
           (libre ? '' : '<p>Les cartes sues reviendront dans 3, 7, 14 puis 30 jours ; celles que tu as ratées, dès demain.</p>') +
           (reste.dues.length || reste.nouvelles.length
@@ -304,7 +304,7 @@ var Activites = (function () {
       var melange = melanger(L.etapes.map(function (e, i) { return { txt: e, i: i }; }));
       app.innerHTML = fil(m, 'Remettre dans l’ordre') +
         '<section class="defi ordre" style="--c:' + m.couleur + '">' +
-          '<div class="defi-haut"><span>🔢 Liste ' + (k + 1) + '/' + listes.length + '</span><span class="defi-score ordre-err">0 erreur</span></div>' +
+          '<div class="defi-haut"><span>' + Icone('liste') + ' Liste ' + (k + 1) + '/' + listes.length + '</span><span class="defi-score ordre-err">0 erreur</span></div>' +
           '<span class="defi-tag">' + esc(L.f.titre) + '</span>' +
           '<h2 class="defi-q">' + esc(L.titre) + '</h2>' +
           '<p class="ordre-aide">Touche les étapes dans le bon ordre, de la première à la dernière.</p>' +
@@ -339,10 +339,10 @@ var Activites = (function () {
       stat('ordres');
       if (!erreurs) stat('ordresParfaits');
       Jeu.compter('ordre');
-      Jeu.gagner(erreurs ? 8 : 15, erreurs ? 'liste remise en ordre' : 'ordre parfait !');
+      Jeu.gagner(erreurs ? 8 : 15, erreurs ? 'liste remise en ordre' : 'ordre parfait');
       if (!erreurs) Jeu.confettis();
       var r = app.querySelector('.serie-retour');
-      r.innerHTML = '<p class="qcm-expl"><b>' + (erreurs ? 'Liste complète, avec ' + erreurs + ' erreur' + (erreurs > 1 ? 's' : '') + '.' : 'Sans faute !') + '</b></p>' +
+      r.innerHTML = '<p class="qcm-expl"><b>' + (erreurs ? 'Liste complète, avec ' + erreurs + ' erreur' + (erreurs > 1 ? 's' : '') + '.' : 'Sans faute.') + '</b></p>' +
         (k + 1 < listes.length ? '<button type="button" class="defi-go">Liste suivante ›</button>'
           : '<p>Toutes les listes sont faites : ' + parfaites + '/' + listes.length + ' sans faute.</p><a class="defi-go" href="#/' + m.id + '/ordre" data-rejouer>Recommencer</a>');
       var b = r.querySelector('button.defi-go');
@@ -363,7 +363,7 @@ var Activites = (function () {
       var it = items[i], choix = melanger([it.bonne].concat(it.fausses));
       app.innerHTML = fil(m, 'Textes à trous') +
         '<section class="defi trous" style="--c:' + m.couleur + '">' +
-          '<div class="defi-haut"><span>✏️ Phrase ' + (i + 1) + '/' + items.length + '</span><span class="defi-score">' + bonnes + ' ✓</span></div>' +
+          '<div class="defi-haut"><span>' + Icone('crayon') + ' Phrase ' + (i + 1) + '/' + items.length + '</span><span class="defi-score">' + bonnes + ' ✓</span></div>' +
           '<div class="serie-avance"><i style="width:' + Math.round(i / items.length * 100) + '%"></i></div>' +
           '<span class="defi-tag">' + esc(it.f.titre) + '</span>' +
           '<p class="trou-phrase">' + esc(it.phrase).replace('___', '<span class="trou">?</span>') + '</p>' +
@@ -385,7 +385,7 @@ var Activites = (function () {
         trou.classList.add(juste ? 'ok' : 'ko');
         if (juste) { Jeu.gagner(5, '', true); Jeu.compter('trous'); stat('trous'); }
         var r = app.querySelector('.serie-retour');
-        r.innerHTML = '<p class="qcm-expl"><b>' + (juste ? 'Exact !' : 'Raté.') + '</b> ' + (juste ? '' : 'La bonne réponse : ' + esc(it.bonne) + '.') + '</p>' +
+        r.innerHTML = '<p class="qcm-expl"><b>' + (juste ? 'Exact.' : 'Raté.') + '</b> ' + (juste ? '' : 'La bonne réponse : ' + esc(it.bonne) + '.') + '</p>' +
           '<button type="button" class="defi-go">' + (i + 1 < items.length ? 'Phrase suivante ›' : 'Voir le bilan') + '</button>';
         r.querySelector('button').addEventListener('click', function () { i++; if (i < items.length) afficher(); else fin(); });
       });
@@ -394,7 +394,7 @@ var Activites = (function () {
       Jeu.gagner(10, 'textes à trous');
       if (bonnes === items.length) Jeu.confettis();
       app.innerHTML = fil(m, 'Textes à trous') +
-        '<section class="defi defi-fin"><div class="defi-eclair">✏️</div><h1>' + bonnes + ' / ' + items.length + '</h1>' +
+        '<section class="defi defi-fin"><div class="defi-eclair">' + Icone('crayon') + '</div><h1>' + bonnes + ' / ' + items.length + '</h1>' +
           '<p><a class="defi-go" href="#/' + m.id + '/trous" data-rejouer>Nouvelles phrases</a></p></section>' +
         (erreurs.length ? '<h2 class="titre-section">À retenir</h2><div class="defi-erreurs">' + erreurs.map(function (it) {
           return '<div class="defi-erreur"><p>' + esc(it.phrase).replace('___', '<b class="trou ok">' + esc(it.bonne) + '</b>') + '</p>' +
@@ -413,7 +413,7 @@ var Activites = (function () {
     var best = Jeu.etat().best['examen:' + m.id];
     app.innerHTML = fil(m, 'Examen blanc') +
       '<section class="defi defi-accueil" style="--c:' + m.couleur + '">' +
-        '<div class="defi-eclair">📝</div><h1>Examen blanc · ' + esc(m.nom) + '</h1>' +
+        '<div class="defi-eclair">' + Icone('copie') + '</div><h1>Examen blanc · ' + esc(m.nom) + '</h1>' +
         '<p><b>' + n + ' questions</b> en <b>' + mmss(limite) + '</b> minutes, toutes les fiches de la matière.</p>' +
         '<ul><li>Pas de correction pendant l’épreuve, comme le jour J</li><li>À la fin : ta note sur 20 et ton bilan par chapitre</li><li>Les erreurs partent dans ta révision</li></ul>' +
         (best ? '<p class="defi-record">Ta meilleure note : <b>' + best[0] + '/20</b></p>' : '') +
@@ -455,7 +455,7 @@ var Activites = (function () {
   function encadreEssentiel(f) {
     var t = R.essentiel && R.essentiel[f.id];
     if (!t) return '';
-    return '<aside class="essentiel"><div class="essentiel-titre">⏱ L’essentiel en 1 minute</div><ul>' +
+    return '<aside class="essentiel"><div class="essentiel-titre">' + Icone('chrono') + ' L’essentiel en 1 minute</div><ul>' +
       t.map(function (x) { return '<li>' + esc(x) + '</li>'; }).join('') + '</ul></aside>';
   }
 
@@ -470,9 +470,9 @@ var Activites = (function () {
       }).join('');
     }).join('');
     app.innerHTML = '<nav class="fil"><a href="#/">Matières</a> › L’essentiel en 1 minute</nav>' +
-      '<section class="express-tete"><div class="defi-eclair">⏱</div><h1>L’essentiel en 1 minute</h1>' +
+      '<section class="express-tete"><div class="defi-eclair">' + Icone('chrono') + '</div><h1>L’essentiel en 1 minute</h1>' +
       '<p>Les 3 choses à retenir de chaque fiche. Parfait juste avant l’épreuve.</p>' +
-      '<p><button type="button" class="imprimer-btn">🖨️ Imprimer / PDF</button></p></section>' + html +
+      '<p><button type="button" class="imprimer-btn">' + Icone('imprimante') + ' Imprimer / PDF</button></p></section>' + html +
       '<p class="express-fin"><button type="button" class="defi-go">J’ai tout relu ✓</button></p>';
     app.querySelector('.imprimer-btn').addEventListener('click', function () { Composants.imprimer('L’essentiel en 1 minute', 'Les 3 points clés de chaque fiche', html); });
     app.querySelector('.express-fin button').addEventListener('click', function (e) {
@@ -490,11 +490,11 @@ var Activites = (function () {
   // ---------- Badges et missions de ce lot ----------
 
   Jeu.ajouterBadges([
-    ['cartes-50', '🃏', 'Mémoire vive', 'Revoir 50 cartes mémo'],
-    ['ordre-3', '🔢', 'Méthodique', 'Remettre 3 listes dans l’ordre sans erreur'],
-    ['trous-20', '✏️', 'Plume affûtée', 'Compléter 20 textes à trous'],
-    ['examen-15', '📝', 'Prêt pour le jour J', 'Avoir 15/20 ou plus à un examen blanc'],
-    ['express', '⏱', 'Révision express', 'Relire l’essentiel en 1 minute']
+    ['cartes-50', Icone('cartes'), 'Mémoire vive', 'Revoir 50 cartes mémo'],
+    ['ordre-3', Icone('liste'), 'Méthodique', 'Remettre 3 listes dans l’ordre sans erreur'],
+    ['trous-20', Icone('crayon'), 'Plume affûtée', 'Compléter 20 textes à trous'],
+    ['examen-15', Icone('copie'), 'Prêt pour le jour J', 'Avoir 15/20 ou plus à un examen blanc'],
+    ['express', Icone('chrono'), 'Révision express', 'Relire l’essentiel en 1 minute']
   ], function (E) {
     return {
       'cartes-50': (E.stats.cartes || 0) >= 50,

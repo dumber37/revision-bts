@@ -91,19 +91,19 @@ var Bonus = (function () {
         document.body.appendChild(mini);
         document.body.classList.add('avec-lecteur');
       }
-      mini.querySelector('.ml-play').textContent = joue ? '⏸' : '▶';
+      mini.querySelector('.ml-play').innerHTML = Icone(joue ? 'pause' : 'lecture');
       mini.querySelector('.ml-play').setAttribute('aria-label', joue ? 'Pause' : 'Lecture');
       var t = mini.querySelector('.ml-titre');
-      t.textContent = '🎧 ' + f.titre; t.href = '#/' + f.matiere + '/' + f.id;
+      t.textContent = f.titre; t.href = '#/' + f.matiere + '/' + f.id;
       mini.querySelector('.ml-temps').textContent = mmss(audio.currentTime) + ' / ' + mmss(duree());
-      mini.querySelector('.ml-barre i').style.width = (audio.currentTime / (duree() || 1) * 100) + '%';
+      mini.querySelector('.ml-barre i').style.transform = 'scaleX(' + Math.min(1, audio.currentTime / (duree() || 1)) + ')';
     } else if (mini) { mini.remove(); document.body.classList.remove('avec-lecteur'); }
     // Lecteur de la fiche ouverte, s'il y en a un
     Array.prototype.forEach.call(document.querySelectorAll('.ecoute'), function (el) {
       var actif = f && el.dataset.id === f.id;
       el.classList.toggle('en-cours', actif && joue);
-      el.querySelector('.ecoute-play').textContent = actif && joue ? '⏸' : '▶';
-      el.querySelector('.ecoute-barre i').style.width = (actif ? audio.currentTime / (duree() || 1) * 100 : 0) + '%';
+      el.querySelector('.ecoute-play').innerHTML = Icone(actif && joue ? 'pause' : 'lecture');
+      el.querySelector('.ecoute-barre i').style.transform = 'scaleX(' + (actif ? Math.min(1, audio.currentTime / (duree() || 1)) : 0) + ')';
       el.querySelector('.ecoute-temps').textContent = actif ? mmss(audio.currentTime) + ' / ' + mmss(duree()) : mmss(dureeFiche(el.dataset.id));
     });
     Array.prototype.forEach.call(document.querySelectorAll('.piste'), function (el) {
@@ -122,8 +122,8 @@ var Bonus = (function () {
   function lecteurFiche(f) {
     if (!aAudio(f.id)) return '';
     return '<div class="ecoute" data-id="' + f.id + '">' +
-      '<button type="button" class="ecoute-play" aria-label="Écouter la fiche">▶</button>' +
-      '<div class="ecoute-info"><b>🎧 Écouter la fiche</b><span class="ecoute-temps">' + mmss(dureeFiche(f.id)) + '</span>' +
+      '<button type="button" class="ecoute-play" aria-label="Écouter la fiche">' + Icone('lecture') + '</button>' +
+      '<div class="ecoute-info"><b>' + Icone('casque') + ' Écouter la fiche</b><span class="ecoute-temps">' + mmss(dureeFiche(f.id)) + '</span>' +
         '<span class="ecoute-barre"><i></i></span></div>' +
       '<div class="ecoute-outils"><button type="button" data-saut="-15" aria-label="Reculer de 15 secondes">↺ 15</button>' +
         '<button type="button" data-saut="15" aria-label="Avancer de 15 secondes">15 ↻</button>' +
@@ -188,10 +188,10 @@ var Bonus = (function () {
         return c.keys().then(function (cles) { return Promise.all(cles.filter(function (r) { return gardees.indexOf(r.url) < 0; }).map(function (r) { return c.delete(r); })); });
       });
     }).then(function () {
-      if (erreurs) { btn.disabled = false; btn.textContent = '⚠ ' + erreurs + ' fichier(s) non téléchargé(s) : réessayer'; return; }
-      Jeu.toast('🎧 Fiches audio disponibles sans réseau', 'grand');
+      if (erreurs) { btn.disabled = false; btn.textContent = erreurs + ' fichier(s) non téléchargé(s) : réessayer'; return; }
+      Jeu.toast('Fiches audio disponibles sans réseau', 'grand');
       etatHorsLigne(btn);
-    }).catch(function () { btn.disabled = false; btn.textContent = '⚠ Téléchargement impossible : réessayer'; });
+    }).catch(function () { btn.disabled = false; btn.textContent = 'Téléchargement impossible : réessayer'; });
   }
 
   function pageEcoute(app) {
@@ -202,14 +202,14 @@ var Bonus = (function () {
       if (!fs.length) return '';
       fs.forEach(function (f) { total += dureeFiche(f.id); });
       return '<h2 class="titre-section titre-matiere" style="--c:' + m.couleur + '">' + esc(m.nom) +
-        ' <button type="button" class="tout-ecouter" data-m="' + m.id + '">▶ Tout écouter</button></h2>' +
+        ' <button type="button" class="tout-ecouter" data-m="' + m.id + '">' + Icone('lecture') + ' Tout écouter</button></h2>' +
         fs.map(function (f) {
-          return '<button type="button" class="piste" data-id="' + f.id + '" style="--c:' + m.couleur + '"><span class="piste-play">▶</span>' +
+          return '<button type="button" class="piste" data-id="' + f.id + '" style="--c:' + m.couleur + '"><span class="piste-play">' + Icone('lecture') + '</span>' +
             '<span class="piste-titre">' + esc(f.titre) + '</span><span class="piste-duree">' + mmss(dureeFiche(f.id)) + '</span></button>';
         }).join('');
     }).join('');
     app.innerHTML = fil('Écouter les fiches') +
-      '<section class="express-tete"><div class="defi-eclair">🎧</div><h1>Écouter les fiches</h1>' +
+      '<section class="express-tete"><div class="defi-eclair">' + Icone('casque') + '</div><h1>Écouter les fiches</h1>' +
       '<p>Chaque fiche lue par une voix naturelle, avec l’essentiel en premier. ' + Math.round(total / 60) + ' minutes au total : idéal dans le bus ou en marchant. La lecture continue si tu changes de page.</p>' + choixVoix() +
       ('caches' in window ? '<p class="calc-boutons"><button type="button" class="installer-btn secondaire" data-audio-horsligne></button></p>' : '') + '</section>' +
       '<div class="pistes">' + (html || '<p class="vide">Pas encore de fiche audio.</p>') + '</div>';
@@ -233,7 +233,7 @@ var Bonus = (function () {
   // ---------- Méthodologie d'examen ----------
 
   var METHODO = [
-    { id: 'ecrit', titre: 'Les écrits (E5, E6)', ico: '✍️', html: `
+    { id: 'ecrit', titre: 'Les écrits (E5, E6)', ico: Icone('plume'), html: `
       <div class="retenir">Le jury note ta capacité à <b>utiliser les annexes</b> et à <b>justifier avec le cours</b>. Une bonne réponse = une notion + l’application au cas + une conclusion.</div>
       <h2>Méthode pour chaque question</h2>
       <ol class="etapes">
@@ -245,7 +245,7 @@ var Bonus = (function () {
       </ol>
       <h2>Présentation de la copie</h2>
       <ul><li>Numérote les questions comme le sujet, saute une ligne entre chaque.</li><li>Des phrases courtes, un paragraphe par idée.</li><li>Les tableaux sont bienvenus pour comparer (fournisseurs, modalités de formation…).</li><li>Garde 10 minutes à la fin pour relire chiffres et unités.</li></ul>` },
-    { id: 'calculs', titre: 'Les calculs', ico: '🧮', html: `
+    { id: 'calculs', titre: 'Les calculs', ico: Icone('calculatrice'), html: `
       <div class="retenir">Un calcul rapporte des points même si le résultat final est faux, <b>à condition de montrer la méthode</b>.</div>
       <ol class="etapes">
         <li><b>Écrire la formule</b><p>Ex. « Taux de marque = marge ÷ prix de vente HT × 100 ». Le correcteur voit que tu connais la méthode.</p></li>
@@ -254,7 +254,7 @@ var Bonus = (function () {
         <li><b>Interpréter</b><p>Une phrase : « La demande est très élastique : une hausse de prix ferait perdre beaucoup de ventes. »</p></li>
       </ol>
       <p class="exemple">Entraîne-toi sur la page <a href="#/calculs">Calculs à l’infini</a> : chiffres différents à chaque fois, correction détaillée.</p>` },
-    { id: 'oral', titre: 'Les oraux (E41, E42)', ico: '🎙️', html: `
+    { id: 'oral', titre: 'Les oraux (E41, E42)', ico: Icone('micro'), html: `
       <div class="retenir">À l’oral, on évalue autant <b>la posture</b> que <b>le contenu</b> : sourire, regard, vocabulaire professionnel, écoute.</div>
       <h2>E41 : la négociation vente</h2>
       <ol class="etapes">
@@ -267,18 +267,18 @@ var Bonus = (function () {
       <h2>E42 : présenter un projet d’animation</h2>
       <ul><li><b>Diagnostic</b> chiffré (ventes, trafic, concurrence) avant toute proposition.</li><li><b>Objectifs</b> SMART : chiffrés et datés.</li><li><b>Actions</b> concrètes : offre, mise en avant, communication, planning.</li><li><b>Budget et rentabilité</b>, puis <b>indicateurs de suivi</b>.</li></ul>
       <p class="exemple">Entraîne-toi avec le <a href="#/oral">simulateur d’oral</a> : Claude joue le client ou le manager, puis te note sur 20.</p>` },
-    { id: 'pieges', titre: 'Les pièges classiques', ico: '⚠️', html: `
+    { id: 'pieges', titre: 'Les pièges classiques', ico: Icone('alerte'), html: `
       <div class="cartes">
         <div><b>Taux de marge ou de marque ?</b><p>Marge : on divise par le coût d’achat. Marque : par le prix de vente. Vérifie toujours le dénominateur.</p></div>
         <div><b>HT ou TTC ?</b><p>Les marges se calculent en HT. Le coefficient multiplicateur passe du coût d’achat HT au prix de vente TTC.</p></div>
-        <div><b>Cotisations salariales</b><p>Elles sont retenues sur le salaire du salarié, pas payées en plus par l’entreprise (erreur du cours !).</p></div>
+        <div><b>Cotisations salariales</b><p>Elles sont retenues sur le salaire du salarié, pas payées en plus par l’entreprise (erreur fréquente).</p></div>
         <div><b>Heures sup</b><p>+25 % de la 36e à la 43e heure, +50 % à partir de la 44e. Ne majore pas les 35 premières.</p></div>
         <div><b>Recopier l’annexe</b><p>Le jury veut une analyse : cite un chiffre puis explique ce qu’il signifie.</p></div>
         <div><b>Réponse sans notion</b><p>Toujours nommer la notion du cours : c’est souvent là que sont les points.</p></div>
         <div><b>Challenge ou concours ?</b><p>Challenge : tous ceux qui atteignent l’objectif gagnent. Concours : seuls les meilleurs.</p></div>
         <div><b>Élasticité négative ?</b><p>On la donne en valeur absolue : E = 3, pas −3.</p></div>
       </div>` },
-    { id: 'jourj', titre: 'Le jour J', ico: '🎯', html: `
+    { id: 'jourj', titre: 'Le jour J', ico: Icone('cible'), html: `
       <h2>La veille</h2>
       <ul><li>Relis <a href="#/express">l’essentiel en 1 minute</a> et tes <a href="#/carnet">notes</a>, pas de nouvelle notion.</li><li>Prépare convocation, pièce d’identité, calculatrice (autorisée ?), stylos.</li><li>Dors : la mémoire se consolide pendant le sommeil.</li></ul>
       <h2>Pendant l’épreuve</h2>
@@ -290,7 +290,7 @@ var Bonus = (function () {
     document.title = 'Méthodologie d’examen · Révisions BTS MCO';
     var t = METHODO.filter(function (x) { return x.id === onglet; })[0] || METHODO[0];
     app.innerHTML = fil('Méthodologie') +
-      '<section class="express-tete"><div class="defi-eclair">🧭</div><h1>Méthodologie d’examen</h1><p>Comment répondre pour aller chercher tous les points.</p></section>' +
+      '<section class="express-tete"><div class="defi-eclair">' + Icone('boussole') + '</div><h1>Méthodologie d’examen</h1><p>Comment répondre pour aller chercher tous les points.</p></section>' +
       '<div class="calc-types methodo-onglets">' + METHODO.map(function (x) {
         return '<a href="#/methodo/' + x.id + '"' + (x === t ? ' class="actif"' : '') + '>' + x.ico + ' ' + esc(x.titre) + '</a>';
       }).join('') + '</div>' +
@@ -304,10 +304,10 @@ var Bonus = (function () {
     document.title = 'Études de cas · Révisions BTS MCO';
     var cas = R.cas || [];
     app.innerHTML = fil('Études de cas') +
-      '<section class="express-tete"><div class="defi-eclair">🗂️</div><h1>Études de cas</h1><p>Des cas comme à l’examen : contexte, annexes, questions. Réponds, puis compare avec le corrigé ou fais-toi corriger par Claude.</p></section>' +
+      '<section class="express-tete"><div class="defi-eclair">' + Icone('dossier') + '</div><h1>Études de cas</h1><p>Des cas comme à l’examen : contexte, annexes, questions. Réponds, puis compare avec le corrigé ou fais-toi corriger par Claude.</p></section>' +
       (cas.length ? '<div class="activites">' + cas.map(function (c) {
         var m = Activites.matiere(c.matiere);
-        return '<a class="activite" href="#/cas/' + c.id + '" style="--c:' + m.couleur + '"><span class="activite-ico">🗂️</span><span><b>' + esc(c.titre) + '</b>' +
+        return '<a class="activite" href="#/cas/' + c.id + '" style="--c:' + m.couleur + '"><span class="activite-ico">' + Icone('dossier') + '</span><span><b>' + esc(c.titre) + '</b>' +
           '<span>' + esc(m.nom) + ' · ' + c.questions.length + ' questions' + (c.exemple ? ' · exemple' : c.source ? ' · ta copie' : '') + '</span></span></a>';
       }).join('') + '</div>' : '<p class="vide">Pas encore d’étude de cas.</p>') +
       '<p class="astuce">Envoie tes études de cas vues en cours : elles seront ajoutées ici avec leur corrigé.</p>';
@@ -320,9 +320,9 @@ var Bonus = (function () {
     document.title = c.titre + ' · Études de cas';
     app.innerHTML = fil(c.titre, ['Études de cas', '#/cas']) +
       '<article class="fiche" style="--c:' + m.couleur + '"><span class="defi-tag">' + esc(m.nom) + (c.exemple ? ' · cas d’exemple' : c.source ? ' · d’après ta copie' : '') + '</span><h1>' + esc(c.titre) + '</h1>' +
-        '<div class="contenu">' + c.contexte + (c.annexes ? '<details class="annexes" open><summary>📎 Annexes</summary>' + c.annexes + '</details>' : '') + '</div></article>' +
-      '<p class="calc-boutons cas-outils"><button type="button" class="imprimer-btn" data-imp="sujet">🖨️ Imprimer le sujet</button><button type="button" class="imprimer-btn" data-imp="corrige">🖨️ Sujet + corrigé</button></p>' +
-      '<a class="lien-profil cas-examen-lien" href="#/cas/' + c.id + '/examen"><span class="ico">⏱</span><span><b>Mode sujet d’examen</b><span>' + dureeExamen(c) + ' minutes chrono, sans corrigé, puis note de toute ta copie par Claude</span></span></a>' +
+        '<div class="contenu">' + c.contexte + (c.annexes ? '<details class="annexes" open><summary>' + Icone('trombone') + ' Annexes</summary>' + c.annexes + '</details>' : '') + '</div></article>' +
+      '<p class="calc-boutons cas-outils"><button type="button" class="imprimer-btn" data-imp="sujet">' + Icone('imprimante') + ' Imprimer le sujet</button><button type="button" class="imprimer-btn" data-imp="corrige">' + Icone('imprimante') + ' Sujet + corrigé</button></p>' +
+      '<a class="lien-profil cas-examen-lien" href="#/cas/' + c.id + '/examen"><span class="ico">' + Icone('chrono') + '</span><span><b>Mode sujet d’examen</b><span>' + dureeExamen(c) + ' minutes chrono, sans corrigé, puis note de toute ta copie par Claude</span></span></a>' +
       c.questions.map(function (q, i) {
         var cle = 'cas:' + c.id + ':' + i;
         return '<section class="cas-q" data-i="' + i + '"><div class="cas-q-tete"><span class="cas-num">' + (i + 1) + '</span><b>' + esc(q.q) + '</b>' + (q.points ? '<span class="cas-pts">' + q.points + ' pts</span>' : '') + '</div>' +
@@ -381,7 +381,7 @@ var Bonus = (function () {
     function cle(i) { return 'casx:' + c.id + ':' + i; }
     document.title = 'Sujet d’examen · ' + c.titre;
     app.innerHTML = fil('Mode examen', ['Études de cas', '#/cas']) +
-      '<section class="defi defi-accueil"><div class="defi-eclair">⏱</div><h1>Sujet d’examen</h1>' +
+      '<section class="defi defi-accueil"><div class="defi-eclair">' + Icone('chrono') + '</div><h1>Sujet d’examen</h1>' +
         '<p><b>' + esc(c.titre) + '</b> · ' + c.questions.length + ' questions · ' + total + ' points</p>' +
         '<ul><li><b>' + dureeExamen(c) + ' minutes</b> pour tout le sujet</li><li>Pas de corrigé pendant l’épreuve, comme le jour J</li><li>À la fin : les corrigés et la note de toute ta copie par Claude</li></ul>' +
         (c.questions.some(function (q, i) { return (E.notes || {})[cle(i)]; })
@@ -396,9 +396,9 @@ var Bonus = (function () {
     app.querySelector('[data-go]').addEventListener('click', function () {
       var debut = Date.now();
       app.innerHTML = fil('Mode examen', ['Études de cas', '#/cas']) +
-        '<div class="cas-chrono"><span>⏱ <b></b></span><button type="button" class="installer-btn" data-rendre>Rendre ma copie</button></div>' +
+        '<div class="cas-chrono"><span>' + Icone('chrono') + ' <b></b></span><button type="button" class="installer-btn" data-rendre>Rendre ma copie</button></div>' +
         '<article class="fiche" style="--c:' + m.couleur + '"><span class="defi-tag">' + esc(m.nom) + ' · sujet d’examen</span><h1>' + esc(c.titre) + '</h1>' +
-          '<div class="contenu">' + c.contexte + (c.annexes ? '<details class="annexes" open><summary>📎 Annexes</summary>' + c.annexes + '</details>' : '') + '</div></article>' +
+          '<div class="contenu">' + c.contexte + (c.annexes ? '<details class="annexes" open><summary>' + Icone('trombone') + ' Annexes</summary>' + c.annexes + '</details>' : '') + '</div></article>' +
         c.questions.map(function (q, i) {
           return '<section class="cas-q" data-i="' + i + '"><div class="cas-q-tete"><span class="cas-num">' + (i + 1) + '</span><b>' + esc(q.q) + '</b>' + (q.points ? '<span class="cas-pts">' + q.points + ' pts</span>' : '') + '</div>' +
             '<textarea rows="5" placeholder="Ta réponse…">' + esc((E.notes || {})[cle(i)] || '') + '</textarea></section>';
@@ -432,7 +432,7 @@ var Bonus = (function () {
         Jeu.compter('cas');
         Jeu.gagner(10 + 3 * reps.filter(Boolean).length, 'sujet d’examen');
         app.innerHTML = fil('Mode examen', ['Études de cas', '#/cas']) +
-          '<section class="defi defi-fin"><div class="defi-eclair">📝</div><h1>Copie rendue</h1>' +
+          '<section class="defi defi-fin"><div class="defi-eclair">' + Icone('copie') + '</div><h1>Copie rendue</h1>' +
             '<p>' + (tempsEcoule ? 'Temps écoulé. ' : min < 1 ? 'En moins d’une minute. ' : 'En ' + min + ' minute' + (min > 1 ? 's' : '') + '. ') + reps.filter(Boolean).length + '/' + reps.length + ' questions traitées.</p>' +
             '<p class="calc-boutons"><button type="button" class="defi-go" data-noter>Faire noter ma copie par Claude ↗</button></p><p class="transfert-msg" aria-live="polite"></p></section>' +
           '<h2 class="titre-section">Ta copie et le corrigé</h2>' +
@@ -470,7 +470,7 @@ var Bonus = (function () {
     var texte = debut + ctx + fin;
     function afficher(ok) {
       if (!msg) return;
-      msg.innerHTML = ok ? '📋 Ta copie est trop longue pour un lien : elle est copiée. <a href="https://claude.ai/new" target="_blank" rel="noopener">Ouvre Claude ↗</a> puis colle-la (Ctrl+V ou appui long › Coller).'
+      msg.innerHTML = ok ? Icone('pressePapier') + ' Ta copie est trop longue pour un lien : elle est copiée. <a href="https://claude.ai/new" target="_blank" rel="noopener">Ouvre Claude ↗</a> puis colle-la (Ctrl+V ou appui long › Coller).'
         : 'Copie automatique impossible : sélectionne tes réponses, copie-les, puis <a href="https://claude.ai/new" target="_blank" rel="noopener">ouvre Claude ↗</a>.';
     }
     if (navigator.clipboard) navigator.clipboard.writeText(texte).then(function () { afficher(true); }, function () { afficher(false); });
@@ -480,15 +480,15 @@ var Bonus = (function () {
   // ---------- Défi de la semaine ----------
 
   var DEFIS_SEMAINE = [
-    { id: 'calculs', ico: '🧮', titre: 'Semaine des calculs', txt: 'Réussir 10 exercices de calcul', cle: 'calculEx', obj: 10, lien: '#/calculs' },
-    { id: 'marathon', ico: '🏃', titre: 'Semaine marathon', txt: 'Réviser 5 jours différents', jours: true, obj: 5, lien: '#/planning' },
-    { id: 'sansfaute', ico: '💯', titre: 'Semaine sans faute', txt: 'Réussir 3 QCM sans faute', cle: 'parfait', obj: 3, lien: '#/' },
-    { id: 'memoire', ico: '🃏', titre: 'Semaine mémoire', txt: 'Faire 4 paquets de cartes mémo', cle: 'cartes', obj: 4, lien: Activites.lienEntrainement },
-    { id: 'boss', ico: '👑', titre: 'Semaine des boss', txt: 'Battre 2 boss', cle: 'bossGagne', obj: 2, lien: Activites.lienEntrainement },
-    { id: 'eclair', ico: '⚡', titre: 'Semaine éclair', txt: 'Jouer 5 Défis éclair', cle: 'defi', obj: 5, lien: '#/defi' },
-    { id: 'cent', ico: '💪', titre: 'Semaine des 100', txt: 'Donner 100 bonnes réponses', cle: 'bonnes', obj: 100, lien: '#/defi' },
-    { id: 'oral', ico: '🎙️', titre: 'Semaine de l’oral', txt: 'Faire 2 oraux blancs avec Claude', cle: 'oral', obj: 2, lien: '#/oral' },
-    { id: 'ecoute', ico: '🎧', titre: 'Semaine audio', txt: 'Écouter 4 fiches en entier', cle: 'ecoute', obj: 4, lien: '#/ecoute' }
+    { id: 'calculs', ico: Icone('calculatrice'), titre: 'Semaine des calculs', txt: 'Réussir 10 exercices de calcul', cle: 'calculEx', obj: 10, lien: '#/calculs' },
+    { id: 'marathon', ico: Icone('rythme'), titre: 'Semaine marathon', txt: 'Réviser 5 jours différents', jours: true, obj: 5, lien: '#/planning' },
+    { id: 'sansfaute', ico: Icone('sansFaute'), titre: 'Semaine sans faute', txt: 'Réussir 3 QCM sans faute', cle: 'parfait', obj: 3, lien: '#/' },
+    { id: 'memoire', ico: Icone('cartes'), titre: 'Semaine mémoire', txt: 'Faire 4 paquets de cartes mémo', cle: 'cartes', obj: 4, lien: Activites.lienEntrainement },
+    { id: 'boss', ico: Icone('couronne'), titre: 'Semaine des boss', txt: 'Battre 2 boss', cle: 'bossGagne', obj: 2, lien: Activites.lienEntrainement },
+    { id: 'eclair', ico: Icone('eclair'), titre: 'Semaine éclair', txt: 'Jouer 5 Défis éclair', cle: 'defi', obj: 5, lien: '#/defi' },
+    { id: 'cent', ico: Icone('doubleCoche'), titre: 'Semaine des 100', txt: 'Donner 100 bonnes réponses', cle: 'bonnes', obj: 100, lien: '#/defi' },
+    { id: 'oral', ico: Icone('micro'), titre: 'Semaine de l’oral', txt: 'Faire 2 oraux blancs avec Claude', cle: 'oral', obj: 2, lien: '#/oral' },
+    { id: 'ecoute', ico: Icone('casque'), titre: 'Semaine audio', txt: 'Écouter 4 fiches en entier', cle: 'ecoute', obj: 4, lien: '#/ecoute' }
   ];
   function defiSemaine() {
     var sid = Jeu.semaineId(), num = parseInt(sid.split('-S')[1], 10);
@@ -506,7 +506,7 @@ var Bonus = (function () {
     E.stats.semaines = (E.stats.semaines || 0) + 1;
     Jeu.sauver();
     Jeu.debloquer('semaine');
-    setTimeout(function () { Jeu.toast('🏁 Défi de la semaine réussi : ' + x.d.titre + ' !', 'grand'); Jeu.confettis(); Jeu.gagner(100, 'défi de la semaine', true); }, 600);
+    setTimeout(function () { Jeu.toast('Défi de la semaine réussi : ' + x.d.titre, 'grand'); Jeu.confettis(); Jeu.gagner(100, 'défi de la semaine', true); }, 600);
   });
 
   function decorerAccueil(app) {
@@ -531,9 +531,9 @@ var Bonus = (function () {
     if (c && p[3] === 'examen') pageCasExamen(app, c); else if (id) pageCas(app, id); else pageCasListe(app);
   });
   Jeu.ajouterBadges([
-    ['semaine', '🏁', 'Champion de la semaine', 'Réussir un défi de la semaine'],
-    ['semaine-4', '🗓️', 'Régularité de pro', 'Réussir 4 défis de la semaine'],
-    ['auditeur', '🎧', 'Bonne oreille', 'Écouter 5 fiches en entier']
+    ['semaine', Icone('drapeau'), 'Champion de la semaine', 'Réussir un défi de la semaine'],
+    ['semaine-4', Icone('calendrierOk'), 'Régularité de pro', 'Réussir 4 défis de la semaine'],
+    ['auditeur', Icone('casque'), 'Bonne oreille', 'Écouter 5 fiches en entier']
   ], function (E) { return { 'semaine-4': (E.stats.semaines || 0) >= 4, 'auditeur': (E.stats.ecoutes || 0) >= 5 }; });
   Jeu.ajouterMissions([
     { id: 'ecoute', txt: 'Écouter une fiche en entier', cle: 'ecoute', obj: 1, lien: '#/ecoute', si: function () { return !!R.audio; } },

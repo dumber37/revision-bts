@@ -108,7 +108,7 @@ var Jeu = (function () {
     if (!discret) toast('+' + xp + ' XP' + (raison ? ' · ' + raison : ''));
     var apres = niveau(E.xp);
     if (apres.n > avant) {
-      toast('🎉 Niveau ' + apres.n + ' : ' + apres.nom + ' !', 'grand');
+      toast('Niveau ' + apres.n + ' : ' + apres.nom, 'grand');
       confettis();
       son('niveau');
     }
@@ -120,7 +120,7 @@ var Jeu = (function () {
     if (!c) return;
     var nv = niveau(E.xp), f = serieActuelle();
     c.innerHTML = '<span class="chip-nv">Niv. ' + nv.n + '</span><span class="chip-barre"><i style="width:' + nv.pct + '%"></i></span>' +
-      (f ? '<span class="chip-flamme" title="Jours de révision d’affilée">🔥 ' + f + '</span>' : '');
+      (f ? '<span class="chip-flamme" title="Jours de révision d’affilée">' + Icone('flamme') + ' ' + f + '</span>' : '');
     c.title = nv.nom + ' · ' + E.xp + ' XP';
   }
 
@@ -161,24 +161,24 @@ var Jeu = (function () {
   // ---------- Badges ----------
 
   var BADGES = [
-    ['premier-qcm', '🎯', 'Premier pas', 'Terminer un premier QCM'],
-    ['sans-faute', '💯', 'Sans-faute', 'Faire un QCM parfait'],
-    ['serie-5', '🔥', 'En feu', '5 bonnes réponses d’affilée'],
-    ['serie-10', '☄️', 'Inarrêtable', '10 bonnes réponses d’affilée'],
-    ['lecteur-5', '📖', 'Rat de bibliothèque', 'Lire 5 fiches jusqu’au bout'],
-    ['toutes-fiches', '🏛️', 'Tout vu', 'Lire toutes les fiches du site'],
-    ['calculs', '🧮', 'As du calcul', 'Ouvrir les 9 corrections de la page Formules'],
-    ['eclair', '⚡', 'Éclair', 'Terminer un Défi éclair'],
-    ['eclair-8', '🏆', 'Champion éclair', 'Au moins 8/10 au Défi éclair'],
-    ['flamme-3', '🕯️', 'Régulier', 'Réviser 3 jours d’affilée'],
-    ['flamme-7', '🌋', 'Assidu', 'Réviser 7 jours d’affilée'],
-    ['cent', '💪', 'Centurion', '100 bonnes réponses au total'],
-    ['manager', '👔', 'Promu manager', 'Atteindre le niveau Manager'],
-    ['revision', '🔁', 'Mémoire d’éléphant', 'Terminer une révision des erreurs'],
-    ['journee', '✅', 'Journée parfaite', 'Réussir les 3 missions d’une journée'],
-    ['missions-10', '🎖️', 'Employé du mois', 'Réussir 10 missions au total'],
-    ['ancre', '⚓', 'Bien ancré', '20 questions rangées dans la boîte « sue »'],
-    ['defi-ami', '🥇', 'Défi relevé', 'Battre le score d’un ami au Défi éclair']
+    ['premier-qcm', Icone('cible'), 'Premier pas', 'Terminer un premier QCM'],
+    ['sans-faute', Icone('sansFaute'), 'Sans-faute', 'Faire un QCM parfait'],
+    ['serie-5', Icone('flamme'), 'En feu', '5 bonnes réponses d’affilée'],
+    ['serie-10', Icone('tendance'), 'Inarrêtable', '10 bonnes réponses d’affilée'],
+    ['lecteur-5', Icone('livre'), 'Rat de bibliothèque', 'Lire 5 fiches jusqu’au bout'],
+    ['toutes-fiches', Icone('monument'), 'Tout vu', 'Lire toutes les fiches du site'],
+    ['calculs', Icone('calculatrice'), 'As du calcul', 'Ouvrir les 9 corrections de la page Formules'],
+    ['eclair', Icone('eclair'), 'Éclair', 'Terminer un Défi éclair'],
+    ['eclair-8', Icone('trophee'), 'Champion éclair', 'Au moins 8/10 au Défi éclair'],
+    ['flamme-3', Icone('calendrierOk'), 'Régulier', 'Réviser 3 jours d’affilée'],
+    ['flamme-7', Icone('montagne'), 'Assidu', 'Réviser 7 jours d’affilée'],
+    ['cent', Icone('doubleCoche'), 'Centurion', '100 bonnes réponses au total'],
+    ['manager', Icone('mallette'), 'Promu manager', 'Atteindre le niveau Manager'],
+    ['revision', Icone('repeter'), 'Mémoire d’éléphant', 'Terminer une révision des erreurs'],
+    ['journee', Icone('rondOk'), 'Journée parfaite', 'Réussir les 3 missions d’une journée'],
+    ['missions-10', Icone('etoile'), 'Employé du mois', 'Réussir 10 missions au total'],
+    ['ancre', Icone('ancre'), 'Bien ancré', '20 questions rangées dans la boîte « sue »'],
+    ['defi-ami', Icone('rosette'), 'Défi relevé', 'Battre le score d’un ami au Défi éclair']
   ];
   var conditionsExtra = []; // ajoutées par les autres modules (activités)
   function conditions() {
@@ -209,7 +209,7 @@ var Jeu = (function () {
     if (E.badges[id]) return;
     E.badges[id] = jour();
     var b = BADGES.filter(function (x) { return x[0] === id; })[0];
-    if (b) setTimeout(function () { toast(b[1] + ' Badge débloqué : ' + b[2], 'grand'); son('badge'); }, 400);
+    if (b) setTimeout(function () { toast('Badge débloqué : ' + b[2], 'grand'); son('badge'); }, 400);
   }
   function verifierBadges() {
     var c = conditions();
@@ -303,7 +303,7 @@ var Jeu = (function () {
       if (!E.jour.faites[id] && (E.jour.c[d.cle] || 0) >= d.obj) {
         E.jour.faites[id] = true; nouvelle++;
         E.stats.missions++;
-        setTimeout(function () { toast('✅ Mission accomplie : ' + d.txt, 'grand'); }, 300);
+        setTimeout(function () { toast('Mission accomplie : ' + d.txt, 'grand'); }, 300);
       }
       if (!E.jour.faites[id]) toutes = false;
     });
@@ -328,7 +328,7 @@ var Jeu = (function () {
       combo++;
       E.stats.bonnes++;
       E.stats.comboMax = Math.max(E.stats.comboMax, combo);
-      gagner(10 + (combo >= 3 ? 5 : 0), combo >= 3 ? 'série de ' + combo + ' 🔥' : '', discret);
+      gagner(10 + (combo >= 3 ? 5 : 0), combo >= 3 ? 'série de ' + combo : '', discret);
       compter('bonnes');
       if (x) compter('m:' + x.f.matiere);
       son('bon');
@@ -345,7 +345,7 @@ var Jeu = (function () {
     var b = E.best[cle];
     if (!b || bonnes / total > b[0] / b[1]) E.best[cle] = [bonnes, total];
     compter('qcm');
-    if (bonnes === total) { compter('parfait'); debloquer('sans-faute'); confettis(); gagner(20, 'sans-faute !'); }
+    if (bonnes === total) { compter('parfait'); debloquer('sans-faute'); confettis(); gagner(20, 'sans-faute'); }
     else { verifierBadges(); sauver(); }
   }
 
@@ -388,16 +388,17 @@ var Jeu = (function () {
 
   // ---------- Bandeau d'accueil ----------
 
+  // Titre du bandeau : la date du jour (« Mercredi 11 novembre »), plutôt qu'une salutation.
   function salut() {
-    var h = new Date().getHours();
-    return h < 5 ? 'Encore debout ?' : h < 12 ? 'Bonjour !' : h < 18 ? 'Bon après-midi !' : 'Bonsoir !';
+    var t = new Date().toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' });
+    return t.charAt(0).toUpperCase() + t.slice(1);
   }
   function hero() {
     var nv = niveau(E.xp), f = serieActuelle(), ms = missionsDuJour(), ar = aRevoir().length;
     var dejaJoue = Object.keys(E.srs).length > 0;
     return '<section class="hero">' +
       '<div class="hero-haut">' +
-        '<div class="hero-salut"><b>' + salut() + '</b><span>' + (f ? '🔥 ' + f + ' jour' + (f > 1 ? 's' : '') + ' de révision d’affilée' : 'Une petite session aujourd’hui ?') + '</span></div>' +
+        '<div class="hero-salut"><b>' + salut() + '</b><span>' + (f ? Icone('flamme') + ' ' + f + ' jour' + (f > 1 ? 's' : '') + ' de révision d’affilée' : 'Une petite session aujourd’hui ?') + '</span></div>' +
         '<a class="hero-grade" href="#/profil"><span class="hero-n">' + nv.n + '</span><span><b>' + esc(nv.nom) + '</b>' +
           '<span class="prog-barre"><i style="width:' + nv.pct + '%"></i></span><small>' + E.xp + ' XP</small></span></a>' +
       '</div>' +
@@ -407,7 +408,7 @@ var Jeu = (function () {
           '<span class="mission-txt">' + esc(m.txt) + '</span><span class="mission-n">' + m.n + '/' + m.obj + '</span>' +
           '<span class="mission-barre"><i style="width:' + Math.round(m.n / m.obj * 100) + '%"></i></span></a>';
       }).join('') + '<p class="hero-bonus">+30 XP par mission, +50 si les trois sont faites</p></div>' +
-      '<a class="hero-revoir' + (ar ? ' actif' : '') + '" href="#/revoir"><span class="ico">🔁</span><span><b>' +
+      '<a class="hero-revoir' + (ar ? ' actif' : '') + '" href="#/revoir"><span class="ico">' + Icone('repeter') + '</span><span><b>' +
         (ar ? ar + ' question' + (ar > 1 ? 's' : '') + ' à revoir aujourd’hui' : dejaJoue ? 'Rien à revoir aujourd’hui' : 'Révision des erreurs') +
         '</b><span>' + (ar ? 'Les questions que tu as ratées, au bon moment' : dejaJoue ? 'Tes questions reviendront quand il faudra' : 'Réponds à des QCM : tes erreurs reviendront ici') + '</span></span></a>' +
     '</section>';
@@ -420,7 +421,7 @@ var Jeu = (function () {
     if (typeof Activites === 'undefined') return '';
     var l = R.matieres.map(function (m) { var s = Activites.etatCartes(m); return { m: m, n: s.dues.length }; }).filter(function (x) { return x.n; });
     return l.length ? '<h2 class="titre-section">Cartes mémo à revoir</h2><div class="activites">' + l.map(function (x) {
-      return '<a class="activite" href="#/' + x.m.id + '/cartes" style="--c:' + x.m.couleur + '"><span class="activite-ico">🃏</span><span><b>' + esc(x.m.nom) + '</b><span>' + x.n + ' carte' + (x.n > 1 ? 's' : '') + ' à revoir aujourd’hui</span></span></a>';
+      return '<a class="activite" href="#/' + x.m.id + '/cartes" style="--c:' + x.m.couleur + '"><span class="activite-ico">' + Icone('cartes') + '</span><span><b>' + esc(x.m.nom) + '</b><span>' + x.n + ' carte' + (x.n > 1 ? 's' : '') + ' à revoir aujourd’hui</span></span></a>';
     }).join('') + '</div>' : '';
   }
 
@@ -434,12 +435,12 @@ var Jeu = (function () {
     app.innerHTML =
       '<nav class="fil"><a href="#/">Matières</a> › Révision des erreurs</nav>' +
       '<section class="defi defi-accueil">' +
-        '<div class="defi-eclair">🔁</div><h1>Révision des erreurs</h1>' +
+        '<div class="defi-eclair">' + Icone('repeter') + '</div><h1>Révision des erreurs</h1>' +
         '<p>Chaque question ratée revient ici le jour même. Chaque bonne réponse l’éloigne : demain, puis dans 3, 7, 14 et 30 jours. C’est la répétition espacée : on revoit au moment où on allait oublier.</p>' +
         tableau +
         (dus.length
           ? '<button type="button" class="defi-go">Réviser ' + Math.min(dus.length, 15) + ' question' + (dus.length > 1 ? 's' : '') + '</button>'
-          : '<p class="vide">' + (Object.keys(E.srs).length ? 'Rien à revoir aujourd’hui. Reviens demain !' : 'Fais quelques QCM ou un Défi éclair : tes erreurs arriveront ici.') + '</p>') +
+          : '<p class="vide">' + (Object.keys(E.srs).length ? 'Rien à revoir aujourd’hui. Reviens demain.' : 'Fais quelques QCM ou un Défi éclair : tes erreurs arriveront ici.') + '</p>') +
       '</section>' + cartesARevoir();
     var go = app.querySelector('.defi-go');
     if (go) go.addEventListener('click', function () {
@@ -471,7 +472,7 @@ var Jeu = (function () {
           '<span class="prog-barre grande"><i style="width:' + nv.pct + '%"></i></span></div></div>' +
         '<div id="magasin"></div>' +
         '<div class="chiffres">' +
-          '<div><b>Flamme</b><strong><span class="emoji">🔥</span> ' + serieActuelle() + '</strong><span>jour' + (serieActuelle() > 1 ? 's' : '') + ' d’affilée · record ' + E.jours.max + '</span></div>' +
+          '<div><b>Flamme</b><strong><span class="emoji">' + Icone('flamme') + '</span> ' + serieActuelle() + '</strong><span>jour' + (serieActuelle() > 1 ? 's' : '') + ' d’affilée · record ' + E.jours.max + '</span></div>' +
           '<div><b>Bonnes réponses</b><strong>' + E.stats.bonnes + '</strong><span>' + taux + ' % de réussite</span></div>' +
           '<div><b>Fiches lues</b><strong>' + Object.keys(E.lues).length + '/' + R.fiches.length + '</strong><span>jusqu’au bout</span></div>' +
           '<div><b>Défi éclair</b><strong>' + E.stats.record + '</strong><span>points, record</span></div>' +
@@ -482,7 +483,7 @@ var Jeu = (function () {
       '<h2 class="titre-section">Badges (' + Object.keys(E.badges).length + '/' + BADGES.length + ')</h2>' +
       '<div class="badges">' + BADGES.map(function (b) {
         var ok = E.badges[b[0]];
-        return '<div class="badge' + (ok ? ' ok' : '') + '"><span class="badge-ico">' + (ok ? b[1] : '🔒') + '</span>' +
+        return '<div class="badge' + (ok ? ' ok' : '') + '"><span class="badge-ico">' + (ok ? b[1] : Icone('cadenas')) + '</span>' +
           '<b>' + esc(b[2]) + '</b><span>' + esc(b[3]) + '</span></div>';
       }).join('') + '</div>' +
       '<h2 class="titre-section">Les grades</h2>' +
@@ -534,13 +535,13 @@ var Jeu = (function () {
     app.innerHTML =
       '<nav class="fil"><a href="#/">Matières</a> › Défi éclair</nav>' +
       '<section class="defi defi-accueil">' +
-        '<div class="defi-eclair">⚡</div><h1>Défi éclair</h1>' +
+        '<div class="defi-eclair">' + Icone('eclair') + '</div><h1>Défi éclair</h1>' +
         (adversaire
           ? '<p class="defi-adversaire"><b>' + esc(adversaire.nom) + '</b> te défie : <b>' + adversaire.score + ' points</b> à battre, sur exactement les mêmes questions.</p>'
           : '<p>10 questions tirées dans toutes les matières, <b>' + DUREE + ' secondes</b> pour chacune.</p>') +
-        '<ul><li>Bonne réponse : <b>100 points</b> + un bonus de vitesse</li><li>3 bonnes d’affilée et plus : <b>bonus de série</b> 🔥</li><li>À la fin : la correction de tes erreurs, et un lien pour défier un ami</li></ul>' +
+        '<ul><li>Bonne réponse : <b>100 points</b> + un bonus de vitesse</li><li>3 bonnes d’affilée et plus : <b>bonus de série</b> ' + Icone('flamme') + '</li><li>À la fin : la correction de tes erreurs, et un lien pour défier un ami</li></ul>' +
         '<p class="defi-record">Ton record : <b>' + E.stats.record + '</b> points</p>' +
-        '<button type="button" class="defi-go">' + (adversaire ? 'Relever le défi' : 'C’est parti !') + '</button>' +
+        '<button type="button" class="defi-go">' + (adversaire ? 'Relever le défi' : 'C’est parti') + '</button>' +
       '</section>';
     app.querySelector('.defi-go').addEventListener('click', function () {
       lancerDefi(app, adversaire ? adversaire.graine : Math.floor(Math.random() * 1e9), adversaire);
@@ -560,7 +561,7 @@ var Jeu = (function () {
       app.innerHTML =
         '<section class="defi">' +
           '<div class="defi-haut"><span>Question ' + (i + 1) + '/' + qs.length + '</span><span class="defi-score">' + score + ' pts</span>' +
-            (serie >= 2 ? '<span class="defi-serie">🔥 ' + serie + '</span>' : '') + '</div>' +
+            (serie >= 2 ? '<span class="defi-serie">' + Icone('flamme') + ' ' + serie + '</span>' : '') + '</div>' +
           (adversaire ? '<p class="defi-cible">À battre : ' + adversaire.score + ' pts (' + esc(adversaire.nom) + ')</p>' : '') +
           '<div class="defi-temps"><i></i></div>' +
           '<span class="defi-tag" style="--c:' + m.couleur + '">' + esc(m.nom) + ' · ' + esc(it.f.titre) + '</span>' +
@@ -587,12 +588,12 @@ var Jeu = (function () {
           var pts = 100 + Math.round(reste * 5) + (serie >= 3 ? 50 * (serie - 2) : 0);
           score += pts;
           b.classList.add('bonne');
-          retour.innerHTML = '<b>+' + pts + ' pts</b>' + (serie >= 3 ? ' · série de ' + serie + ' 🔥' : '');
+          retour.innerHTML = '<b>+' + pts + ' pts</b>' + (serie >= 3 ? ' · série de ' + serie + ' ' + Icone('flamme') : '');
           reponse(true, true, it.id);
         } else {
           serie = 0;
           if (b) b.classList.add('fausse');
-          retour.innerHTML = b ? '<b>Raté.</b>' : '<b>Temps écoulé !</b>';
+          retour.innerHTML = b ? '<b>Raté.</b>' : '<b>Temps écoulé.</b>';
           erreurs.push(it);
           reponse(false, true, it.id);
         }
@@ -604,7 +605,7 @@ var Jeu = (function () {
       });
       minuteur = setInterval(function () {
         var t = (Date.now() - debut) / 1000;
-        barre.style.width = Math.max(0, 100 - t / DUREE * 100) + '%';
+        barre.style.transform = 'scaleX(' + Math.max(0, 1 - t / DUREE) + ')';
         barre.classList.toggle('urgent', t > DUREE - 5);
         if (t >= DUREE) repondre(null);
       }, 100);
@@ -620,20 +621,20 @@ var Jeu = (function () {
       if (gagne) { E.stats.defisGagnes = (E.stats.defisGagnes || 0) + 1; debloquer('defi-ami'); }
       verifierBadges(); sauver();
       compter('defi');
-      gagner(Math.round(score / 20) + (gagne ? 30 : 0), gagne ? 'défi relevé !' : 'Défi éclair');
+      gagner(Math.round(score / 20) + (gagne ? 30 : 0), gagne ? 'défi relevé' : 'Défi éclair');
       if (record || bonnes === qs.length || gagne) confettis();
       var prenom = (E.reglages && E.reglages.prenom) || '';
       app.innerHTML =
         '<nav class="fil"><a href="#/">Matières</a> › Défi éclair</nav>' +
         '<section class="defi defi-fin">' +
-          '<div class="defi-eclair">' + (gagne ? '🥇' : bonnes >= 8 ? '🏆' : bonnes >= 5 ? '⚡' : '💡') + '</div>' +
+          '<div class="defi-eclair">' + (gagne ? Icone('rosette') : bonnes >= 8 ? Icone('trophee') : bonnes >= 5 ? Icone('eclair') : Icone('ampoule')) + '</div>' +
           '<h1>' + score + ' points</h1>' +
-          (adversaire ? '<p class="defi-adversaire">' + (gagne ? 'Tu as battu <b>' + esc(adversaire.nom) + '</b> (' + adversaire.score + ' pts) !'
-            : score === adversaire.score ? 'Égalité parfaite avec <b>' + esc(adversaire.nom) + '</b> !' : '<b>' + esc(adversaire.nom) + '</b> garde l’avantage avec ' + adversaire.score + ' pts.') + '</p>' : '') +
-          '<p><b>' + bonnes + '/' + qs.length + '</b> bonnes réponses' + (record ? ' · <b class="nouveau-record">nouveau record !</b>' : ' · record : ' + E.stats.record) + '</p>' +
+          (adversaire ? '<p class="defi-adversaire">' + (gagne ? 'Tu as battu <b>' + esc(adversaire.nom) + '</b> (' + adversaire.score + ' pts).'
+            : score === adversaire.score ? 'Égalité parfaite avec <b>' + esc(adversaire.nom) + '</b>.' : '<b>' + esc(adversaire.nom) + '</b> garde l’avantage avec ' + adversaire.score + ' pts.') + '</p>' : '') +
+          '<p><b>' + bonnes + '/' + qs.length + '</b> bonnes réponses' + (record ? ' · <b class="nouveau-record">nouveau record</b>' : ' · record : ' + E.stats.record) + '</p>' +
           '<div class="defi-partage"><b>Défie un ami sur les mêmes questions</b>' +
             '<label><span>Ton prénom</span><input id="prenom" maxlength="16" value="' + esc(prenom) + '" placeholder="Ex. Gary"></label>' +
-            '<button type="button" class="defi-go partager">📤 Envoyer le défi</button><p class="defi-lien" hidden></p></div>' +
+            '<button type="button" class="defi-go partager">' + Icone('envoyer') + ' Envoyer le défi</button><p class="defi-lien" hidden></p></div>' +
           '<p><button type="button" class="defi-go secondaire rejouer">Rejouer (nouvelles questions)</button></p>' +
         '</section>' +
         listeErreurs(erreurs);
@@ -642,7 +643,7 @@ var Jeu = (function () {
         var nom = app.querySelector('#prenom').value.trim() || 'Un ami';
         E.reglages = E.reglages || {}; E.reglages.prenom = nom === 'Un ami' ? '' : nom; sauver();
         var url = location.origin + location.pathname + '#/defi/' + graine + '/' + score + '/' + encodeURIComponent(nom);
-        var txt = nom + ' te défie au Défi éclair BTS MCO : ' + score + ' points à battre ⚡';
+        var txt = nom + ' te défie au Défi éclair BTS MCO : ' + score + ' points à battre';
         var zone = app.querySelector('.defi-lien');
         function montrer(msg) { zone.hidden = false; zone.innerHTML = msg + '<br><input readonly value="' + esc(url) + '" onclick="this.select()">'; }
         if (navigator.share) {
@@ -659,10 +660,10 @@ var Jeu = (function () {
 
   function listeErreurs(erreurs) {
     return erreurs.length ? '<h2 class="titre-section">À revoir</h2><div class="defi-erreurs">' + erreurs.map(function (it) {
-      return '<div class="defi-erreur"><p><b>' + it.q[0] + '</b></p><p>✔ ' + it.q[1][0] + '</p>' +
+      return '<div class="defi-erreur"><p><b>' + it.q[0] + '</b></p><p>✓ ' + it.q[1][0] + '</p>' +
         (it.q[2] ? '<p class="qcm-expl">' + it.q[2] + '</p>' : '') +
         '<a href="#/' + it.f.matiere + '/' + it.f.id + '">Revoir la fiche « ' + esc(it.f.titre) + ' » ›</a></div>';
-    }).join('') + '</div><p class="note-revoir">🔁 Ces questions sont ajoutées à ta révision des erreurs.</p>' : '<p class="vide">Aucune erreur, chapeau !</p>';
+    }).join('') + '</div><p class="note-revoir">' + Icone('repeter') + ' Ces questions sont ajoutées à ta révision des erreurs.</p>' : '<p class="vide">Aucune erreur, chapeau.</p>';
   }
 
   return {

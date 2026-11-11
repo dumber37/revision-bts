@@ -35,11 +35,11 @@ var Carnet = (function () {
   function planning(nb) {
     var auj = Jeu.jour(), d = dates(), pf = E().parFiche || {}, lues = E().lues || {};
     var actives = R.matieres.filter(function (m) { return fichesDe(m.id).length; });
-    var activites = [['📖', 'Relire la fiche et faire son QCM', function (m, f) { return '#/' + m.id + '/' + f.id; }],
-      ['🃏', 'Cartes mémo', function (m) { return '#/' + m.id + '/cartes'; }],
-      ['✏️', 'Textes à trous', function (m) { return '#/' + m.id + '/trous'; }],
-      ['🔍', 'Chasse à l’erreur', function (m) { return '#/' + m.id + '/chasse'; }],
-      ['👑', 'Affronter le boss', function (m) { return '#/' + m.id + '/boss'; }]];
+    var activites = [[Icone('livre'), 'Relire la fiche et faire son QCM', function (m, f) { return '#/' + m.id + '/' + f.id; }],
+      [Icone('cartes'), 'Cartes mémo', function (m) { return '#/' + m.id + '/cartes'; }],
+      [Icone('crayon'), 'Textes à trous', function (m) { return '#/' + m.id + '/trous'; }],
+      [Icone('loupe'), 'Chasse à l’erreur', function (m) { return '#/' + m.id + '/chasse'; }],
+      [Icone('couronne'), 'Affronter le boss', function (m) { return '#/' + m.id + '/boss'; }]];
     function poids(f) { var t = pf[f.id]; return (t && t[1] ? t[0] / t[1] : 0.5) + (lues[f.id] ? 0.2 : 0); }
     var jours = [];
     for (var k = 0; k < nb; k++) {
@@ -58,10 +58,10 @@ var Carnet = (function () {
       var fs = fichesDe(m.id).slice().sort(function (a, b) { return poids(a) - poids(b); });
       var f = fs[Math.floor(k / enCours.length) % fs.length];
       var act;
-      if (urgent && urgent.reste === 0) act = ['🎯', 'Jour J : ' + urgent.e.nom + '. Relis l’essentiel, respire, tu es prêt !', function () { return '#/express'; }];
-      else if (urgent && urgent.reste === 1) act = ['⏱', 'Veille d’épreuve : l’essentiel en 1 minute', function () { return '#/express'; }];
-      else if (urgent && urgent.reste === 2) act = ['📝', 'Examen blanc', function (mm) { return '#/' + mm.id + '/examen'; }];
-      else if (urgent) act = ['🔁', 'Révision des erreurs', function () { return '#/revoir'; }];
+      if (urgent && urgent.reste === 0) act = [Icone('cible'), 'Jour J : ' + urgent.e.nom + '. Relis l’essentiel, respire, tu es prêt.', function () { return '#/express'; }];
+      else if (urgent && urgent.reste === 1) act = [Icone('chrono'), 'Veille d’épreuve : l’essentiel en 1 minute', function () { return '#/express'; }];
+      else if (urgent && urgent.reste === 2) act = [Icone('copie'), 'Examen blanc', function (mm) { return '#/' + mm.id + '/examen'; }];
+      else if (urgent) act = [Icone('repeter'), 'Révision des erreurs', function () { return '#/revoir'; }];
       else act = activites[joursEntre('2026-01-01', jour) % activites.length];
       jours.push({ jour: jour, m: m, f: f, ico: act[0], txt: act[1], lien: act[2](m, f), urgent: urgent });
     }
@@ -72,7 +72,7 @@ var Carnet = (function () {
     document.title = 'Mon planning · Révisions BTS MCO';
     var d = dates(), p = prochaine(), jours = planning(14);
     app.innerHTML = fil('Mon planning') +
-      '<section class="defi defi-accueil"><div class="defi-eclair">📅</div><h1>Compte à rebours</h1>' +
+      '<section class="defi defi-accueil"><div class="defi-eclair">' + Icone('calendrier') + '</div><h1>Compte à rebours</h1>' +
         (p ? '<p class="decompte"><b>J-' + p.j + '</b> avant ' + esc(p.e.nom) + ' (' + dateFr(p.date, true) + ')</p>' : '<p>Entre les dates de tes épreuves : le site te prépare un planning jour par jour.</p>') +
         '<div class="duel-form">' + EPREUVES.map(function (e) {
           return '<label><span>' + esc(e.nom) + '</span><input type="date" data-ep="' + e.id + '" value="' + (d[e.id] || '') + '"></label>';
@@ -121,7 +121,7 @@ var Carnet = (function () {
     document.title = 'Lexique · Révisions BTS MCO';
     var t = entreesLexique();
     app.innerHTML = fil('Lexique') +
-      '<section class="express-tete"><div class="defi-eclair">📚</div><h1>Lexique</h1><p>' + t.length + ' notions de A à Z. Touche une notion pour ouvrir sa fiche.</p></section>' +
+      '<section class="express-tete"><div class="defi-eclair">' + Icone('bibliotheque') + '</div><h1>Lexique</h1><p>' + t.length + ' notions de A à Z. Touche une notion pour ouvrir sa fiche.</p></section>' +
       '<div class="recherche"><input id="lq" type="search" placeholder="Chercher une notion…" autocomplete="off"></div>' +
       '<div class="lex-lettres"></div><div class="lexique"></div>';
     var zone = app.querySelector('.lexique'), lettres = app.querySelector('.lex-lettres');
@@ -170,7 +170,7 @@ var Carnet = (function () {
     if (ia) {
       var n = document.createElement('section');
       n.className = 'notes';
-      n.innerHTML = '<label class="notes-titre" for="noteFiche">📝 Mes notes sur cette fiche</label>' +
+      n.innerHTML = '<label class="notes-titre" for="noteFiche">Mes notes sur cette fiche</label>' +
         '<textarea id="noteFiche" rows="3" placeholder="Tes remarques, exemples, astuces de mémorisation… (gardées sur cet appareil)"></textarea>' +
         '<span class="notes-etat" aria-live="polite"></span>';
       ia.parentNode.insertBefore(n, ia);
@@ -194,21 +194,21 @@ var Carnet = (function () {
     if (salut) {
       var a = document.createElement('a');
       a.className = 'hero-decompte'; a.href = '#/planning';
-      a.innerHTML = p ? '📅 <b>J-' + p.j + '</b> avant ' + esc(p.e.nom.split(' (')[0]) : '📅 Ajouter mes dates d’examen';
+      a.innerHTML = p ? Icone('calendrier') + ' <b>J-' + p.j + '</b> avant ' + esc(p.e.nom.split(' (')[0]) : Icone('calendrier') + ' Ajouter mes dates d’examen';
       salut.appendChild(a);
       // Rappel de sauvegarde quand il y a de quoi perdre et que la dernière date de plus de 2 semaines.
       var der = (E().reglages || {}).sauvegarde;
       if (E().xp >= 300 && (!der || joursEntre(der, Jeu.jour()) > 14)) {
         var s = document.createElement('a');
         s.className = 'hero-decompte'; s.href = '#/profil';
-        s.innerHTML = '💾 Pense à <b>sauvegarder</b> ta progression';
+        s.innerHTML = Icone('disquette') + ' Pense à <b>sauvegarder</b> ta progression';
         salut.appendChild(s);
       }
     }
     var fv = R.fiches.filter(function (f) { return estFavori(f.id); }), titre = app.querySelector('.titre-section');
     if (fv.length && titre) {
       var s = document.createElement('div');
-      s.innerHTML = '<h2 class="titre-section">⭐ Mes favoris</h2><div class="liste-fiches favoris-liste">' + fv.map(function (f) {
+      s.innerHTML = '<h2 class="titre-section">Mes favoris</h2><div class="liste-fiches favoris-liste">' + fv.map(function (f) {
         var m = R.matieres.filter(function (x) { return x.id === f.matiere; })[0];
         return '<a class="carte-fiche" href="#/' + f.matiere + '/' + f.id + '" style="--c:' + m.couleur + '"><span class="tag">' + esc(m.nom) + '</span><span class="titre">' + esc(f.titre) + '</span></a>';
       }).join('') + '</div>';
@@ -222,11 +222,11 @@ var Carnet = (function () {
     var notes = E().notes || {}, fv = R.fiches.filter(function (f) { return estFavori(f.id); });
     var avecNotes = R.fiches.filter(function (f) { return notes[f.id]; });
     app.innerHTML = fil('Mon carnet') +
-      '<section class="express-tete"><div class="defi-eclair">📒</div><h1>Mon carnet</h1><p>Tes fiches favorites et toutes tes notes, au même endroit.</p></section>' +
-      '<h2 class="titre-section">⭐ Favoris</h2>' + (fv.length ? '<div class="liste-fiches">' + fv.map(function (f) {
+      '<section class="express-tete"><div class="defi-eclair">' + Icone('carnet') + '</div><h1>Mon carnet</h1><p>Tes fiches favorites et toutes tes notes, au même endroit.</p></section>' +
+      '<h2 class="titre-section">Favoris</h2>' + (fv.length ? '<div class="liste-fiches">' + fv.map(function (f) {
         return '<a class="carte-fiche" href="#/' + f.matiere + '/' + f.id + '" style="--c:' + Activites.matiere(f.matiere).couleur + '"><span class="titre">' + esc(f.titre) + '</span></a>';
       }).join('') + '</div>' : '<p class="vide">Touche l’étoile ☆ en haut d’une fiche pour l’ajouter ici.</p>') +
-      '<h2 class="titre-section">📝 Mes notes</h2>' + (avecNotes.length ? avecNotes.map(function (f) {
+      '<h2 class="titre-section">Mes notes</h2>' + (avecNotes.length ? avecNotes.map(function (f) {
         return '<div class="express-fiche" style="--c:' + Activites.matiere(f.matiere).couleur + '"><a href="#/' + f.matiere + '/' + f.id + '"><b>' + esc(f.titre) + '</b> ›</a><p class="note-texte">' + esc(notes[f.id]) + '</p></div>';
       }).join('') : '<p class="vide">Tu n’as pas encore pris de notes. Il y a un bloc « Mes notes » en bas de chaque fiche.</p>');
   }
