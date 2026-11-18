@@ -264,8 +264,8 @@ var Composants = (function () {
         '<div class="table-wrap"><table class="calc-table scoring"><tr><th>Critère</th><th>Coef.</th>' +
         four.map(function (f) { return '<th>' + f[0] + '</th>'; }).join('') + '</tr>' +
         crit.map(function (c, i) {
-          return '<tr><td>' + c[0] + '</td><td><input inputmode="decimal" data-coef="' + i + '" value="' + c[1] + '"></td>' +
-            four.map(function (f, j) { return '<td><input inputmode="decimal" data-n="' + i + '-' + j + '" value="' + f[1][i] + '"></td>'; }).join('') + '</tr>';
+          return '<tr><td>' + c[0] + '</td><td><input inputmode="decimal" data-coef="' + i + '" aria-label="Coefficient : ' + c[0] + '" value="' + c[1] + '"></td>' +
+            four.map(function (f, j) { return '<td><input inputmode="decimal" data-n="' + i + '-' + j + '" aria-label="Note de ' + f[0] + ' : ' + c[0] + '" value="' + f[1][i] + '"></td>'; }).join('') + '</tr>';
         }).join('') +
         '<tr class="fort"><td>Total pondéré</td><td></td>' + four.map(function (f, j) { return '<td data-t="' + j + '"></td>'; }).join('') + '</tr>' +
         '</table></div><p class="calc-verdict"></p>';

@@ -249,7 +249,7 @@ var Outils = (function () {
       '<p class="calc-boutons"><button type="button" class="installer-btn" data-lien>' + Icone('lien') + ' Envoyer par lien</button><button type="button" class="installer-btn secondaire" data-copier>' + Icone('pressePapier') + ' Copier mon code</button>' +
       '<button type="button" class="installer-btn secondaire" data-fichier>' + Icone('disquette') + ' Télécharger un fichier</button></p>' +
       '<details class="correction"><summary>Importer une progression</summary>' +
-        '<textarea id="codeImport" rows="3" placeholder="Colle ici ton code (il commence par RBTS1.)"></textarea>' +
+        '<textarea id="codeImport" rows="3" aria-label="Code de progression à importer" placeholder="Colle ici ton code (il commence par RBTS1.)"></textarea>' +
         '<p class="calc-boutons"><button type="button" class="installer-btn" data-importer>Importer le code</button>' +
         '<label class="installer-btn secondaire fichier">' + Icone('dossierOuvert') + ' Choisir un fichier<input type="file" accept=".json,.txt,application/json,text/plain" hidden data-fichier-import></label></p>' +
         '<p class="transfert-msg" aria-live="polite"></p></details></section>';

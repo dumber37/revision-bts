@@ -1,7 +1,9 @@
 {
   "name": "Révisions BTS MCO",
   "short_name": "Révisions MCO",
-  "description": "Fiches, visuels, QCM et jeux pour réviser le BTS MCO.",
+  "id": "./",
+  "description": "Fiches, visuels, QCM, études de cas et jeux pour réviser le BTS MCO, utilisables hors-ligne.",
+  "categories": ["education"],
   "lang": "fr",
   "start_url": "./",
   "scope": "./",
@@ -11,6 +13,7 @@
   "icons": [
     { "src": "icones/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
     { "src": "icones/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
-    { "src": "icones/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+    { "src": "icones/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" },
+    { "src": "icones/icone.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any" }
   ]
 }

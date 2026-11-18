@@ -63,7 +63,7 @@
 
     app.innerHTML =
       Jeu.hero() +
-      '<div class="recherche"><input id="q" type="search" placeholder="Chercher une notion, un cas, une formule" autocomplete="off"></div>' +
+      '<div class="recherche"><input id="q" type="search" placeholder="Chercher une notion, un cas, une formule" aria-label="Chercher dans les fiches, les cas et les formules" autocomplete="off"></div>' +
       '<div id="resultats"></div>' +
       '<h2 class="titre-section">Mes matières</h2>' +
       '<div class="grille-matieres">' + cartes + '</div>' +
@@ -558,7 +558,7 @@
     } else {
       html += '<b>Réviser sans réseau</b><span>Les pages déjà ouvertes restent disponibles hors-ligne. Télécharge aussi les visuels pour le bus ou la salle d’attente.</span>';
     }
-    html += 'serviceWorker' in navigator ? '<button type="button" class="installer-btn secondaire" data-horsligne>Télécharger les visuels (≈ 13 Mo)</button>' : '';
+    html += 'serviceWorker' in navigator ? '<button type="button" class="installer-btn secondaire" data-horsligne>Télécharger les visuels (≈ 12 Mo)</button>' : '';
     html += '</div></section>';
     c.innerHTML = html;
     var bi = c.querySelector('[data-installer]');

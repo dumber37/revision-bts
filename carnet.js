@@ -122,7 +122,7 @@ var Carnet = (function () {
     var t = entreesLexique();
     app.innerHTML = fil('Lexique') +
       '<section class="express-tete"><div class="defi-eclair">' + Icone('bibliotheque') + '</div><h1>Lexique</h1><p>' + t.length + ' notions de A à Z. Touche une notion pour ouvrir sa fiche.</p></section>' +
-      '<div class="recherche"><input id="lq" type="search" placeholder="Chercher une notion…" autocomplete="off"></div>' +
+      '<div class="recherche"><input id="lq" type="search" placeholder="Chercher une notion" aria-label="Chercher dans le lexique" autocomplete="off"></div>' +
       '<div class="lex-lettres"></div><div class="lexique"></div>';
     var zone = app.querySelector('.lexique'), lettres = app.querySelector('.lex-lettres');
     function afficher(q) {

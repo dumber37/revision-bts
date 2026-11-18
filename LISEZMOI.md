@@ -30,7 +30,8 @@ La durée sert aussi de numéro de version dans l'adresse du MP3 (`?d=`) : l'anc
 - `sw.js` + `manifest.webmanifest` + `icones/` : application installable et hors-ligne.
 
 ## Visuels
-`visuels/<matiere>/` : pages des PDF en JPG 1600 px, miniatures 400 px dans `mini/`, et PDF d'origine.
+`visuels/<matiere>/` : pages des PDF en WebP 1600 px (qualité 0,82), miniatures 400 px dans `mini/` (qualité 0,78), et PDF d'origine.
+Le WebP pèse environ deux fois moins que le JPG pour le même rendu ; un nouveau visuel doit être enregistré en `.webp` (le chemin est construit dans `data/matieres.js`).
 
 ## Mise en ligne
 À chaque mise en ligne, augmenter le `?v=` de `index.html` **et** `VERSION` dans `sw.js` (même numéro).

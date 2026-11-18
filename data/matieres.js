@@ -13,7 +13,7 @@ var R = {
   visuels: [],
   fiche: function (f) { this.fiches.push(f); },
   visuel: function (v) { this.visuels.push(v); },
-  // Un PDF découpé en images : visuels/<matiere>/<prefixe>-01.jpg, -02.jpg…
+  // Un PDF découpé en images : visuels/<matiere>/<prefixe>-01.webp, -02.webp…
   // pages : [légende, id de fiche (facultatif), image (facultatif, ex. 'fmr-03')] dans l'ordre d'affichage.
   // Sans image, la page prend le numéro de sa position. pdf : un lien, ou une liste de [libellé, lien].
   diaporama: function (d) {
@@ -22,8 +22,8 @@ var R = {
       var nom = p[2] || d.prefixe + '-' + (i < 9 ? '0' : '') + (i + 1);
       self.visuels.push({
         matiere: d.matiere, groupe: d.groupe, pdf: d.pdf,
-        src: 'visuels/' + d.matiere + '/' + nom + '.jpg',
-        mini: 'visuels/' + d.matiere + '/mini/' + nom + '.jpg', // miniature 400 px
+        src: 'visuels/' + d.matiere + '/' + nom + '.webp',
+        mini: 'visuels/' + d.matiere + '/mini/' + nom + '.webp', // miniature 400 px
         legende: p[0], fiche: p[1]
       });
     });
