@@ -565,6 +565,89 @@ var Composants = (function () {
           txt(170, 176, 'panier moyen : 70 €', 'grand a-pop', ' text-anchor="middle"' + d(2)) +
           '</svg>';
       }
+    },
+    // Le cycle de vente en 5 étapes, en boucle vers le suivi et la fidélisation.
+    cycle: {
+      legende: 'Les 5 étapes s’enchaînent dans l’ordre : on n’argumente pas avant d’avoir <b>découvert les besoins</b>. Après la conclusion, le <b>suivi</b> fait revenir le client : le cycle recommence.',
+      svg: function () {
+        var cx = 170, cy = 110, r = 72, et = [
+          ['Prise de contact', 0, -16, 'middle'], ['Découverte|des besoins', 14, -4, 'start'], ['Argumentation|(CAP)', 10, 18, 'start'],
+          ['Objections|(REPO)', -10, 18, 'end'], ['Conclusion', -14, 4, 'end']];
+        return '<svg viewBox="0 0 340 210" role="img" aria-label="Cycle de vente en 5 étapes">' +
+          '<path class="courbe douce a-trace" pathLength="1" style="--t:3.2s" d="M' + cx + ' ' + (cy - r) + ' A' + r + ' ' + r + ' 0 1 1 ' + cx + ' ' + (cy + r) + ' A' + r + ' ' + r + ' 0 1 1 ' + cx + ' ' + (cy - r) + '"/>' +
+          [0, 1, 2, 3, 4].map(function (i) { // chevrons de sens, à mi-chemin entre deux étapes
+            var a = (-54 + 72 * i) * Math.PI / 180, x = cx + r * Math.cos(a), y = cy + r * Math.sin(a), ux = -Math.sin(a), uy = Math.cos(a), nx = Math.cos(a), ny = Math.sin(a);
+            function p(k, m) { return (x + ux * k + nx * m).toFixed(1) + ' ' + (y + uy * k + ny * m).toFixed(1); }
+            return '<path class="fleche a-fondu" d="M' + p(-4, 5) + ' L' + p(3, 0) + ' L' + p(-4, -5) + '"' + d(.5 + i * .64) + '/>';
+          }).join('') +
+          txt(cx, cy - 4, 'Vente conseil', 'fort a-fondu', ' text-anchor="middle"') +
+          txt(cx, cy + 12, 'puis suivi', 'petit a-fondu', ' text-anchor="middle"' + d(3.2)) + txt(cx, cy + 24, 'et fidélisation', 'petit a-fondu', ' text-anchor="middle"' + d(3.2)) +
+          et.map(function (e, i) {
+            var a = (-90 + 72 * i) * Math.PI / 180, x = cx + r * Math.cos(a), y = cy + r * Math.sin(a), l = e[0].split('|'), t = .2 + i * .64;
+            return '<circle class="noeud plein a-pop" cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="11"' + d(t) + '/>' +
+              txt(x.toFixed(1), (y + 4).toFixed(1), i + 1, 'blanc num a-fondu', ' text-anchor="middle"' + d(t)) +
+              l.map(function (s, k) { return txt((x + e[1]).toFixed(1), (y + e[2] + k * 12).toFixed(1), s, (k ? 'petit' : 'fort') + ' a-fondu', ' text-anchor="' + e[3] + '"' + d(t + .15)); }).join('');
+          }).join('') +
+          '</svg>';
+      }
+    },
+    // CAP : de la caractéristique technique à la preuve.
+    cap: {
+      legende: 'Un argument CAP part d’un <b>fait</b> sur le produit, le traduit en <b>bénéfice pour ce client</b>, puis le <b>prouve</b>. Le client achète l’avantage, pas la fiche technique.',
+      svg: function () {
+        var b = [['C', 'Caractéristique', 'Cette veste|est en Gore-Tex', 'un fait technique'], ['A', 'Avantage', 'Vous restez au sec|sous la pluie', 'le bénéfice client'], ['P', 'Preuve', 'Regardez : l’eau|glisse dessus', 'la démonstration']];
+        return '<svg viewBox="0 0 340 160" role="img" aria-label="Méthode CAP : caractéristique, avantage, preuve">' +
+          b.map(function (x, i) {
+            var X = 8 + i * 112, t = i * .9;
+            return '<rect class="boite a-pop" x="' + X + '" y="34" width="100" height="78" rx="10"' + d(t) + '/>' +
+              txt(X + 50, 26, x[1], 'fort a-fondu', ' text-anchor="middle"' + d(t)) +
+              txt(X + 50, 62, x[0], 'grand a-fondu', ' text-anchor="middle"' + d(t + .2)) +
+              x[2].split('|').map(function (s, k) { return txt(X + 50, 82 + k * 13, s, 'petit a-fondu', ' text-anchor="middle"' + d(t + .35)); }).join('') +
+              txt(X + 50, 130, x[3], 'mini a-fondu', ' text-anchor="middle"' + d(t + .35)) +
+              (i < 2 ? '<path class="fleche a-fondu" d="M' + (X + 102) + ' 73 H' + (X + 110) + ' m-4 -4 l4 4 l-4 4"' + d(t + .6) + '/>' : '');
+          }).join('') +
+          txt(170, 154, '« Vous restez au sec », c’est ce que le client retient.', 'petit or a-fondu', ' text-anchor="middle"' + d(2.8)) +
+          '</svg>';
+      }
+    },
+    // Du brut au net, et du brut au coût employeur (exemple : 2 000 € brut, 22 % et 42 %).
+    salaire: {
+      legende: 'Exemple : 2 000 € brut. Le salarié touche <b>1 560 € net</b> (22 % de cotisations salariales retenues sur son salaire) ; le magasin paie <b>2 840 €</b> (42 % de cotisations patronales en plus). Taux indicatifs, les mêmes que la calculatrice.',
+      svg: function () {
+        var k = 280 / 2840, x0 = 20, brut = 2000 * k, net = 1560 * k;
+        function barre(y, w, cls, t, x) { return '<rect class="' + cls + '" x="' + ((x || x0)).toFixed(1) + '" y="' + y + '" width="' + w.toFixed(1) + '" height="24" rx="3"' + d(t) + '/>'; }
+        return '<svg viewBox="0 0 340 200" role="img" aria-label="Décomposition du salaire : brut, net et coût employeur">' +
+          '<path class="repere a-fondu" d="M' + (x0 + brut).toFixed(1) + ' 22 V182"' + d(.6) + '/>' +
+          txt(x0, 22, 'Salaire brut : 2 000 €', 'fort') +
+          barre(28, brut, 'barre-svg fort a-droite', 0) +
+          txt(x0, 84, 'Salaire net : 1 560 €', 'fort a-fondu', d(.9)) +
+          barre(90, net, 'barre-svg fort a-droite', .9) +
+          barre(90, brut - net, 'retenue a-fondu', 1.5, x0 + net) +
+          txt(x0 + brut + 6, 101, '− 440 €', 'petit or a-fondu', d(1.6)) + txt(x0 + brut + 6, 113, 'cotisations salariales', 'mini a-fondu', d(1.6)) +
+          txt(x0, 146, 'Coût pour l’employeur : 2 840 €', 'fort a-fondu', d(2.1)) +
+          barre(152, brut, 'barre-svg fort a-droite', 2.1) +
+          barre(152, 840 * k, 'barre-svg or a-droite', 2.8, x0 + brut) +
+          txt(x0 + brut + 840 * k / 2, 168, '+ 840 €', 'fort sombre a-fondu', ' text-anchor="middle"' + d(3.3)) +
+          txt(x0 + 280, 192, 'cotisations patronales', 'mini a-fondu', ' text-anchor="end"' + d(3.3)) +
+          '</svg>';
+      }
+    },
+    // Sélection d'un fournisseur : 8 étapes en serpentin.
+    selection: {
+      legende: 'Les 8 étapes dans l’ordre : on fixe les <b>critères</b> et le <b>cahier des charges</b> avant l’appel d’offres. Le <b>scoring</b> sert à l’étape 4 ; la négociation vient ensuite, avant le choix final.',
+      svg: function () {
+        var L = ['Critères|de sélection', 'Cahier|des charges', 'Appel|d’offres', 'Examen des offres|(scoring)', 'Négociation', 'Choix du|fournisseur', 'Signature|du contrat', 'Début de|la relation'];
+        var P = [[45, 40], [125, 40], [205, 40], [285, 40], [285, 128], [205, 128], [125, 128], [45, 128]];
+        return '<svg viewBox="0 0 340 190" role="img" aria-label="Les 8 étapes de la sélection d’un fournisseur">' +
+          '<path class="courbe douce a-trace" pathLength="1" style="--t:3.6s" d="M45 40 H285 C330 40 330 128 285 128 H45"/>' +
+          P.map(function (p, i) {
+            var t = i * .45, fort = i === 3;
+            return '<circle class="noeud' + (fort ? ' plein' : '') + ' a-pop" cx="' + p[0] + '" cy="' + p[1] + '" r="12"' + d(t) + '/>' +
+              txt(p[0], p[1] + 4, i + 1, (fort ? 'blanc ' : '') + 'num a-fondu', ' text-anchor="middle"' + d(t)) +
+              L[i].split('|').map(function (s, k) { return txt(p[0], p[1] + 28 + k * 12, s, (k ? 'petit' : 'fort') + ' a-fondu', ' text-anchor="middle"' + d(t + .15)); }).join('');
+          }).join('') +
+          '</svg>';
+      }
     }
   };
 

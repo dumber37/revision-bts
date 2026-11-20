@@ -90,6 +90,7 @@ R.fiche({
       <li><b>Signature du contrat</b><p>Mettre par écrit les engagements des deux parties (convention annuelle).</p></li>
       <li><b>Début de la relation</b><p>Premières commandes, puis suivi de la qualité et des délais.</p></li>
     </ol>
+    <div data-anim="selection"></div>
 
     <h2>Le scoring : choisir avec une note pondérée</h2>
     <ol>

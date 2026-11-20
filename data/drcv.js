@@ -31,6 +31,7 @@ R.fiche({
       <li><b>Conclusion</b><p>Proposer de conclure, faire une vente additionnelle, prendre congé.</p></li>
     </ol>
     <p>Une sixième étape est possible : <b>le suivi et la fidélisation</b>.</p>
+    <div data-anim="cycle"></div>
 
     <h2>CAP : construire un argument</h2>
     <ol class="etapes">
@@ -38,6 +39,7 @@ R.fiche({
       <li><b>Avantage</b><p>Ce que ça apporte au client. Ex. « Vous resterez au sec même sous une forte pluie. »</p></li>
       <li><b>Preuve</b><p>Ce qui le démontre : test, avis, label, démonstration. Ex. « Regardez, l'eau glisse dessus. »</p></li>
     </ol>
+    <div data-anim="cap"></div>
   `
 });
 

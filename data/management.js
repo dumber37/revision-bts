@@ -197,6 +197,7 @@ R.fiche({
     <h2>Du salaire brut au salaire net</h2>
     <div class="formule"><b>Salaire brut</b> (fixe + commissions + primes) − <b>cotisations salariales</b> (retenues sur le salaire) = <b>salaire net</b></div>
     <div class="formule"><b>Salaire brut</b> (base de calcul des cotisations) + <b>cotisations patronales</b> (à la charge de l'employeur) = <b>coût pour l'employeur</b></div>
+    <div data-anim="salaire"></div>
     <p>L'impôt sur le revenu est prélevé à la source sur le net à payer.</p>
     <div class="attention">
       <b>Attention, erreur dans le cours :</b> il écrit que les cotisations salariales sont « payées par l'entreprise ».
