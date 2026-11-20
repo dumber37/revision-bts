@@ -708,5 +708,59 @@ var Composants = (function () {
     });
   }
 
-  return { activer: activer, qcm: qcm, imprimer: imprimer, scene: scene };
+  // ---------- Carte mentale d'une matière ----------
+  // Construite à partir des fiches (titre, « l'essentiel », titres h2) : elle suit le contenu sans rien saisir à la main.
+  function couper(t, max) {
+    var mots = t.split(' '), l = [], c = '';
+    mots.forEach(function (w) { if (c && (c + ' ' + w).length > max) { l.push(c); c = w; } else c = c ? c + ' ' + w : w; });
+    if (c) l.push(c);
+    if (l.length > 3) { l = l.slice(0, 3); l[2] = (l[2].length > max - 2 ? l[2].replace(/\s*\S*$/, '') : l[2]) + '…'; }
+    return l;
+  }
+  function court(f) { return f.titre.split(' : ')[0].replace(/\s*\(.*\)$/, ''); }
+  function esc2(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;'); }
+  function carte(m, fiches) {
+    var W = 360, H = 285, cx = 180, cy = 145, n = fiches.length, R = n > 6 ? 125 : 118;
+    var noeuds = fiches.map(function (f, i) {
+      var a = (-90 + 360 / n * i) * Math.PI / 180;
+      return { f: f, x: cx + R * 1.05 * Math.cos(a), y: cy + R * .86 * Math.sin(a), l: couper(court(f), 18) };
+    });
+    var svg = '<svg viewBox="0 0 ' + W + ' ' + H + '" role="group" aria-label="Carte mentale : ' + esc2(m.nom) + '">' +
+      noeuds.map(function (p, i) {
+        var mx = (cx + p.x) / 2 + (p.y - cy) * .12, my = (cy + p.y) / 2 - (p.x - cx) * .12;
+        return '<path class="courbe a-trace" pathLength="1" style="--t:.6s;--d:' + (.2 + i * .18).toFixed(2) + 's" d="M' + cx + ' ' + cy + ' Q' + mx.toFixed(1) + ' ' + my.toFixed(1) + ' ' + p.x.toFixed(1) + ' ' + p.y.toFixed(1) + '"/>';
+      }).join('') +
+      '<g class="carte-centre a-pop"><rect x="' + (cx - 58) + '" y="' + (cy - 22) + '" width="116" height="44" rx="22"/>' +
+        txt(cx, cy - 2, esc2(m.code), 'mini', ' text-anchor="middle"') + txt(cx, cy + 12, esc2(m.nom.length > 20 ? m.nom.split(' ')[0] : m.nom), 'fort', ' text-anchor="middle"') + '</g>' +
+      noeuds.map(function (p, i) {
+        var h = 14 + p.l.length * 12, t = (.5 + i * .18).toFixed(2);
+        return '<g class="carte-noeud a-pop" tabindex="0" role="button" data-i="' + i + '" aria-label="' + esc2(p.f.titre) + '"' + ' style="--d:' + t + 's">' +
+          '<rect x="' + (p.x - 56).toFixed(1) + '" y="' + (p.y - h / 2).toFixed(1) + '" width="112" height="' + h + '" rx="10"/>' +
+          p.l.map(function (s, k) { return txt(p.x.toFixed(1), (p.y - h / 2 + 18 + k * 12).toFixed(1), esc2(s), 'carte-txt', ' text-anchor="middle"'); }).join('') + '</g>';
+      }).join('') + '</svg>';
+    return '<div class="anim carte-mentale" style="--c:' + m.couleur + '">' + svg +
+      '<p class="anim-legende">Touche une fiche pour voir son essentiel et ses grandes parties.</p></div><div class="carte-detail" aria-live="polite"></div>';
+  }
+  function activerCarte(root, fiches) {
+    var bloc = root.querySelector('.carte-mentale'), detail = root.querySelector('.carte-detail');
+    if (!bloc) return;
+    function choisir(i) {
+      var f = fiches[i], ess = (R.essentiel || {})[f.id] || [], d = document.createElement('div');
+      d.innerHTML = f.contenu;
+      var parties = Array.prototype.map.call(d.querySelectorAll('h2'), function (h) { return h.textContent.trim(); }).filter(function (t) { return !/^Pour aller plus loin/.test(t); });
+      Array.prototype.forEach.call(bloc.querySelectorAll('.carte-noeud'), function (g) { g.classList.toggle('actif', +g.dataset.i === i); g.setAttribute('aria-pressed', +g.dataset.i === i); });
+      detail.innerHTML = '<h2><a href="#/' + f.matiere + '/' + f.id + '">' + esc2(f.titre) + ' ›</a></h2>' +
+        (ess.length ? '<ul class="carte-ess">' + ess.map(function (e) { return '<li>' + esc2(e) + '</li>'; }).join('') + '</ul>' : '<p>' + esc2(f.resume || '') + '</p>') +
+        (parties.length ? '<p class="carte-parties">' + parties.map(function (p) { return '<span>' + esc2(p) + '</span>'; }).join('') + '</p>' : '');
+    }
+    bloc.addEventListener('click', function (e) { var g = e.target.closest('.carte-noeud'); if (g) choisir(+g.dataset.i); });
+    bloc.addEventListener('keydown', function (e) {
+      var g = e.target.closest('.carte-noeud'); if (!g || (e.key !== 'Enter' && e.key !== ' ')) return;
+      e.preventDefault(); choisir(+g.dataset.i);
+    });
+    choisir(0);
+    if (vu) { bloc.classList.add('anim-attente', 'joue'); vu.observe(bloc); } else bloc.classList.add('joue');
+  }
+
+  return { activer: activer, qcm: qcm, imprimer: imprimer, scene: scene, carte: carte, activerCarte: activerCarte };
 })();

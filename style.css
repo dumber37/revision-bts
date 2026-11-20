@@ -124,11 +124,13 @@ h1 { font-size: 1.8rem; line-height: 1.2; margin: 0 0 16px; letter-spacing: -.01
 .entete-matiere .code { display: block; }
 .entete-matiere h1 { margin: 2px 0 2px; }
 .entete-matiere p { margin: 0; color: var(--doux); }
-.onglets { display: flex; gap: 8px; border-bottom: 1px solid var(--bord); margin-bottom: 20px; }
+.onglets { display: flex; gap: 8px; border-bottom: 1px solid var(--bord); margin-bottom: 20px; overflow-x: auto; scrollbar-width: none; }
+.onglets::-webkit-scrollbar { display: none; }
 .onglets a {
-  padding: 8px 16px; text-decoration: none; color: var(--doux);
-  border-bottom: 3px solid transparent; margin-bottom: -1px;
+  padding: 8px 16px; text-decoration: none; color: var(--doux); white-space: nowrap; flex: none;
+  border-bottom: 3px solid transparent; margin-bottom: 0;
 }
+@media (max-width: 480px) { .onglets { gap: 0; } .onglets a { padding: 8px 8px; } .o-long { display: none; } }
 .onglets a.actif { color: var(--texte); border-bottom-color: var(--c); font-weight: 700; }
 
 .liste-fiches { display: grid; gap: 12px; }
@@ -1233,3 +1235,23 @@ body.avec-lecteur .toasts { bottom: 86px; }
 .ob-grille input { accent-color: var(--or); }
 .ob-note { margin: 4px 0 0; padding: 12px 16px; border-radius: 10px; background: var(--surface); border: 1px solid var(--bord); }
 @media (prefers-reduced-motion: reduce) { .ob-point { animation: none; } .ob-barre i { transition: none; } }
+
+/* ---------- Carte mentale ---------- */
+.carte-mentale svg { max-width: 560px; }
+.anim .carte-centre rect { fill: var(--texte); }
+.anim .carte-centre text { fill: var(--bg); }
+.anim .carte-noeud { cursor: pointer; outline: none; }
+.anim .carte-noeud rect { fill: var(--surface); stroke: var(--a); stroke-width: 1.5; transition: fill .2s, stroke-width .2s; }
+.anim .carte-noeud:hover rect { stroke-width: 2.5; }
+.anim .carte-noeud:focus-visible rect { stroke: var(--or); stroke-width: 3; }
+.anim .carte-noeud.actif rect { fill: var(--a); }
+.anim text.carte-txt { font-size: 10.5px; font-weight: 600; fill: var(--texte); pointer-events: none; }
+.anim .carte-noeud.actif text.carte-txt { fill: var(--bg); }
+.carte-detail { margin: 12px 0 24px; padding: 16px 20px; border: 1px solid var(--bord); border-radius: 12px; background: var(--surface); }
+.carte-detail h2 { margin: 0 0 8px; font-size: 1.05rem; }
+.carte-detail h2 a { color: inherit; text-decoration-color: var(--or); text-underline-offset: 3px; }
+.carte-ess { margin: 0 0 12px; padding-left: 20px; }
+.carte-ess li { margin: 4px 0; }
+.carte-parties { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; }
+.carte-parties span { padding: 4px 12px; border-radius: 999px; background: var(--exemple); font-size: .82rem; }
+@media (prefers-reduced-motion: reduce) { .anim .carte-noeud rect { transition: none; } }

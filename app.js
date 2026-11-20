@@ -169,6 +169,8 @@
       if (Jeu.questionsMatiere(m.id).length) corps += '<div id="qcm"></div>';
     } else if (onglet === 'entrainement') {
       corps = Activites.hub(m);
+    } else if (onglet === 'carte') {
+      corps = fiches.length ? Composants.carte(m, fiches) : '<p class="vide">Pas encore de fiche pour cette matière.</p>';
     } else {
       corps = fiches.length
         ? '<div class="liste-fiches">' + fiches.map(carteFiche).join('') + '</div>'
@@ -184,9 +186,13 @@
       '<div class="onglets" style="--c:' + m.couleur + '">' +
         '<a href="#/' + m.id + '"' + (onglet === 'fiches' ? ' class="actif"' : '') + '>Fiches (' + fiches.length + ')</a>' +
         '<a href="#/' + m.id + '/visuels"' + (onglet === 'visuels' ? ' class="actif"' : '') + '>Visuels (' + visuels.length + ')</a>' +
+        '<a href="#/' + m.id + '/carte"' + (onglet === 'carte' ? ' class="actif"' : '') + '>Carte<span class="o-long"> mentale</span></a>' +
         '<a href="#/' + m.id + '/entrainement"' + (onglet === 'entrainement' ? ' class="actif"' : '') + '>S’entraîner</a>' +
       '</div>' + corps;
     activerLecteurs();
+    var ong = $('.onglets'), oa = ong && ong.querySelector('a.actif');
+    if (oa && ong.scrollWidth > ong.clientWidth) ong.scrollLeft = oa.offsetLeft - ong.offsetLeft - 16;
+    if (onglet === 'carte') Composants.activerCarte(app, fiches);
     if ($('#qcm')) Composants.qcm($('#qcm'), Jeu.questionsMatiere(m.id), 8, 'matiere:' + m.id);
   }
 
@@ -469,7 +475,7 @@
       var pages = { cartes: Activites.pageCartes, ordre: Activites.pageOrdre, trous: Activites.pageTrous, examen: Activites.pageExamen };
       if (!m) introuvable();
       else if (!parts[1]) pageMatiere(m, 'fiches');
-      else if (parts[1] === 'visuels' || parts[1] === 'entrainement') pageMatiere(m, parts[1]);
+      else if (parts[1] === 'visuels' || parts[1] === 'entrainement' || parts[1] === 'carte') pageMatiere(m, parts[1]);
       else if (Activites.page(parts[1])) Activites.page(parts[1])(app, m);
       else if (pages[parts[1]]) pages[parts[1]](app, m);
       else {
