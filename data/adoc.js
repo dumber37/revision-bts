@@ -90,6 +90,7 @@ R.fiche({
 
     <h2>Pour aller plus loin</h2>
     <p>Notions classiques du BTS MCO, utiles pour enrichir tes réponses (elles ne figurent pas sur la fiche du prof).</p>
+    <div data-anim="zones"></div>
     <div class="cartes">
       <div><b>Zone chaude</b><p>Endroit naturellement très fréquenté (entrée, allée centrale, caisses, têtes de gondole).</p></div>
       <div><b>Zone froide</b><p>Endroit peu fréquenté (fond de magasin, angles) : on la « réchauffe » avec des produits d’appel ou de l’éclairage.</p></div>
@@ -213,6 +214,8 @@ R.fiche({
       <tr><td>Rentabilité de l’action</td><td>Marge supplémentaire générée − coût de l’action</td></tr>
       <tr><td>Retombées numériques</td><td>Abonnés gagnés, vues, partages, clics</td></tr>
     </table>
+    <div data-anim="entonnoir"></div>
+    <p>Ces chiffres viennent de l’étude de cas <a href="#/cas/sporttours-semaine-trail">Sport’Tours : dynamiser le rayon trail</a>.</p>
     <div class="attention">Un indicateur seul ne dit rien : compare-le à l’<b>objectif fixé</b> et à une <b>période de référence</b> (la même semaine l’an dernier, par exemple). Puis rédige en trois temps : fait, sens, recommandation.</div>
   `
 });

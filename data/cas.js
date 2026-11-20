@@ -194,6 +194,77 @@ R.cas = [
   },
 
   {
+    id: 'sporttours-semaine-trail',
+    matiere: 'adoc',
+    titre: 'Sport’Tours : dynamiser le rayon trail',
+    resume: 'Analyser la demande et l’offre, réimplanter le rayon, animer, communiquer, puis évaluer l’opération en chiffres.',
+    exemple: true,
+    contexte: `
+      <p>Sport’Tours est un magasin de sport indépendant du centre de Tours (600 m², 8 salariés). Léa, la manager, a remarqué que le <b>trail</b>
+      (course à pied en nature) progresse fort depuis deux ans, porté par les courses organisées autour de la Loire.</p>
+      <p>En alternance dans le magasin, tu es chargé(e) de dynamiser le rayon trail. Léa veut une opération « <b>Semaine du trail</b> » du 14 au 20 mars,
+      avec un budget de 1 500 €. Après l’opération, elle te demande d’en faire le bilan.</p>`,
+    annexes: `
+      <h3>Annexe 1 : le rayon trail aujourd’hui</h3>
+      <table><tr><th>CA HT du rayon trail</th><th>N-2</th><th>N-1</th><th>N</th></tr>
+        <tr><td>Chiffre d’affaires</td><td>18 000 €</td><td>22 500 €</td><td>29 000 €</td></tr></table>
+      <p><b>Enquête clients</b> (120 réponses) : 62 % veulent essayer les chaussures avant d’acheter ; 48 % attendent des conseils sur le choix de la chaussure ;
+      35 % s’intéressent aux produits éco-conçus ; 30 % achètent leur nutrition sportive (gels, barres) sur Internet.</p>
+      <p><b>Offre actuelle</b> : 14 références de chaussures de trail, de 2 marques ; quelques sacs d’hydratation ; ni bâtons, ni frontales, ni nutrition sportive.</p>
+      <h3>Annexe 2 : implantation actuelle</h3>
+      <p>Entrée et caisses à l’avant droit du magasin. Allée centrale bordée par le running route et le textile. Le rayon trail est <b>au fond à gauche</b>,
+      à côté de la porte de la réserve, peu éclairé, sans signalétique. Une tête de gondole libre se trouve au bout de l’allée centrale.</p>
+      <h3>Annexe 3 : budget de l’opération (1 500 €)</h3>
+      <table><tr><th>Poste</th><th>Montant</th></tr>
+        <tr><td>Atelier « bien choisir ses chaussures de trail » avec un traileur local</td><td>400 €</td></tr>
+        <tr><td>Location d’un tapis de course pour l’essai</td><td>300 €</td></tr>
+        <tr><td>PLV et signalétique</td><td>250 €</td></tr>
+        <tr><td>Publicité sponsorisée Facebook et Instagram</td><td>200 €</td></tr>
+        <tr><td>Flyers déposés dans les clubs et salles de sport</td><td>150 €</td></tr>
+        <tr><td>Lots du jeu concours (dossard offert pour une course locale)</td><td>200 €</td></tr></table>
+      <h3>Annexe 4 : résultats de la Semaine du trail</h3>
+      <table><tr><th></th><th>Même semaine N-1 (sans opération)</th><th>Semaine du trail</th></tr>
+        <tr><td>Visiteurs (compteur d’entrée)</td><td>900</td><td>1 300</td></tr>
+        <tr><td>Tickets de caisse</td><td>180</td><td>312</td></tr>
+        <tr><td>CA HT du magasin</td><td>10 800 €</td><td>21 840 €</td></tr></table>
+      <p>Taux de marque moyen : 40 %. Autres retombées : 180 nouveaux abonnés Instagram, 45 participants à l’atelier (40 places prévues),
+      210 participations au jeu concours, 85 nouvelles cartes de fidélité. Deux clients se sont plaints d’une attente de 20 minutes pour essayer sur le tapis.</p>`,
+    questions: [
+      { q: 'Annexe 1. Analysez la demande et l’offre actuelle du rayon trail.', points: 4,
+        corrige: `<p><b>La demande progresse vite</b> : +25 % de N-2 à N-1 ((22 500 − 18 000) ÷ 18 000) et +28,9 % de N-1 à N ((29 000 − 22 500) ÷ 22 500). La croissance s’accélère.</p>
+          <p><b>Les attentes</b> : essayer avant d’acheter (62 %), être conseillé (48 %), des produits éco-conçus (35 %), et une nutrition aujourd’hui achetée ailleurs (30 %).</p>
+          <p><b>L’offre ne suit pas</b> : assortiment étroit (chaussures et un peu d’hydratation), peu profond (2 marques), sans produits complémentaires (bâtons, frontales, nutrition) ni service d’essai. Le magasin laisse partir des ventes vers Internet.</p>` },
+      { q: 'Proposez une adaptation de l’offre : produits et services.', points: 3,
+        corrige: `<ul><li><b>Élargir l’assortiment</b> : bâtons, frontales, nutrition sportive (gels, barres), textile technique : le client trouve tout son équipement au même endroit.</li>
+          <li><b>Approfondir</b> les chaussures : une 3<sup>e</sup> marque, dont une gamme éco-conçue, et plusieurs niveaux de prix.</li>
+          <li><b>Ajouter des services</b> : essai sur tapis, analyse de la foulée, conseil personnalisé, reprise des anciennes chaussures pour recyclage.</li></ul>
+          <p>Ces choix répondent directement à l’enquête (essai, conseil, éco-conception, nutrition) et augmentent le panier moyen grâce aux produits complémentaires.</p>` },
+      { q: 'Annexe 2. Proposez une nouvelle implantation du rayon trail et justifiez-la.', points: 3,
+        corrige: `<ul><li><b>Sortir le trail de la zone froide</b> : le rapprocher de l’allée centrale, à côté du running route (univers cohérent, le client de l’un est client de l’autre).</li>
+          <li><b>Utiliser la tête de gondole</b> du bout de l’allée centrale pour les nouveautés et l’opération : elle attire le regard et conduit vers le rayon.</li>
+          <li><b>Créer un univers</b> : signalétique « Trail », éclairage, photos de courses locales, espace d’essai avec le tapis ; produits complémentaires à côté des chaussures, meilleures ventes au niveau des yeux.</li></ul>
+          <p>On respecte les préconisations de l’enseigne et la sécurité : allées dégagées, porte de la réserve et issues accessibles.</p>` },
+      { q: 'Annexe 3. Distinguez les animations et les actions promotionnelles prévues, et justifiez leur intérêt.', points: 3,
+        corrige: `<p><b>Animations</b> (créer un événement et une ambiance) : l’atelier avec le traileur local et l’essai sur tapis. Elles répondent aux attentes de conseil et d’essai, font venir des clients et donnent une image d’expert.</p>
+          <p><b>Action promotionnelle</b> (donner un avantage concret) : le jeu concours avec un dossard à gagner. Il crée du trafic et permet de collecter des contacts (avec le consentement des participants, RGPD).</p>
+          <p>On pourrait ajouter une offre ciblée, par exemple −10 % sur la nutrition pour l’achat de chaussures, pour vendre les nouveaux produits complémentaires.</p>` },
+      { q: 'Construisez le plan de communication de l’opération.', points: 3,
+        corrige: `<table><tr><th>Terrain</th><th>Actions</th></tr>
+          <tr><td>Sur le lieu de vente</td><td>PLV sur la tête de gondole, affiches à l’entrée et en caisse, signalétique du rayon, vitrine trail une semaine avant</td></tr>
+          <tr><td>Externe</td><td>Flyers dans les clubs et salles de sport, partenariat avec une course locale, presse locale</td></tr>
+          <tr><td>Numérique</td><td>Publicité Facebook et Instagram ciblée sur Tours et la pratique de la course, publications et stories avant et pendant, inscriptions à l’atelier en ligne, newsletter aux clients qui ont accepté de la recevoir</td></tr></table>
+          <p>Message clair : « Semaine du trail, du 14 au 20 mars : essayez, apprenez, équipez-vous ». Cible : coureurs de Tours et environs, débutants comme confirmés.</p>` },
+      { q: 'Annexe 4. Évaluez l’opération : indicateurs, rentabilité et axes d’amélioration.', points: 4,
+        corrige: `<table><tr><th>Indicateur</th><th>Référence N-1</th><th>Semaine du trail</th></tr>
+          <tr><td>Taux de transformation</td><td>180 ÷ 900 = 20 %</td><td>312 ÷ 1 300 = 24 %</td></tr>
+          <tr><td>Panier moyen</td><td>10 800 ÷ 180 = 60 €</td><td>21 840 ÷ 312 = 70 €</td></tr>
+          <tr><td>CA HT</td><td>10 800 €</td><td>21 840 € (+11 040 €, soit +102,2 %)</td></tr></table>
+          <p><b>Rentabilité</b> : marge supplémentaire = 11 040 × 40 % = 4 416 € ; moins le coût de 1 500 € = <b>+2 916 €</b>. L’opération est rentable.</p>
+          <p><b>Fait</b> : plus de visiteurs (+44 %), qui achètent plus souvent (24 % contre 20 %) et plus (70 € contre 60 €). <b>Sens</b> : les animations ont attiré et convaincu ; la notoriété progresse (180 abonnés, 85 cartes de fidélité). <b>Recommandations</b> : prévoir un 2<sup>e</sup> tapis ou des créneaux d’essai sur rendez-vous (attente de 20 minutes), ouvrir plus de places à l’atelier, relancer les nouveaux clients, et refaire l’opération chaque saison avant les grandes courses locales.</p>
+          <div data-calc="action"></div>` }
+    ]
+  },
+  {
     id: 'auchan-fournisseurs-dattes',
     matiere: 'gestion',
     titre: 'Auchan Sarcelles : sélectionner et contractualiser avec un fournisseur',

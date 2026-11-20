@@ -237,6 +237,7 @@ R.fiche({
       <div><b>Stock d’alerte</b><p>Stock minimum + stock de sécurité : quand on l’atteint, on passe commande.</p></div>
       <div><b>Nombre maximum de commandes</b><p>Consommation ÷ stock minimum : chaque livraison doit couvrir au moins le délai de livraison.</p></div>
     </div>
+    <div data-anim="stock"></div>
     <p class="exemple"><b>Gourdes :</b> 7 200 ÷ 360 = 20 par jour. Délai 9 jours : stock minimum 180. Sécurité 3 jours : 60. <b>Stock d’alerte 240</b>. Maximum 7 200 ÷ 180 = 40 commandes par an.</p>
 
     <h2>Demande régulière : le modèle de Wilson</h2>
@@ -244,6 +245,7 @@ R.fiche({
     C : consommation · PU : coût d’achat unitaire · T : taux de possession · P : coût d’une commande</div>
     <p>Le coût total est au plus bas quand <b>coût de passation = coût de possession</b>. La formule donne directement ce point, sans tester les rythmes un par un.</p>
     <p class="situation"><b>Café de l’Épicerie des Halles :</b> 3 600 paquets, 5 € HT, 20 %, 18 € par commande. 3 600 × 5 × 0,20 = 3 600 ; 2 × 18 = 36 ; 3 600 ÷ 36 = 100 ; <b>N = 10</b> commandes de <b>Q = 360</b> paquets. Possession = 180 × 5 × 0,20 = 180 € = passation 10 × 18 = 180 €. Total 360 €, contre 366 € avec 12 commandes.</p>
+    <div data-anim="wilson"></div>
     <div data-calc="wilson"></div>
     <p><b>Résultat à virgule</b> (ex. gourdes : N = √108 = 10,39) : à l’examen, on <b>arrondit à l’entier supérieur</b> (11), sauf consigne contraire. En entreprise, on compare les deux entiers voisins (832 € pour 10, 832,73 € pour 11).</p>
     <p><b>Erreurs fréquentes :</b> oublier le 2 au dénominateur, oublier la racine, saisir 15 au lieu de 0,15.</p>
@@ -359,7 +361,7 @@ R.fiche({
       <li><b>Repérer les 80 %</b><p>Les références qui atteignent environ 80 % du cumul.</p></li>
     </ol>
     <p class="exemple"><b>Rayon thés</b> (10 références, 60 000 €) : Earl Grey 45 % puis thé vert à la menthe 35 %, cumul <b>80 %</b>. 2 références sur 10 = 20 % de l’assortiment : la loi est vérifiée, elles ne doivent jamais manquer.</p>
-    <div class="barre" data-parts="Earl Grey|45|27 000 €, rang 1;Thé vert menthe|35|21 000 €, cumul 80 %;Darjeeling|5|3 000 €;Rooibos|4|2 400 €;Thé blanc|3|1 800 €;5 autres|8|4 800 € à elles cinq"></div>
+    <div data-anim="pareto"></div>
     <p>Précautions : le classement peut se faire sur la marge ou la valeur du stock (le sujet le précise) ; un article qui vend peu peut rester indispensable s’il attire des clients. La loi donne un ordre de grandeur : 79 % suffit. Leviers : CA (1), optimisation des ressources (4), stocks (7).</p>
 
     <h2>Les indicateurs de suivi</h2>

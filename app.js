@@ -177,10 +177,10 @@
 
     app.innerHTML =
       '<nav class="fil"><a href="#/">Matières</a> › ' + esc(m.nom) + '</nav>' +
-      '<header class="entete-matiere" style="--c:' + m.couleur + '">' +
+      '<header class="entete-matiere" style="--c:' + m.couleur + '"><div>' +
         '<span class="code">' + esc(m.code) + '</span>' +
         '<h1>' + esc(m.nom) + '</h1><p>' + esc(m.long) + '</p>' +
-      '</header>' +
+      '</div>' + Composants.scene(m.id) + '</header>' +
       '<div class="onglets" style="--c:' + m.couleur + '">' +
         '<a href="#/' + m.id + '"' + (onglet === 'fiches' ? ' class="actif"' : '') + '>Fiches (' + fiches.length + ')</a>' +
         '<a href="#/' + m.id + '/visuels"' + (onglet === 'visuels' ? ' class="actif"' : '') + '>Visuels (' + visuels.length + ')</a>' +

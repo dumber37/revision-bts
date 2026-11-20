@@ -1064,3 +1064,112 @@ body.avec-lecteur .toasts { bottom: 86px; }
   #impression a { color: #111; }
   @page { margin: 14mm 12mm; }
 }
+
+/* ---------- Schémas animés des fiches (data-anim) ---------- */
+/* État au repos = état final. Les animations ne jouent qu'avec .joue ; .anim-attente les met en pause sur leur première image. */
+.anim { margin: 16px 0; padding: 12px 12px 8px; border: 1px solid var(--bord); border-radius: 12px; background: var(--surface); --a: var(--ct, var(--c, var(--rouille))); }
+.anim svg { display: block; width: 100%; max-width: 520px; height: auto; margin: 0 auto; overflow: visible; font-family: "DM Sans", system-ui, sans-serif; }
+.anim-legende { margin: 8px 0 0; font-size: .9rem; color: var(--doux); }
+.anim-legende b { color: var(--texte); }
+.anim-rejouer { margin-top: 8px; border: 1px solid var(--bord); background: var(--bg); color: var(--texte); border-radius: 999px; padding: 4px 12px; font: inherit; font-size: .82rem; cursor: pointer; }
+.anim-rejouer:hover { border-color: var(--or); }
+.anim text { fill: var(--texte); font-size: 11px; }
+.anim text.petit { font-size: 10px; fill: var(--doux); }
+.anim text.mini { font-size: 8.5px; fill: var(--doux); }
+.anim text.grand { font-size: 16px; font-weight: 700; fill: var(--a); }
+.anim text.fort { fill: var(--texte); font-weight: 700; }
+.anim text.or { fill: var(--rouille); font-weight: 700; }
+.anim text.blanc { fill: var(--surface); font-weight: 700; font-size: 12px; }
+.anim .axe { fill: none; stroke: var(--doux); stroke-width: 1.2; }
+.anim .seuil { fill: none; stroke: var(--doux); stroke-width: 1; stroke-dasharray: 4 4; }
+.anim .seuil.alerte { stroke: var(--or); stroke-width: 1.4; }
+.anim .courbe { fill: none; stroke: var(--a); stroke-width: 3; stroke-linejoin: round; stroke-linecap: round; }
+.anim .courbe.douce { stroke: var(--doux); stroke-width: 2; }
+.anim .courbe.douce2 { stroke: var(--or); stroke-width: 2; }
+.anim .point { fill: var(--a); stroke: var(--surface); stroke-width: 2; }
+.anim .point.or { fill: var(--or); }
+.anim .fleche, .anim .accolade { fill: none; stroke: var(--texte); stroke-width: 1.4; stroke-linecap: round; stroke-linejoin: round; }
+.anim .barre-svg { fill: color-mix(in srgb, var(--a) 30%, var(--surface)); }
+.anim .barre-svg.fort { fill: var(--a); }
+.anim .entonnoir { fill: color-mix(in srgb, var(--a) 12%, transparent); }
+.anim .mur { fill: none; stroke: var(--texte); stroke-width: 2; }
+.anim .porte { stroke: var(--surface); stroke-width: 4; }
+.anim .gondole { fill: color-mix(in srgb, var(--doux) 25%, var(--surface)); stroke: var(--doux); stroke-width: 1; }
+.anim .tete { fill: var(--or); }
+.anim .caisse { fill: var(--texte); }
+.anim .zone.chaude, .anim .leg.chaude { fill: color-mix(in srgb, #e8743d 30%, transparent); }
+.anim .zone.froide, .anim .leg.froide { fill: color-mix(in srgb, #3d8be8 24%, transparent); }
+.anim .circuit { fill: none; stroke: var(--a); stroke-width: 2; stroke-linecap: round; }
+.anim .client { display: none; fill: var(--a); stroke: var(--surface); stroke-width: 2; }
+@supports (offset-path: path("M0 0")) {
+  .anim .client { display: block; offset-path: path("M284 196 V150 H300 V40 H40 V150 H150 L196 166"); offset-distance: 100%; offset-rotate: 0deg; }
+  .anim.joue .a-client { animation: client 4s .9s linear both; }
+}
+
+.anim.joue .a-trace { stroke-dasharray: 1 1; animation: trace var(--t, 1.6s) var(--d, 0s) linear both; }
+.anim.joue .a-fondu { animation: anim-fondu .5s var(--d, 0s) var(--ease) both; }
+.anim.joue .a-pop { transform-box: fill-box; transform-origin: center; animation: anim-pop .45s var(--d, 0s) var(--ease) both; }
+.anim.joue .a-monte { transform-box: fill-box; transform-origin: bottom; animation: anim-monte .7s var(--d, 0s) var(--ease) both; }
+.anim.joue .a-large { transform-box: fill-box; transform-origin: center; animation: anim-large .7s var(--d, 0s) var(--ease) both; }
+.anim.joue .a-pulse { animation: anim-fondu .5s var(--d, 0s) both, anim-pulse 2.4s calc(var(--d, 0s) + .5s) ease-in-out 3; }
+.anim.anim-attente * { animation-play-state: paused !important; }
+@keyframes trace { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+@keyframes anim-fondu { from { opacity: 0; } to { opacity: 1; } }
+@keyframes anim-pop { from { opacity: 0; transform: scale(0); } 70% { opacity: 1; transform: scale(1.25); } to { opacity: 1; transform: scale(1); } }
+@keyframes anim-monte { from { transform: scaleY(0); } to { transform: scaleY(1); } }
+@keyframes anim-large { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+@keyframes anim-pulse { 50% { opacity: .45; } }
+@keyframes client { from { offset-distance: 0%; } to { offset-distance: 100%; } }
+@media print { .anim-rejouer { display: none; } .anim { break-inside: avoid; } }
+
+/* ---------- Scènes animées des en-têtes de matière ---------- */
+.entete-matiere { display: flex; align-items: center; gap: 16px; }
+.entete-matiere > div { flex: 1; min-width: 0; }
+.scene { flex: 0 0 auto; width: 112px; height: auto; overflow: visible; --s: var(--ct, var(--c)); }
+@media (max-width: 420px) { .scene { width: 84px; } }
+.scene .sc-bulle { fill: color-mix(in srgb, var(--s) 18%, var(--surface)); }
+.scene .sc-bulle2 { fill: var(--s); }
+.scene .sc-point { fill: var(--s); animation: sc-saute 1.4s ease-in-out infinite; }
+.scene .sc-point.s2 { animation-delay: .18s; }
+.scene .sc-point.s3 { animation-delay: .36s; }
+.scene .sc-coche { fill: none; stroke: var(--surface); stroke-width: 3.5; stroke-linecap: round; stroke-linejoin: round; }
+.scene .sc-pop { transform-box: fill-box; transform-origin: center; animation: sc-pop 5s var(--ease) infinite; }
+.scene .sc-trait { stroke: var(--doux); stroke-width: 2.5; stroke-linecap: round; }
+.scene .sc-produit { fill: var(--s); }
+.scene .sc-produit2 { fill: color-mix(in srgb, var(--s) 45%, var(--surface)); }
+.scene .sc-tombe { animation: sc-tombe .7s var(--ease) both; }
+.scene .t2 { animation-delay: .15s; }
+.scene .t3 { animation-delay: .3s; }
+.scene .sc-etiquette { transform-box: view-box; transform-origin: 95px 8px; animation: sc-balance 3.2s ease-in-out infinite; }
+.scene .sc-fil { stroke: var(--doux); stroke-width: 1.5; }
+.scene .sc-tag { fill: var(--or); }
+.scene text { font: 700 11px "DM Sans", system-ui, sans-serif; fill: #172340; } /* % sur l étiquette dorée */
+.scene .sc-barre { fill: color-mix(in srgb, var(--s) 35%, var(--surface)); transform-box: fill-box; transform-origin: bottom; animation: anim-monte .8s var(--ease) both; }
+.scene .b2 { animation-delay: .15s; }
+.scene .b3 { animation-delay: .3s; }
+.scene .sc-tete { fill: var(--s); }
+.scene .sc-etoile { fill: var(--or); }
+.scene .sc-courbe { fill: none; stroke: var(--s); stroke-width: 3; stroke-linecap: round; stroke-linejoin: round; stroke-dasharray: 1 1; animation: trace 1.2s .4s ease-out both; }
+.scene .sc-fin { fill: var(--or); transform-box: fill-box; transform-origin: center; animation: anim-pop .4s 1.5s var(--ease) both; }
+.scene .sc-mot { font-size: 12px; animation: sc-mot 6s ease-in-out infinite; }
+.scene .sc-mot.haut { fill: var(--texte); }
+.scene .sc-mot.bas { fill: var(--surface); }
+.scene .sc-mot.m2 { animation-delay: -3s; }
+@keyframes sc-saute { 0%, 60%, 100% { transform: none; } 30% { transform: translateY(-4px); } }
+@keyframes sc-pop { 0%, 12% { opacity: 0; transform: scale(.6); } 22%, 88% { opacity: 1; transform: none; } 100% { opacity: 0; transform: scale(.9); } }
+@keyframes sc-tombe { from { opacity: 0; transform: translateY(-14px); } to { opacity: 1; transform: none; } }
+@keyframes sc-balance { 0%, 100% { transform: rotate(-7deg); } 50% { transform: rotate(7deg); } }
+@keyframes sc-mot { 0%, 42% { opacity: 1; } 50%, 92% { opacity: 0; } 100% { opacity: 1; } }
+
+/* Entrée en cascade des cartes de matière et de fiche */
+#app.entree :is(.grille-matieres, .liste-fiches) > * { animation: entree .4s var(--ease) backwards; }
+#app.entree :is(.grille-matieres, .liste-fiches) > :nth-child(2) { animation-delay: .05s; }
+#app.entree :is(.grille-matieres, .liste-fiches) > :nth-child(3) { animation-delay: .1s; }
+#app.entree :is(.grille-matieres, .liste-fiches) > :nth-child(4) { animation-delay: .15s; }
+#app.entree :is(.grille-matieres, .liste-fiches) > :nth-child(5) { animation-delay: .2s; }
+#app.entree :is(.grille-matieres, .liste-fiches) > :nth-child(n+6) { animation-delay: .25s; }
+
+@media (prefers-reduced-motion: reduce) {
+  .scene *, .anim * { animation: none !important; }
+  .anim .client { display: none; }
+}
