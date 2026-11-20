@@ -395,9 +395,17 @@ table.bilan a { color: inherit; }
 :root[data-theme="dark"] :is(.pf-ligne.vert .pf-taux, .pf-legende .vert, .pf-titre small) { color: #5cc28f; }
 :root[data-theme="dark"] :is(.pf-ligne.rouge .pf-taux, .pf-legende .rouge, .pf-carte-taux) { color: #ef7a5f; }
 
-.calc-types { display: flex; flex-wrap: wrap; gap: 8px; margin: 4px 0 16px; }
+.calc-types { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 4px 0 8px; }
+.calc-types + .defi-q { margin-top: 16px; }
+.calc-groupe { font-size: .75rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--doux); min-width: 92px; }
 .calc-types a { padding: 4px 12px; border-radius: 999px; border: 1px solid var(--bord); text-decoration: none; font-size: .84rem; background: var(--bg); }
 .calc-types a.actif { background: var(--nuit); color: var(--or); border-color: var(--nuit); font-weight: 700; }
+@media (max-width: 600px) {
+  .calc-types { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; margin: 0 -20px 4px; padding: 2px 20px; }
+  .calc-types::-webkit-scrollbar { display: none; }
+  .calc-types a { white-space: nowrap; flex: none; }
+  .calc-groupe { min-width: 0; flex: none; }
+}
 .calculs .situation { margin-bottom: 16px; }
 .calculs .situation .table-wrap { margin: 12px 0 0; }
 .calc-form { display: grid; gap: 12px; grid-template-columns: repeat(auto-fill, minmax(min(100%, 220px), 1fr)); }

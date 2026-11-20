@@ -118,8 +118,97 @@ var Outils = (function () {
         champs: noms.map(function (n, j) { return ['Note pondérée de ' + n, tot[j], '']; }),
         choix: ['Fournisseur retenu', gagnant, noms],
         correction: noms.map(function (n, j) { return n + ' : ' + notes[j].map(function (v, i) { return v + ' × ' + coefs[i]; }).join(' + ') + ' = <b>' + tot[j] + '</b>'; }).join('<br>') + '<br>On retient <b>' + gagnant + '</b>.' };
+    } },
+    prixvente: { titre: 'Prix de vente et taux de marque', gen: function () {
+      var prod = choisir(PRODUITS), pa = alea(12, 90), t = choisir([25, 30, 35, 36, 40, 45, 50]);
+      var pv = pa / (1 - t / 100), faux = pa * (1 + t / 100);
+      return { situation: 'Léa référence des ' + prod + ' achetés <b>' + fr(pa, 0) + ' € HT</b>. La directrice veut un <b>taux de marque de ' + t + ' %</b>. Quel prix de vente HT fixer ? Et quel prix fixerait un vendeur qui confond avec le taux de marge ?',
+        champs: [['Prix de vente HT (taux de marque)', pv, '€'], ['Prix HT si on confond (taux de marge)', faux, '€'], ['Perte par article', pv - faux, '€']],
+        correction: 'Le coût d’achat représente ' + (100 - t) + ' % du prix de vente : PV = ' + fr(pa, 0) + ' ÷ ' + fr(1 - t / 100) + ' = <b>' + fr(pv) + ' €</b><br>' +
+          'Avec un taux de marge : ' + fr(pa, 0) + ' × ' + fr(1 + t / 100) + ' = <b>' + fr(faux) + ' €</b><br>Perte par article : ' + fr(pv) + ' − ' + fr(faux) + ' = <b>' + fr(pv - faux) + ' €</b>' };
+    } },
+    remises: { titre: 'Remises successives', gen: function () {
+      var brut = alea(400, 5000, 50), r1 = choisir([5, 8, 10, 12, 15, 20]), r2 = choisir([2, 3, 5, 8, 10]);
+      var net1 = brut * (1 - r1 / 100), net = net1 * (1 - r2 / 100), g = (brut - net) / brut * 100;
+      return { situation: 'Un fournisseur accorde à Sport’Tours deux remises successives sur une commande de <b>' + fr(brut, 0) + ' € HT</b> : <b>' + r1 + ' %</b>, puis <b>' + r2 + ' %</b>.',
+        champs: [['Net à payer HT (€)', net, '€'], ['Taux de remise global (%)', g, '%']],
+        correction: 'Après la 1<sup>re</sup> remise : ' + fr(brut, 0) + ' × ' + fr(1 - r1 / 100) + ' = ' + fr(net1) + ' €<br>Après la 2<sup>e</sup> : ' + fr(net1) + ' × ' + fr(1 - r2 / 100) + ' = <b>' + fr(net) + ' €</b><br>' +
+          'Remise globale : (' + fr(brut, 0) + ' − ' + fr(net) + ') ÷ ' + fr(brut, 0) + ' × 100 = <b>' + fr(g) + ' %</b>, et non ' + (r1 + r2) + ' % : la 2<sup>e</sup> remise porte sur un montant déjà réduit.' };
+    } },
+    wilson: { titre: 'Modèle de Wilson', gen: function () {
+      // On tire N, PU, T et P, puis on en déduit une consommation entière : le résultat tombe juste.
+      var n, pu, t, p, c;
+      for (var essai = 0; essai < 200; essai++) {
+        n = choisir([4, 5, 6, 8, 10, 12, 15, 20, 24]); pu = choisir([4, 5, 6, 8, 10, 12, 15, 20]); t = choisir([10, 15, 20, 25]); p = choisir([10, 12, 15, 18, 20, 25, 30, 40]);
+        c = n * n * 2 * p * 100 / (pu * t); // calcul en entiers : pas d'erreur d'arrondi
+        if (Math.abs(c - Math.round(c)) < 1e-9 && c >= 600 && c <= 40000 && Math.abs(c / n - Math.round(c / n)) < 1e-9) break;
+      }
+      c = Math.round(c);
+      var prod = choisir(PRODUITS), q = c / n, pos = q / 2 * pu * t / 100, pas = n * p;
+      return { situation: 'Sport’Tours vend <b>' + fr(c, 0) + ' ' + prod + '</b> par an, à un rythme régulier. Coût d’achat : <b>' + fr(pu, 0) + ' € HT</b>. Coût de passation : <b>' + fr(p, 0) + ' €</b> par commande. Taux de possession : <b>' + t + ' %</b>.',
+        champs: [['Nombre optimal de commandes N', n, ''], ['Quantité par commande Q', q, ''], ['Coût total de gestion (€)', pos + pas, '€']],
+        correction: 'C × PU × T = ' + fr(c, 0) + ' × ' + fr(pu, 0) + ' × ' + fr(t / 100) + ' = ' + fr(c * pu * t / 100) + '<br>2 × P = ' + fr(2 * p, 0) + '<br>' +
+          'N = √(' + fr(c * pu * t / 100) + ' ÷ ' + fr(2 * p, 0) + ') = √' + fr(n * n, 0) + ' = <b>' + n + ' commandes</b><br>Q = ' + fr(c, 0) + ' ÷ ' + n + ' = <b>' + fr(q, 0) + '</b><br>' +
+          'Possession = (' + fr(q, 0) + ' ÷ 2) × ' + fr(pu, 0) + ' × ' + fr(t / 100) + ' = ' + fr(pos) + ' € ; passation = ' + n + ' × ' + fr(p, 0) + ' = ' + fr(pas) + ' €<br>Coût total = <b>' + fr(pos + pas) + ' €</b> (les deux coûts sont égaux à l’optimum).' };
+    } },
+    alerte: { titre: 'Stock minimum, de sécurité, d’alerte', gen: function () {
+      var prod = choisir(PRODUITS), j = alea(5, 60), c = j * 360, dl = alea(3, 15), ds = alea(2, 7);
+      return { situation: 'Sport’Tours vend <b>' + fr(c, 0) + ' ' + prod + '</b> par an (année de 360 jours). Le fournisseur livre en <b>' + dl + ' jours</b>. Léa veut <b>' + ds + ' jours</b> de stock de sécurité.',
+        champs: [['Ventes par jour', j, ''], ['Stock minimum', j * dl, ''], ['Stock de sécurité', j * ds, ''], ['Stock d’alerte', j * (dl + ds), '']],
+        correction: 'Ventes par jour = ' + fr(c, 0) + ' ÷ 360 = <b>' + j + '</b><br>Stock minimum = ' + j + ' × ' + dl + ' = <b>' + j * dl + '</b><br>Stock de sécurité = ' + j + ' × ' + ds + ' = <b>' + j * ds + '</b><br>' +
+          'Stock d’alerte = ' + j * dl + ' + ' + j * ds + ' = <b>' + j * (dl + ds) + '</b> : on commande dès que le stock descend à ce niveau.' };
+    } },
+    cmp: { titre: 'Fiche de stock et CMP', gen: function () {
+      // CMP de fin de période, choisi pour tomber juste au centime (comme dans les sujets).
+      var q0, p0, q1, p1, q2, p2, s1, s2, val, qt, cmp;
+      // Calcul en centimes : on cherche un 3e prix (en hausse) qui rend la division exacte.
+      var c0, c1, c2, trouve = false;
+      for (var essai = 0; essai < 500 && !trouve; essai++) {
+        q0 = alea(50, 300, 10); c0 = alea(400, 2000, 10); q1 = alea(100, 500, 50); c1 = c0 + alea(5, 60, 5); q2 = alea(100, 400, 50); qt = q0 + q1 + q2;
+        for (c2 = c1 + 5; c2 <= c1 + 80; c2++) { if ((q0 * c0 + q1 * c1 + q2 * c2) % qt === 0) { trouve = true; break; } }
+      }
+      if (!trouve) { q0 = 100; c0 = 1000; q1 = 200; c1 = 1030; q2 = 100; c2 = 1050; qt = 400; }
+      p0 = c0 / 100; p1 = c1 / 100; p2 = c2 / 100;
+      val = (q0 * c0 + q1 * c1 + q2 * c2) / 100; cmp = (q0 * c0 + q1 * c1 + q2 * c2) / qt / 100;
+      s1 = alea(Math.round((q0 + q1) * 0.4 / 10) * 10, q0 + q1 - 10, 10); s2 = alea(Math.round((q0 + q1 - s1 + q2) * 0.4 / 10) * 10, q0 + q1 - s1 + q2 - 20, 10);
+      var sorties = s1 + s2, final = qt - sorties;
+      return { situation: 'Mouvements d’un mois pour une référence de Sport’Tours (CMP calculé en fin de période) :' +
+          '<div class="table-wrap"><table class="calc-table"><tr><th>Mouvement</th><th>Quantité</th><th>Coût unitaire</th></tr>' +
+          '<tr><td>Stock initial</td><td>' + q0 + '</td><td>' + fr(p0) + ' €</td></tr><tr><td>Entrée</td><td>' + q1 + '</td><td>' + fr(p1) + ' €</td></tr>' +
+          '<tr><td>Sortie</td><td>' + s1 + '</td><td></td></tr><tr><td>Entrée</td><td>' + q2 + '</td><td>' + fr(p2) + ' €</td></tr><tr><td>Sortie</td><td>' + s2 + '</td><td></td></tr></table></div>',
+        champs: [['CMP (€)', cmp, '€'], ['Valeur des sorties (€)', sorties * cmp, '€'], ['Valeur du stock final (€)', final * cmp, '€']],
+        correction: 'Valeur des entrées et du stock initial : ' + fr(q0 * p0) + ' + ' + fr(q1 * p1) + ' + ' + fr(q2 * p2) + ' = ' + fr(val) + ' € pour ' + qt + ' unités<br>' +
+          'CMP = ' + fr(val) + ' ÷ ' + qt + ' = <b>' + fr(cmp) + ' €</b><br>Sorties : (' + s1 + ' + ' + s2 + ') × ' + fr(cmp) + ' = <b>' + fr(sorties * cmp) + ' €</b><br>' +
+          'Stock final : ' + qt + ' − ' + sorties + ' = ' + final + ' unités × ' + fr(cmp) + ' = <b>' + fr(final * cmp) + ' €</b><br>Contrôle : ' + fr(sorties * cmp) + ' + ' + fr(final * cmp) + ' = ' + fr(qt * cmp) + ' €' + (Math.abs(qt * cmp - val) > 0.005 ? ' (petit écart dû à l’arrondi du CMP)' : ', soit la valeur totale') + '.' };
+    } },
+    rotation: { titre: 'Stock moyen, rotation, durée', gen: function () {
+      var prod = choisir(PRODUITS), si = alea(40, 400, 10), sf = alea(40, 400, 10), sm = (si + sf) / 2, r = choisir([6, 8, 9, 10, 12, 15, 18, 20, 24]), v = sm * r;
+      return { situation: 'Les ' + prod + ' de Sport’Tours sur l’année (360 jours) : stock au 1<sup>er</sup> janvier <b>' + si + '</b>, stock au 31 décembre <b>' + sf + '</b>, quantité vendue <b>' + fr(v, 0) + '</b>.',
+        champs: [['Stock moyen', sm, ''], ['Ratio de rotation', r, ''], ['Durée moyenne de stockage (jours)', 360 / r, 'j']],
+        correction: 'Stock moyen = (' + si + ' + ' + sf + ') ÷ 2 = <b>' + fr(sm, sm % 1 ? 1 : 0) + '</b><br>Rotation = ' + fr(v, 0) + ' ÷ ' + fr(sm, sm % 1 ? 1 : 0) + ' = <b>' + r + '</b><br>' +
+          'Durée = 360 ÷ ' + r + ' = <b>' + fr(360 / r, 1) + ' jours</b> : un article reste en moyenne ' + fr(360 / r, 0) + ' jours en stock.' };
+    } },
+    demarque: { titre: 'Inventaire : démarque ou surmarque', gen: function () {
+      var prod = choisir(PRODUITS), th = alea(20, 300), e = choisir([-6, -5, -4, -3, -2, 2, 3, 4]), reel = th + e, pa = alea(8, 90);
+      var nature = e < 0 ? 'démarque' : 'surmarque';
+      return { situation: 'Inventaire des ' + prod + ' : le logiciel annonce <b>' + th + '</b> articles, le comptage en trouve <b>' + reel + '</b>. Coût d’achat : <b>' + fr(pa, 0) + ' € HT</b>.',
+        champs: [['Écart en quantité (réel − théorique)', e, ''], ['Valeur de l’écart (€, sans signe)', Math.abs(e) * pa, '€']],
+        choix: ['Cet écart est…', nature, ['démarque', 'surmarque']],
+        correction: 'Écart = ' + reel + ' − ' + th + ' = <b>' + e + '</b> : le stock réel est ' + (e < 0 ? 'inférieur' : 'supérieur') + ' au théorique, c’est une <b>' + nature + '</b>.<br>' +
+          'Valeur = ' + Math.abs(e) + ' × ' + fr(pa, 0) + ' = <b>' + fr(Math.abs(e) * pa) + ' €</b>. Le logiciel est corrigé à ' + reel + '.' };
+    } },
+    transformation: { titre: 'Évaluer une action commerciale', gen: function () {
+      var v = alea(400, 2500, 10), t = choisir([15, 18, 20, 22, 24, 25, 28, 30]), tk = Math.round(v * t / 100), pm = alea(35, 90), ca = tk * pm;
+      var cout = alea(500, 2500, 100), tm = choisir([30, 35, 40, 45]), ca0 = Math.round(ca * choisir([.6, .7, .75, .8]) / 10) * 10, res = (ca - ca0) * tm / 100 - cout;
+      return { situation: 'Pendant une animation, Sport’Tours compte <b>' + fr(v, 0) + ' visiteurs</b>, <b>' + fr(tk, 0) + ' tickets</b> et <b>' + fr(ca, 0) + ' € HT</b> de CA. La même semaine l’an dernier, le CA était de <b>' + fr(ca0, 0) + ' €</b>. Taux de marque : <b>' + tm + ' %</b>. Coût de l’animation : <b>' + fr(cout, 0) + ' €</b>.',
+        champs: [['Taux de transformation (%)', tk / v * 100, '%'], ['Panier moyen (€)', pm, '€'], ['Résultat de l’opération (€)', res, '€']],
+        correction: 'Taux de transformation = ' + fr(tk, 0) + ' ÷ ' + fr(v, 0) + ' × 100 = <b>' + fr(tk / v * 100) + ' %</b><br>Panier moyen = ' + fr(ca, 0) + ' ÷ ' + fr(tk, 0) + ' = <b>' + fr(pm) + ' €</b><br>' +
+          'Marge supplémentaire = (' + fr(ca, 0) + ' − ' + fr(ca0, 0) + ') × ' + tm + ' % = ' + fr((ca - ca0) * tm / 100) + ' €<br>Résultat = ' + fr((ca - ca0) * tm / 100) + ' − ' + fr(cout, 0) + ' = <b>' + fr(res) + ' €</b> : ' + (res >= 0 ? 'l’opération est rentable.' : 'l’opération n’est pas rentable.') };
     } }
   };
+  // Regroupement des types d'exercices par matière, pour les boutons de choix.
+  var GROUPES = [['Gestion', ['variation', 'remises', 'marge', 'prixvente', 'elasticite', 'scoring']], ['Stocks', ['wilson', 'alerte', 'cmp', 'rotation', 'demarque']],
+    ['Management', ['paie', 'horaire']], ['ADOC', ['transformation']]];
 
   function nombre(v) { return parseFloat(String(v).replace(/\s/g, '').replace(',', '.').replace('%', '').replace('€', '')); }
   function proche(x, v) { return isFinite(x) && Math.abs(x - v) <= Math.max(0.011, Math.abs(v) * 0.005); }
@@ -129,13 +218,17 @@ var Outils = (function () {
     var cles = Object.keys(EXOS), choisi = EXOS[type] ? type : null, session = (pageCalculs.session = pageCalculs.session || { ok: 0, faits: 0 });
     var k = choisi || choisir(cles), ex = EXOS[k].gen(), essais = 0, reussi = false, vu = false, compte = false;
     // Un exercice compte une seule fois dans le score de la session ; réussi seulement si la correction n'a pas été vue avant.
-    function compter(ok) { if (compte) return; compte = true; session.faits++; if (ok) session.ok++; }
+    function compter(ok) { if (compte) return; compte = true; session.faits++; if (ok) session.ok++;
+      var sc = app.querySelector('.defi-score'); if (sc) sc.textContent = session.ok + '/' + session.faits + ' réussis'; }
     app.innerHTML = fil('Calculs à l’infini') +
       '<section class="defi calculs">' +
         '<div class="defi-haut"><span>' + Icone('calculatrice') + ' Calculs à l’infini</span><span class="defi-score">' + session.ok + '/' + session.faits + ' réussis</span></div>' +
-        '<div class="calc-types">' + ['<a href="#/calculs"' + (!choisi ? ' class="actif"' : '') + '>' + Icone('des') + ' Au hasard</a>'].concat(cles.map(function (c) {
-          return '<a href="#/calculs/' + c + '"' + (choisi === c ? ' class="actif"' : '') + '>' + esc(EXOS[c].titre) + '</a>';
-        })).join('') + '</div>' +
+        '<div class="calc-types"><a href="#/calculs"' + (!choisi ? ' class="actif"' : '') + '>' + Icone('des') + ' Au hasard</a></div>' +
+        GROUPES.map(function (g) {
+          return '<div class="calc-types"><span class="calc-groupe">' + g[0] + '</span>' + g[1].map(function (c) {
+            return '<a href="#/calculs/' + c + '"' + (choisi === c ? ' class="actif" aria-current="page"' : '') + '>' + esc(EXOS[c].titre) + '</a>';
+          }).join('') + '</div>';
+        }).join('') +
         '<h2 class="defi-q">' + esc(EXOS[k].titre) + '</h2>' +
         '<div class="situation">' + ex.situation + '</div>' +
         '<form class="calc-form" autocomplete="off">' + ex.champs.map(function (c, i) {
@@ -147,6 +240,8 @@ var Outils = (function () {
         '<p class="calc-suivant" hidden><a class="defi-go" href="#/calculs' + (choisi ? '/' + choisi : '') + '" data-rejouer>Nouvel exercice ›</a></p>' +
         '<p class="astuce">Arrondis à 2 décimales. Virgule ou point, comme tu veux.</p>' +
       '</section>';
+    var actif = app.querySelector('.calc-types a.actif');
+    if (actif) { var rang = actif.parentNode; rang.scrollLeft = actif.offsetLeft - rang.offsetLeft - 20; } // sur mobile, le type choisi reste visible
     var form = app.querySelector('.calc-form'), corr = app.querySelector('.calc-correction'), suite = app.querySelector('.calc-suivant');
     function montrerCorrection() { if (!reussi) { vu = true; compter(false); } corr.hidden = false; suite.hidden = false; }
     form.addEventListener('submit', function (e) {
@@ -397,5 +492,5 @@ var Outils = (function () {
     { id: 'oral', txt: 'Faire un oral blanc avec Claude', cle: 'oral', obj: 1, lien: '#/oral' }
   ]);
 
-  return { pageBilan: pageBilan, pageCalculs: pageCalculs, pageOral: pageOral, exporter: exporter, lire: lire };
+  return { pageBilan: pageBilan, pageCalculs: pageCalculs, pageOral: pageOral, exporter: exporter, lire: lire, exos: EXOS };
 })();

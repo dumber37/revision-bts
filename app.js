@@ -72,7 +72,7 @@
         '<a class="lien-profil" href="#/planning"><span class="ico">' + Icone('calendrier') + '</span><span><b>Mon planning</b><span>Compte à rebours et programme du jour</span></span></a>' +
         '<a class="lien-profil" href="#/bilan"><span class="ico">' + Icone('cible') + '</span><span><b>Mes points faibles</b><span>Ce qu’il faut retravailler en priorité</span></span></a>' +
         '<a class="lien-profil" href="#/express"><span class="ico">' + Icone('chrono') + '</span><span><b>L’essentiel en 1 minute</b><span>Les 3 points clés de chaque fiche</span></span></a>' +
-        '<a class="lien-profil" href="#/calculs"><span class="ico">' + Icone('calculatrice') + '</span><span><b>Calculs à l’infini</b><span>Paie, élasticité, marge… avec correction</span></span></a>' +
+        '<a class="lien-profil" href="#/calculs"><span class="ico">' + Icone('calculatrice') + '</span><span><b>Calculs à l’infini</b><span>Marge, Wilson, CMP, paie… 14 types corrigés</span></span></a>' +
         '<a class="lien-profil" href="#/oral"><span class="ico">' + Icone('micro') + '</span><span><b>Simulateur d’oral</b><span>E41 et E42 avec Claude, noté sur 20</span></span></a>' +
         '<a class="lien-profil" href="#/lexique"><span class="ico">' + Icone('bibliotheque') + '</span><span><b>Lexique</b><span>Toutes les notions de A à Z</span></span></a>' +
         '<a class="lien-profil" href="#/carnet"><span class="ico">' + Icone('carnet') + '</span><span><b>Mon carnet</b><span>Mes favoris et mes notes</span></span></a>' +
