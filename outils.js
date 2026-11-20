@@ -538,6 +538,7 @@ var Outils = (function () {
         '<p class="calc-boutons"><button type="button" class="defi-go secondaire" data-hasard>' + Icone('des') + ' Situation au hasard</button><button type="button" class="defi-go" data-lancer>Lancer l’oral avec Claude ↗</button></p>' +
         '<p class="astuce">Claude s’ouvre dans un nouvel onglet. Il faut être connecté à ton compte. Si la consigne n’est pas envoyée toute seule, appuie sur Entrée.</p>' +
       '</section>' +
+      '<a class="lien-profil ob-lien" href="#/oral/blanc"><span class="ico">' + Icone('chrono') + '</span><span><b>Oral blanc E42 chronométré</b><span>Sans Claude : questions du jury au hasard, chrono, enregistrement facultatif</span></span></a>' +
       '<h2 class="titre-section">Ton mémo pendant l’oral</h2><div class="oral-memo"></div>';
     var ep = app.querySelector('#oEp'), sc = app.querySelector('#oSc'), niv = app.querySelector('#oNiv');
     function remplir() {
@@ -565,6 +566,200 @@ var Outils = (function () {
     remplir();
   }
 
+  // ---------- Oral blanc E42 en autonomie : chrono, questions de jury, enregistrement local ----------
+
+  // [compétence, question, ce que le jury attend]
+  var JURY_E42 = [
+    ['Offre', 'Quels chiffres vous ont permis de poser votre diagnostic de départ ?', 'Des données datées : CA, évolution, panier moyen, trafic, taux de transformation, comparés à une période de référence.'],
+    ['Offre', 'Comment avez-vous analysé la demande de vos clients ? Avec quelles sources ?', 'Ventes passées, tendances, enquête ou questionnaire clients, remontées des vendeurs, avis en ligne.'],
+    ['Offre', 'Quels sont les points forts et les points faibles de l’offre existante ?', 'Produits qui tournent ou non, profondeur et largeur de gamme, prix face aux concurrents, ruptures.'],
+    ['Offre', 'Pourquoi avoir choisi cette famille de produits plutôt qu’une autre ?', 'Un lien avec le diagnostic : saison, marge, potentiel de ventes, attente des clients.'],
+    ['Offre', 'Comment votre offre se situe-t-elle face à la concurrence locale ?', 'Concurrents nommés, prix relevés, services en plus ou en moins, positionnement.'],
+    ['Offre', 'Quels services associés avez-vous proposés, ou auriez-vous pu proposer ?', 'Conseil, essai, retouche, livraison, carte de fidélité, atelier : ce qui crée de la valeur pour le client.'],
+    ['Espace', 'Où avez-vous implanté les produits, et pourquoi à cet endroit ?', 'Zone chaude ou froide, flux de circulation, complémentarité, visibilité depuis l’entrée.'],
+    ['Espace', 'Quelle PLV avez-vous utilisée, et qu’apportait-elle ?', 'Le support (kakémono, stop-rayon, affiche, écran), le message, l’emplacement, le coût.'],
+    ['Espace', 'Comment avez-vous respecté la sécurité et l’accessibilité dans votre aménagement ?', 'Allées dégagées, issues de secours, hauteur des produits, accès des personnes à mobilité réduite.'],
+    ['Espace', 'Comment avez-vous organisé le travail de l’équipe pour l’opération ?', 'Qui fait quoi et quand : planning, briefing, consignes, moyens matériels.'],
+    ['Performances', 'Quel était votre objectif chiffré, et comment l’avez-vous fixé ?', 'Un objectif SMART : chiffré, daté, réaliste, appuyé sur l’historique ou le diagnostic.'],
+    ['Performances', 'Quel budget avez-vous engagé ? L’opération a-t-elle été rentable ?', 'Le détail des coûts, la marge supplémentaire dégagée et le résultat : marge en plus − coût de l’action.'],
+    ['Performances', 'Quels leviers avez-vous utilisés pour augmenter le panier moyen ?', 'Vente additionnelle, montée en gamme, lots, offres « dès X € d’achat ».'],
+    ['Performances', 'Comment avez-vous géré le stock pendant l’opération ?', 'Commandes anticipées, stock de sécurité, suivi des ventes, pas de rupture sur les produits mis en avant.'],
+    ['Communication', 'Quelle cible visiez-vous, et quel message lui avez-vous adressé ?', 'Une cible précise, un message simple, un avantage client clair.'],
+    ['Communication', 'Pourquoi ces supports de communication plutôt que d’autres ?', 'Adaptés à la cible et au budget : réseaux sociaux, SMS, affichage, presse locale, en magasin.'],
+    ['Communication', 'Comment avez-vous relié communication en magasin et communication digitale ?', 'Le même message partout, un lien entre les deux (QR code, publication qui renvoie au magasin).'],
+    ['Communication', 'Comment avez-vous mesuré l’efficacité de votre communication ?', 'Trafic, portée et interactions des publications, codes promo utilisés, question « comment nous avez-vous connus ? ».'],
+    ['Communication', 'Quelles règles avez-vous respectées pour vos promotions et vos messages ?', 'Prix de référence, affichage des prix, durée de l’offre, consentement pour les SMS et les e-mails (RGPD).'],
+    ['Évaluation', 'Quels indicateurs avez-vous suivis pour évaluer l’action ?', 'Quantitatifs (CA, ventes, panier, transformation, marge) et qualitatifs (avis clients, retours de l’équipe).'],
+    ['Évaluation', 'Vos objectifs ont-ils été atteints ? Comment expliquez-vous les écarts ?', 'Résultat comparé à l’objectif, causes internes et externes, sans se cacher derrière la météo.'],
+    ['Évaluation', 'Si c’était à refaire, que changeriez-vous ?', 'Une ou deux améliorations concrètes : c’est une preuve de recul, pas un aveu d’échec.'],
+    ['Évaluation', 'Quelles actions correctives avez-vous proposées au manager ?', 'Des propositions réalistes et chiffrées, avec un délai.'],
+    ['Évaluation', 'Comment avez-vous recueilli l’avis des clients après l’opération ?', 'Questionnaire court, échanges en caisse, avis en ligne, taux de retour.'],
+    ['Posture', 'En quoi cette action respecte-t-elle la politique commerciale de l’enseigne ?', 'Cohérence avec le positionnement, les prix, l’image et les consignes du siège.'],
+    ['Posture', 'Qu’avez-vous fait vous-même, et qu’est-ce qui a été décidé par votre tuteur ?', 'Ta part réelle dans le projet, ce que tu as proposé, ce que tu as dû faire valider.'],
+    ['Posture', 'Quelles difficultés avez-vous rencontrées, et comment les avez-vous surmontées ?', 'Une difficulté réelle, la solution trouvée, ce que tu en retiens.'],
+    ['Posture', 'Qu’est-ce que ce projet vous a appris pour votre futur métier ?', 'Une compétence précise du référentiel, reliée à un exemple vécu.']
+  ];
+  var GRILLE_E42 = ['Diagnostic appuyé sur des chiffres', 'Actions cohérentes avec le diagnostic', 'Chiffrage : objectifs, budget, rentabilité', 'Évaluation : indicateurs et écarts', 'Expression : clarté, vocabulaire professionnel', 'Réponses aux questions du jury'];
+  var NIVEAUX_GRILLE = ['Insuffisant', 'Fragile', 'Satisfaisant', 'Très bien'];
+
+  function pageOralBlanc(app) {
+    document.title = 'Oral blanc E42 · Révisions BTS MCO';
+    var micro = !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia && window.MediaRecorder);
+    var voix = 'speechSynthesis' in window;
+    app.innerHTML = '<nav class="fil"><a href="#/">Matières</a> › <a href="#/oral">Simulateur d’oral</a> › Oral blanc E42</nav>' +
+      '<section class="defi oral-blanc">' +
+        '<div class="defi-haut"><span>' + Icone('chrono') + ' Oral blanc E42 · ADOC</span><span class="ob-phase">Réglages</span></div>' +
+        '<div class="ob-reglages">' +
+          '<p>Tu présentes ton projet d’animation comme le jour J, puis le jury te pose des questions tirées au hasard. Le chrono tourne, tu réponds à voix haute.</p>' +
+          '<div class="duel-form">' +
+            '<label><span>Présentation</span><select id="obPres"><option value="5">5 min</option><option value="10" selected>10 min</option></select></label>' +
+            '<label><span>Entretien</span><select id="obEnt"><option value="10">10 min</option><option value="15">15 min</option><option value="20" selected>20 min</option></select></label>' +
+          '</div>' +
+          '<p class="ob-options">' +
+            (voix ? '<label><input type="checkbox" id="obVoix" checked> Le jury lit les questions à voix haute</label>' : '') +
+            (micro ? '<label><input type="checkbox" id="obMicro"> M’enregistrer (le son reste sur cet appareil, rien n’est envoyé)</label>' : '<span class="astuce">L’enregistrement n’est pas disponible sur ce navigateur.</span>') +
+          '</p>' +
+          '<p class="calc-boutons"><button type="button" class="defi-go" data-go>' + Icone('lecture') + ' Commencer la présentation</button></p>' +
+          '<p class="astuce">Repère habituel de l’épreuve : 30 minutes, environ 10 min de présentation puis 20 min d’échange. Vérifie le format exact (CCF ou ponctuel) avec ton professeur.</p>' +
+        '</div>' +
+        '<div class="ob-scene" hidden>' +
+          '<div class="ob-chrono" role="timer" aria-live="off"><span class="ob-temps">10:00</span><span class="ob-barre"><i></i></span></div>' +
+          '<p class="ob-rec" hidden><span class="ob-point"></span> Enregistrement en cours</p>' +
+          '<div class="ob-contenu"></div>' +
+          '<p class="calc-boutons ob-boutons"></p>' +
+        '</div>' +
+        '<div class="ob-bilan" hidden></div>' +
+      '</section>';
+
+    var $ = function (s) { return app.querySelector(s); };
+    var phase = 'reglages', reste = 0, total = 0, dernier = 0, tic = null, pause = false, questions = [], qi = -1, faites = 0;
+    var flux = null, enreg = null, morceaux = [], urlAudio = null;
+
+    function mmss(s) { s = Math.max(0, Math.ceil(s)); return Math.floor(s / 60) + ':' + ('0' + s % 60).slice(-2); }
+    function afficherTemps() {
+      $('.ob-temps').textContent = mmss(reste);
+      $('.ob-barre i').style.width = (total ? (1 - reste / total) * 100 : 0) + '%';
+      $('.ob-chrono').classList.toggle('fin-proche', reste <= 60);
+    }
+    function demarrer(sec) {
+      total = reste = sec; dernier = performance.now(); pause = false; afficherTemps();
+      $('.ob-chrono').classList.remove('en-pause');
+      if (enreg && enreg.state === 'paused') enreg.resume();
+      clearInterval(tic);
+      tic = setInterval(function () {
+        var t = performance.now(); if (!pause) reste -= (t - dernier) / 1000; dernier = t;
+        afficherTemps();
+        if (reste <= 0) { clearInterval(tic); Jeu.sonner('bon'); if (phase === 'presentation') entretien(); else bilan(); }
+      }, 250);
+    }
+    function dire(txt) {
+      var c = $('#obVoix'); if (!voix || !c || !c.checked) return;
+      speechSynthesis.cancel();
+      var u = new SpeechSynthesisUtterance(txt); u.lang = 'fr-FR'; u.rate = 1;
+      var v = speechSynthesis.getVoices().filter(function (x) { return /^fr/i.test(x.lang); })[0]; if (v) u.voice = v;
+      speechSynthesis.speak(u);
+    }
+    function boutons(html) { $('.ob-boutons').innerHTML = html; }
+
+    function presentation() {
+      phase = 'presentation';
+      $('.ob-reglages').hidden = true; $('.ob-scene').hidden = false; $('.ob-phase').textContent = '1. Présentation';
+      $('.ob-contenu').innerHTML = '<h2 class="defi-q">Présente ton projet</h2><ol class="oral-etapes"><li><b>Contexte</b> : l’unité commerciale, ton rayon, ta mission.</li><li><b>Diagnostic</b> : les chiffres de départ, le constat, les causes.</li><li><b>Objectifs</b> : chiffrés et datés.</li><li><b>Actions</b> : offre, implantation, PLV, communication, équipe.</li><li><b>Budget et résultats</b> : coûts, marge en plus, indicateurs suivis.</li><li><b>Bilan</b> : ce qui a marché, ce que tu changerais.</li></ol>';
+      boutons('<button type="button" class="defi-go secondaire" data-pause>' + Icone('pause') + ' Pause</button><button type="button" class="defi-go" data-suite>J’ai fini, place aux questions ›</button>');
+      demarrer(+$('#obPres').value * 60);
+      dire('Bonjour. Nous vous écoutons, vous pouvez présenter votre projet.');
+    }
+    function entretien() {
+      phase = 'entretien'; $('.ob-phase').textContent = '2. Entretien';
+      // Un tirage équilibré : on mélange, puis on alterne les compétences.
+      var pool = JURY_E42.slice().sort(function () { return Math.random() - 0.5; }), vus = {}, ordre = [];
+      while (pool.length) { var k = pool.findIndex(function (q) { return !vus[q[0]]; }); if (k < 0) { vus = {}; k = 0; } vus[pool[k][0]] = 1; ordre.push(pool.splice(k, 1)[0]); }
+      questions = ordre; qi = -1;
+      boutons('<button type="button" class="defi-go secondaire" data-pause>' + Icone('pause') + ' Pause</button><button type="button" class="defi-go secondaire" data-piste>Ce que le jury attend</button><button type="button" class="defi-go" data-question>Question suivante ›</button><button type="button" class="defi-go secondaire" data-fin>Terminer l’oral</button>');
+      demarrer(+$('#obEnt').value * 60);
+      question();
+    }
+    function question() {
+      qi++; if (qi >= questions.length) { bilan(); return; }
+      faites = qi + 1;
+      var q = questions[qi];
+      $('.ob-contenu').innerHTML = '<p class="ob-num">Question ' + (qi + 1) + ' · ' + esc(q[0]) + '</p><h2 class="defi-q ob-question">' + esc(q[1]) + '</h2><p class="ob-piste" hidden>' + esc(q[2]) + '</p>';
+      dire(q[1]);
+    }
+    function bilan() {
+      if (phase === 'bilan') return;
+      phase = 'bilan'; clearInterval(tic); if (voix) speechSynthesis.cancel(); arreterMicro();
+      $('.ob-scene').hidden = true; $('.ob-phase').textContent = '3. Bilan';
+      var b = $('.ob-bilan'); b.hidden = false;
+      b.innerHTML = '<h2 class="defi-q">Ton auto-évaluation</h2><p>' + faites + ' question' + (faites > 1 ? 's' : '') + ' du jury. Réécoute-toi si tu t’es enregistré, puis évalue-toi honnêtement.</p>' +
+        '<div class="ob-audio"></div>' +
+        '<form class="ob-grille">' + GRILLE_E42.map(function (c, i) {
+          return '<fieldset><legend>' + esc(c) + '</legend>' + NIVEAUX_GRILLE.map(function (n, j) { return '<label><input type="radio" name="g' + i + '" value="' + j + '"> ' + n + '</label>'; }).join('') + '</fieldset>';
+        }).join('') + '<p class="ob-note"></p></form>' +
+        '<p class="calc-boutons"><a class="defi-go" href="#/oral/blanc" data-rejouer>Refaire un oral blanc</a><a class="defi-go secondaire" href="#/adoc">Revoir les fiches ADOC</a></p>';
+      function noter() {
+        var s = 0, manque = 0;
+        GRILLE_E42.forEach(function (c, i) { var r = b.querySelector('input[name="g' + i + '"]:checked'); if (r) s += +r.value; else manque++; });
+        if (manque) { b.querySelector('.ob-note').textContent = 'Coche un niveau pour chaque critère (' + manque + ' restant' + (manque > 1 ? 's' : '') + ') pour voir ta note indicative.'; return; }
+        var n = Math.round(s / (GRILLE_E42.length * 3) * 40) / 2;
+        b.querySelector('.ob-note').innerHTML = 'Note indicative : <b>' + fr(n, n % 1 ? 1 : 0) + ' / 20</b>. ' + (n >= 14 ? 'Solide : garde ce niveau de chiffrage.' : n >= 10 ? 'C’est la moyenne : travaille les critères notés « fragile ».' : 'Reprends les fiches ADOC et recommence avec un projet bien chiffré.');
+      }
+      b.querySelector('.ob-grille').addEventListener('change', noter); noter();
+      Activites.relancer(b, '#/oral/blanc');
+      if (!enreg) montrerAudio(); // avec un enregistrement, l'audio s'affiche à l'arrêt du micro (onstop)
+      Activites.stat('oraux'); Jeu.compter('oral'); Jeu.debloquer('oral'); Jeu.gagner(20, 'oral blanc E42');
+    }
+
+    // Micro : MediaRecorder, en mémoire seulement.
+    function lancerMicro() {
+      var c = $('#obMicro'); if (!micro || !c || !c.checked) return Promise.resolve();
+      return navigator.mediaDevices.getUserMedia({ audio: true }).then(function (f) {
+        flux = f; morceaux = [];
+        enreg = new MediaRecorder(f);
+        enreg.ondataavailable = function (e) { if (e.data && e.data.size) morceaux.push(e.data); };
+        enreg.onstop = function () { montrerAudio(); };
+        enreg.start(1000);
+        $('.ob-rec').hidden = false;
+      }).catch(function () {
+        alerteMicro = true;
+      });
+    }
+    var alerteMicro = false;
+    function arreterMicro() {
+      if (enreg && enreg.state !== 'inactive') enreg.stop();
+      if (flux) flux.getTracks().forEach(function (t) { t.stop(); });
+      flux = null; var r = $('.ob-rec'); if (r) r.hidden = true;
+    }
+    function montrerAudio() {
+      var zone = $('.ob-audio'); if (!zone) return;
+      if (alerteMicro) { zone.innerHTML = '<p class="astuce">Le micro n’a pas été autorisé : pas d’enregistrement cette fois.</p>'; return; }
+      if (!morceaux.length || (enreg && enreg.state !== 'inactive')) return;
+      var type = morceaux[0].type || 'audio/webm', ext = /mp4|aac/.test(type) ? 'm4a' : /ogg/.test(type) ? 'ogg' : 'webm';
+      if (urlAudio) URL.revokeObjectURL(urlAudio);
+      urlAudio = URL.createObjectURL(new Blob(morceaux, { type: type }));
+      zone.innerHTML = '<audio controls src="' + urlAudio + '"></audio><p><a class="defi-go secondaire" href="' + urlAudio + '" download="oral-blanc-e42.' + ext + '">' + Icone('disquette') + ' Garder le fichier</a></p>';
+    }
+
+    // Tout couper si on quitte la page (chrono, voix, micro).
+    function quitter() {
+      clearInterval(tic); if (voix) speechSynthesis.cancel();
+      if (enreg) enreg.onstop = null; arreterMicro();
+      if (urlAudio) URL.revokeObjectURL(urlAudio);
+      window.removeEventListener('hashchange', quitter);
+    }
+    window.addEventListener('hashchange', quitter);
+
+    app.querySelector('.oral-blanc').addEventListener('click', function (e) {
+      var t = e.target.closest('button'); if (!t) return;
+      if (t.hasAttribute('data-go')) { t.disabled = true; lancerMicro().then(presentation); }
+      else if (t.hasAttribute('data-pause')) { pause = !pause; t.innerHTML = pause ? Icone('lecture') + ' Reprendre' : Icone('pause') + ' Pause'; $('.ob-chrono').classList.toggle('en-pause', pause); if (enreg) { if (pause && enreg.state === 'recording') enreg.pause(); else if (!pause && enreg.state === 'paused') enreg.resume(); } }
+      else if (t.hasAttribute('data-suite')) entretien();
+      else if (t.hasAttribute('data-question')) question();
+      else if (t.hasAttribute('data-piste')) { var p = $('.ob-piste'); if (p) p.hidden = !p.hidden; }
+      else if (t.hasAttribute('data-fin')) bilan();
+    });
+  }
+
   // ---------- Branchements ----------
 
   Activites.ajouterPageGlobale('bilan', pageBilan);
@@ -572,7 +767,9 @@ var Outils = (function () {
     var t = location.hash.split('/')[2];
     pageCalculs(app, t);
   });
-  Activites.ajouterPageGlobale('oral', pageOral);
+  Activites.ajouterPageGlobale('oral', function (app) {
+    if (location.hash.split('/')[2] === 'blanc') pageOralBlanc(app); else pageOral(app);
+  });
   Activites.ajouterPageGlobale('importer', pageImporter);
   Jeu.ajouterBadges([
     ['calculs-10', Icone('calculatrice'), 'Calculatrice humaine', 'Réussir 10 exercices de calcul'],

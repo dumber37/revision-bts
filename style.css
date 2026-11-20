@@ -1194,3 +1194,32 @@ body.avec-lecteur .toasts { bottom: 86px; }
   .scene *, .anim * { animation: none !important; }
   .anim .client { display: none; }
 }
+
+/* ---------- Oral blanc E42 ---------- */
+.ob-lien { margin: 16px 0 0; }
+.ob-phase { font-weight: 700; color: var(--rouille); }
+.ob-options { display: grid; gap: 8px; margin: 0 0 16px; }
+.ob-options label { display: flex; gap: 8px; align-items: flex-start; font-size: .92rem; }
+.ob-options input { margin-top: 4px; accent-color: var(--or); }
+.ob-chrono { display: grid; gap: 8px; justify-items: center; margin: 8px 0 16px; }
+.ob-temps { font-size: clamp(2.6rem, 10vw, 3.6rem); font-weight: 800; font-variant-numeric: tabular-nums; line-height: 1; letter-spacing: .02em; }
+.ob-barre { width: 100%; height: 8px; border-radius: 999px; background: var(--exemple); overflow: hidden; }
+.ob-barre i { display: block; height: 100%; width: 0; background: var(--or); transition: width .25s linear; }
+.ob-chrono.fin-proche .ob-temps { color: var(--rouille); }
+.ob-chrono.fin-proche .ob-barre i { background: var(--rouille); }
+.ob-chrono.en-pause .ob-temps { opacity: .45; }
+.ob-rec { display: flex; align-items: center; justify-content: center; gap: 8px; margin: 0 0 12px; font-size: .86rem; font-weight: 700; color: var(--rouille); }
+.ob-point { width: 10px; height: 10px; border-radius: 50%; background: #d23c2a; animation: ob-clignote 1.6s ease-in-out infinite; }
+@keyframes ob-clignote { 50% { opacity: .25; } }
+.ob-num { margin: 0 0 4px; font-size: .8rem; font-weight: 700; text-transform: uppercase; letter-spacing: .06em; color: var(--doux); }
+.ob-question { margin-top: 0; font-size: 1.3rem; line-height: 1.4; }
+.ob-piste { padding: 12px 16px; border-radius: 10px; background: var(--retenir); border-left: 4px solid var(--or); }
+.ob-boutons { flex-wrap: wrap; }
+.ob-audio audio { width: 100%; margin: 4px 0 8px; }
+.ob-grille { display: grid; gap: 12px; margin: 16px 0; }
+.ob-grille fieldset { margin: 0; padding: 8px 12px 12px; border: 1px solid var(--bord); border-radius: 10px; }
+.ob-grille legend { padding: 0 4px; font-weight: 700; font-size: .92rem; }
+.ob-grille label { display: inline-flex; align-items: center; gap: 4px; margin: 4px 12px 0 0; font-size: .88rem; }
+.ob-grille input { accent-color: var(--or); }
+.ob-note { margin: 4px 0 0; padding: 12px 16px; border-radius: 10px; background: var(--surface); border: 1px solid var(--bord); }
+@media (prefers-reduced-motion: reduce) { .ob-point { animation: none; } .ob-barre i { transition: none; } }
