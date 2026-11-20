@@ -120,6 +120,61 @@ R.qcm = {
     ['À quoi sert l’avance sur commission ?', ['À garantir le SMIC au vendeur payé à la commission', 'À payer les heures sup', 'À verser la participation', 'À rembourser les frais'], 'Avec une régularisation périodique.']
   ],
 
+  // ---------- ADOC ----------
+
+  'adoc-offre': [
+    ['Quels sont les 3 savoir-faire de « Élaborer et adapter l’offre » ?', ['Analyser la demande, analyser l’offre existante, construire et adapter l’offre', 'Agencer, réapprovisionner, nettoyer', 'Communiquer, promouvoir, évaluer', 'Recruter, former, motiver'], ''],
+    ['La demande de vêtements de sport haut de gamme augmente. Première chose à faire ?', ['Collecter les données de ventes passées', 'Baisser tous les prix', 'Supprimer les autres rayons', 'Lancer une publicité télé'], 'Puis tendances de la mode sportive et enquêtes clients.'],
+    ['Analyser l’offre existante sert à repérer…', ['Les points forts, les faiblesses et les pistes d’amélioration', 'Les concurrents à racheter', 'Le salaire des vendeurs', 'Les horaires d’ouverture'], ''],
+    ['Un article se vend mal malgré des promotions. Une décision possible ?', ['Le retirer ou le remplacer pour libérer de l’espace', 'Doubler son stock', 'Le mettre au niveau des yeux sans rien changer', 'Augmenter son prix'], 'Exemple du cours.'],
+    ['Quel axe consiste à ajuster l’assortiment selon les performances et les retours clients ?', ['L’adaptation de l’offre', 'L’analyse de l’environnement', 'La définition de l’offre', 'Le pilotage de l’offre'], ''],
+    ['Optimiser les ventes avec du merchandising et des stratégies de prix, c’est…', ['Le pilotage de l’offre', 'La définition de l’offre', 'L’analyse de la demande', 'L’adaptation de l’offre'], ''],
+    ['La profondeur d’un assortiment, c’est…', ['Le nombre de références pour un même besoin', 'Le nombre de familles de produits', 'La taille du magasin', 'Le nombre de fournisseurs'], 'La largeur, c’est le nombre de besoins couverts.'],
+    ['Laquelle est une source d’information interne ?', ['La carte de fidélité', 'L’INSEE', 'Un panel', 'La presse professionnelle'], '']
+  ],
+
+  'adoc-organiser': [
+    ['Combien de savoir-faire compte « Organiser l’espace commercial » ?', ['5', '3', '2', '8'], 'Agencer, disponibilité, espace attractif, préconisations de l’enseigne, réglementation.'],
+    ['Garantir la disponibilité de l’offre implique surtout…', ['La gestion des stocks, des réapprovisionnements et des prévisions', 'La décoration de la vitrine', 'Les publications sur Instagram', 'Le recrutement'], ''],
+    ['Ajuster l’agencement selon les promotions et les saisons relève de…', ['Maintenir un espace opérationnel et attractif', 'Agencer l’espace pour la première fois', 'Respecter la réglementation', 'Analyser la demande'], ''],
+    ['Respecter les préconisations de l’enseigne, c’est…', ['Appliquer ses directives, ses valeurs et ses standards', 'Choisir librement sa déco', 'Fixer ses propres prix sans règle', 'Ignorer le siège'], ''],
+    ['Vêtements durables très demandés : quelle réorganisation propose le cours ?', ['Une zone dédiée, bien étiquetée, avec une signalétique sur les qualités éthiques', 'Les ranger en réserve', 'Les mélanger avec les soldes', 'Les placer en fond de magasin sans affichage'], ''],
+    ['Une zone froide, c’est…', ['Un endroit peu fréquenté du magasin', 'Le rayon surgelés', 'L’entrée du magasin', 'La zone des caisses'], 'On la réchauffe avec des produits d’appel ou de l’éclairage.'],
+    ['À quel niveau de présentation vend-on le plus ?', ['Le niveau des yeux', 'Le niveau du sol', 'Le haut du rayon', 'Derrière le comptoir'], ''],
+    ['Une issue de secours encombrée par des cartons, c’est…', ['Un manquement aux règles de sécurité', 'Une bonne façon de stocker', 'Une préconisation de l’enseigne', 'Une animation'], '']
+  ],
+
+  'adoc-performances': [
+    ['Présenter les produits de façon attractive avec des infos utiles, c’est…', ['Mettre en valeur les produits', 'Optimiser l’implantation', 'Une opération promotionnelle', 'Évaluer l’action'], ''],
+    ['Disposer stratégiquement les produits pour la visibilité et la circulation, c’est…', ['Optimiser l’implantation de l’offre', 'Une animation commerciale', 'La communication externe', 'Analyser la demande'], ''],
+    ['Une dégustation en magasin est…', ['Une animation commerciale', 'Une opération promotionnelle', 'Une ILV', 'Une communication externe'], 'L’animation crée un événement ; la promotion donne un avantage concret.'],
+    ['« Le 2e à moitié prix » est…', ['Une opération promotionnelle', 'Une animation commerciale', 'Une signalétique', 'Un agencement'], ''],
+    ['Selon le cours, les opérations promotionnelles servent à…', ['Stimuler les ventes et fidéliser la clientèle', 'Réduire le personnel', 'Remplacer le merchandising', 'Fermer les zones froides'], 'Réductions, offres spéciales, programmes de fidélité.'],
+    ['Une tête de gondole est…', ['L’extrémité très visible d’un rayon', 'Le chef de rayon', 'Le fond du magasin', 'La réserve'], ''],
+    ['Le CA au m² mesure…', ['La performance de la surface de vente', 'Le panier moyen', 'La fréquentation', 'La marge par produit'], 'CA ÷ surface de vente.']
+  ],
+
+  'adoc-communication': [
+    ['Affiches, étiquettes, présentoirs : quel type de communication ?', ['Sur le lieu de vente', 'Externe', 'Numérique', 'Interne au personnel'], ''],
+    ['Une campagne publicitaire dans la presse locale, c’est…', ['De la communication externe', 'De la PLV', 'De l’ILV', 'Du merchandising'], 'Elle touche un public hors du magasin.'],
+    ['À quoi servent les réseaux sociaux selon le cours ?', ['Créer du contenu attrayant et interagir avec les clients', 'Gérer les stocks', 'Calculer les marges', 'Recruter des fournisseurs'], ''],
+    ['PLV signifie…', ['Publicité sur le lieu de vente', 'Prix le plus vendu', 'Plan de livraison', 'Promotion limitée en volume'], ''],
+    ['ILV signifie…', ['Information sur le lieu de vente', 'Implantation linéaire', 'Indice de livraison', 'Image locale de la vitrine'], ''],
+    ['Première étape pour construire une action de communication ?', ['Fixer l’objectif', 'Choisir les couleurs', 'Imprimer les affiches', 'Mesurer les retombées'], 'Puis cible, message, supports, planning et budget, évaluation.'],
+    ['Pour envoyer une newsletter commerciale à un particulier, il faut en principe…', ['Son consentement préalable', 'Rien du tout', 'L’accord du fournisseur', 'Une carte de fidélité payante'], 'RGPD et règles de prospection.']
+  ],
+
+  'adoc-evaluer': [
+    ['Quels sont les 2 savoir-faire de « Évaluer l’action commerciale » ?', ['Analyser l’impact des actions et proposer des axes d’amélioration', 'Agencer et réapprovisionner', 'Communiquer et promouvoir', 'Recruter et former'], ''],
+    ['Selon le cours, on analyse les retombées en termes de…', ['Ventes, notoriété et satisfaction client', 'Salaires et horaires', 'Stocks et réserves', 'Loyer et charges'], ''],
+    ['Proposer des axes d’amélioration, c’est par exemple ajuster…', ['Les méthodes, les canaux de communication ou les offres promotionnelles', 'Le Code du travail', 'Les prix des concurrents', 'La TVA'], ''],
+    ['Taux de transformation =', ['Acheteurs ÷ visiteurs × 100', 'Visiteurs ÷ acheteurs', 'CA ÷ nombre de tickets', 'CA ÷ surface'], ''],
+    ['Panier moyen =', ['CA ÷ nombre de tickets', 'CA ÷ nombre de visiteurs', 'Acheteurs ÷ visiteurs', 'Marge ÷ CA'], ''],
+    ['200 visiteurs, 50 acheteurs. Taux de transformation ?', ['25 %', '4 %', '50 %', '400 %'], '50 ÷ 200 × 100.'],
+    ['Pour juger un résultat, on le compare…', ['À l’objectif et à une période de référence', 'À rien, il parle seul', 'Au salaire du manager', 'Au chiffre d’un autre secteur'], ''],
+    ['Une action rapporte 1 200 € de marge en plus et coûte 1 500 €. Elle est…', ['Non rentable (−300 €)', 'Rentable (+1 200 €)', 'Rentable (+2 700 €)', 'Impossible à juger'], 'Marge supplémentaire − coût de l’action.']
+  ],
+
   // ---------- Gestion opérationnelle ----------
 
   'fixation-prix': [

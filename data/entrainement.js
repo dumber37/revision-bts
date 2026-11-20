@@ -54,6 +54,31 @@ R.essentiel = {
     '35 h/semaine = 151,67 h/mois ; heures sup +25 % (36e à 43e), +50 % dès la 44e.',
     'Un bon système est motivant, sécurisant, équitable, adapté, stimulant et simple.'
   ],
+  'adoc-offre': [
+    '3 savoir-faire : analyser la demande, analyser l’offre existante, construire et adapter l’offre.',
+    'Analyser la demande : ventes passées, tendances, enquêtes clients.',
+    '4 axes : environnement, définition, adaptation, pilotage de l’offre.'
+  ],
+  'adoc-organiser': [
+    '5 savoir-faire : agencer, garantir la disponibilité, maintenir un espace attractif, enseigne, réglementation.',
+    'L’agencement optimise la visibilité, la circulation des clients et la mise en valeur des produits.',
+    'Sans stock en rayon, pas de vente : la disponibilité passe par les stocks, les réassorts et les prévisions.'
+  ],
+  'adoc-performances': [
+    'Mettre en valeur, optimiser l’implantation, animer, promouvoir.',
+    'Animation = un événement et une ambiance ; promotion = un avantage concret pour le client.',
+    'Toujours dans le respect de l’enseigne, de la réglementation, de l’hygiène et de la sécurité.'
+  ],
+  'adoc-communication': [
+    'Trois terrains : le lieu de vente, l’externe, le numérique.',
+    'Message clair et percutant, bons supports, bons canaux, au service d’un objectif.',
+    'Démarche : objectif, cible, message, supports, planning et budget, évaluation.'
+  ],
+  'adoc-evaluer': [
+    'Analyser l’impact (ventes, notoriété, satisfaction), puis proposer des améliorations.',
+    'Taux de transformation = acheteurs ÷ visiteurs ; panier moyen = CA ÷ tickets.',
+    'Comparer à l’objectif et à une période de référence, puis fait, sens, recommandation.'
+  ],
   'fixation-prix': [
     'Prix public = coût d’achat + transport + démarque + marge + taxes.',
     'Élasticité E = % var. demande ÷ % var. prix ; E > 1 = très élastique.',
@@ -166,6 +191,31 @@ R.trous = {
     ['La base mensuelle du temps de travail est de ___ heures.', '151,67', ['140', '160', '169']],
     ['La 44e heure de la semaine est majorée de ___.', '50 %', ['25 %', '10 %', '100 %']],
     ['La participation est obligatoire à partir de ___ salariés.', '50', ['11', '250', '20']]
+  ],
+  'adoc-offre': [
+    ['Analyser l’offre ___ permet de repérer ses points forts et ses faiblesses.', 'existante', ['future', 'concurrente', 'promotionnelle']],
+    ['Ajuster l’assortiment selon les performances et les retours clients : c’est l’___ de l’offre.', 'adaptation', ['analyse', 'évaluation', 'communication']],
+    ['La ___ de l’assortiment est le nombre de références pour un même besoin.', 'profondeur', ['largeur', 'longueur', 'hauteur']]
+  ],
+  'adoc-organiser': [
+    ['Garantir la ___ de l’offre, c’est avoir les produits en stock et en rayon.', 'disponibilité', ['visibilité', 'rentabilité', 'qualité']],
+    ['Un endroit peu fréquenté du magasin est une zone ___.', 'froide', ['chaude', 'morte', 'neutre']],
+    ['On applique les directives et standards de l’___.', 'enseigne', ['INSEE', 'fournisseur', 'client']]
+  ],
+  'adoc-performances': [
+    ['Une démonstration en magasin est une ___ commerciale.', 'animation', ['promotion', 'implantation', 'évaluation']],
+    ['Les opérations promotionnelles servent à stimuler les ventes et à ___ la clientèle.', 'fidéliser', ['recruter', 'compter', 'former']],
+    ['L’extrémité très visible d’un rayon s’appelle la tête de ___.', 'gondole', ['rayon', 'linéaire', 'caisse']]
+  ],
+  'adoc-communication': [
+    ['Les affiches et présentoirs en magasin relèvent de la communication sur le ___.', 'lieu de vente', ['web', 'terrain externe', 'personnel']],
+    ['PLV signifie publicité sur le lieu de ___.', 'vente', ['vie', 'livraison', 'valeur']],
+    ['Une action de communication commence par fixer l’___.', 'objectif', ['affiche', 'budget', 'évaluation']]
+  ],
+  'adoc-evaluer': [
+    ['On analyse l’impact en termes de ventes, de notoriété et de ___ client.', 'satisfaction', ['fidélité', 'fréquentation', 'réclamation']],
+    ['Taux de transformation = acheteurs ÷ ___ × 100.', 'visiteurs', ['tickets', 'vendeurs', 'produits']],
+    ['Panier moyen = CA ÷ nombre de ___.', 'tickets', ['visiteurs', 'vendeurs', 'jours']]
   ],
   'fixation-prix': [
     ['Le taux de marque se calcule en divisant la marge par le ___.', 'prix de vente HT', ['coût d’achat HT', 'prix TTC', 'chiffre d’affaires']],
@@ -290,6 +340,26 @@ R.chasse = {
     ['La base mensuelle est de 151,67 heures.', 'La base mensuelle est de 160 heures.'],
     ['La 40e heure de la semaine est majorée de 25 %.', 'La 40e heure de la semaine est majorée de 50 %.'],
     ['La participation est obligatoire à partir de 50 salariés.', 'La participation est obligatoire dans toutes les entreprises.']
+  ],
+  'adoc-offre': [
+    ['Analyser la demande commence par collecter des données, comme les ventes passées.', 'Analyser la demande commence par baisser les prix.'],
+    ['Le pilotage de l’offre passe par le merchandising et les stratégies de prix.', 'Le pilotage de l’offre passe par le recrutement des vendeurs.']
+  ],
+  'adoc-organiser': [
+    ['Organiser l’espace commercial compte 5 savoir-faire.', 'Organiser l’espace commercial compte 2 savoir-faire.'],
+    ['L’agencement doit suivre les promotions et les saisons.', 'L’agencement ne doit jamais changer pendant l’année.']
+  ],
+  'adoc-performances': [
+    ['Une dégustation est une animation commerciale.', 'Une dégustation est une communication externe.'],
+    ['Un programme de fidélité est une opération promotionnelle.', 'Un programme de fidélité est une règle d’hygiène.']
+  ],
+  'adoc-communication': [
+    ['Une campagne dans la presse locale est de la communication externe.', 'Une campagne dans la presse locale est de la communication sur le lieu de vente.'],
+    ['L’ILV informe le client dans le magasin.', 'L’ILV est un réseau social.']
+  ],
+  'adoc-evaluer': [
+    ['On évalue une action en la comparant à son objectif.', 'Une action s’évalue sans objectif ni comparaison.'],
+    ['Le panier moyen se calcule en divisant le CA par le nombre de tickets.', 'Le panier moyen se calcule en divisant le CA par le nombre de visiteurs.']
   ],
   'fixation-prix': [
     ['Le taux de marge se calcule sur le coût d’achat.', 'Le taux de marge se calcule sur le prix de vente.'],
