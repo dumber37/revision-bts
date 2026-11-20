@@ -6,9 +6,12 @@ var Activites = (function () {
 
   var esc = Jeu.esc, melanger = Jeu.melanger;
   function matiere(id) { return R.matieres.filter(function (m) { return m.id === id; })[0]; }
-  function fichesDe(id) { return R.fiches.filter(function (f) { return f.matiere === id; }); }
+  // « tout » : pseudo-matière qui regroupe toutes les fiches (cartes du jour, toutes matières confondues).
+  var TOUT = { id: 'tout', nom: 'Toutes les matières', couleur: '#2e7d4f' };
+  function fichesDe(id) { return id === 'tout' ? R.fiches : R.fiches.filter(function (f) { return f.matiere === id; }); }
+  function lienCartes(m) { return m.id === 'tout' ? '#/cartes' : '#/' + m.id + '/cartes'; }
   function fil(m, txt) {
-    return '<nav class="fil"><a href="#/">Matières</a> › ' + (m ? '<a href="#/' + m.id + '/entrainement">' + esc(m.nom) + '</a> › ' : '') + esc(txt) + '</nav>';
+    return '<nav class="fil"><a href="#/">Matières</a> › ' + (m && m.id !== 'tout' ? '<a href="#/' + m.id + '/entrainement">' + esc(m.nom) + '</a> › ' : '') + esc(txt) + '</nav>';
   }
   function stat(cle, n) { var E = Jeu.etat(); E.stats[cle] = (E.stats[cle] || 0) + (n || 1); Jeu.sauver(); }
 
@@ -220,10 +223,11 @@ var Activites = (function () {
       app.innerHTML = fil(m, 'Cartes mémo') +
         '<section class="defi defi-fin"><div class="defi-eclair">' + Icone('cartes') + '</div><h1>Rien à revoir aujourd’hui</h1>' +
           '<p>Tes ' + st.toutes.length + ' cartes sont rangées. Prochaine révision : <b>' + prochaine.split('-').reverse().join('/') + '</b>.</p>' +
-          '<p><a class="defi-go secondaire" href="#/' + m.id + '/cartes/tout">Revoir tout le paquet quand même</a></p></section>';
+          '<p><a class="defi-go secondaire" href="' + lienCartes(m) + '/tout">Revoir tout le paquet quand même</a></p></section>';
       return;
     }
     // Révision du jour : d'abord les cartes dues (les plus fragiles en premier), puis les nouvelles. Mode libre : tout le paquet.
+    if (m.id === 'tout') st.nouvelles = melanger(st.nouvelles).slice(0, 10); // pas 300 nouvelles d'un coup
     var paquet = libre ? melanger(st.toutes) : st.dues.concat(melanger(st.nouvelles)), total = paquet.length, sues = 0, premiers = 0, vues = {};
 
     function afficher() {
@@ -234,7 +238,7 @@ var Activites = (function () {
           '<div class="serie-avance"><i style="width:' + Math.round(sues / total * 100) + '%"></i></div>' +
           '<button type="button" class="memo-carte" aria-label="Retourner la carte">' +
             '<span class="memo-in"><span class="memo-face memo-recto"><small>' + esc(c.ctx) + '</small><b>' + c.recto + '</b><em>Touche pour retourner</em></span>' +
-            '<span class="memo-face memo-verso"><small>' + esc(c.f.titre) + '</small><span>' + c.verso + '</span></span></span>' +
+            '<span class="memo-face memo-verso"><small>' + esc((m.id === 'tout' ? matiere(c.f.matiere).nom + ' · ' : '') + c.f.titre) + '</small><span>' + c.verso + '</span></span></span>' +
           '</button>' +
           '<div class="memo-choix" hidden>' +
             '<button type="button" class="memo-non">↻ À revoir</button>' +
@@ -276,9 +280,9 @@ var Activites = (function () {
           '<p>cartes sues du premier coup. Les autres sont revenues jusqu’à ce que tu les saches.</p>' +
           (libre ? '' : '<p>Les cartes sues reviendront dans 3, 7, 14 puis 30 jours ; celles que tu as ratées, dès demain.</p>') +
           (reste.dues.length || reste.nouvelles.length
-            ? '<p><a class="defi-go" href="#/' + m.id + '/cartes" data-rejouer>Continuer (' + (reste.dues.length + reste.nouvelles.length) + ' cartes)</a></p>'
-            : '<p><a class="defi-go secondaire" href="#/' + m.id + '/cartes/tout">Revoir tout le paquet</a></p>') + '</section>';
-      relancer(app, '#/' + m.id + '/cartes');
+            ? '<p><a class="defi-go" href="' + lienCartes(m) + '" data-rejouer>Continuer (' + (reste.dues.length + (m.id === 'tout' ? Math.min(10, reste.nouvelles.length) : reste.nouvelles.length)) + ' cartes)</a></p>'
+            : '<p><a class="defi-go secondaire" href="' + lienCartes(m) + '/tout">Revoir tout le paquet</a></p>') + '</section>';
+      relancer(app, lienCartes(m));
     }
     afficher();
   }
@@ -523,7 +527,7 @@ var Activites = (function () {
     quitterTout: function () { quitter(); clavier = null; arrets.forEach(function (fn) { fn(); }); },
     serie: serie, matiere: matiere, quitter: quitter, hub: hub, ajouterActivite: ajouterActivite, lienEntrainement: LIEN_ENT,
     cartesDe: cartesDe, etatCartes: etatCartes, listesDe: listesDe, trousDe: trousDe, fil: fil, stat: stat, relancer: relancer,
-    pageCartes: pageCartes, pageOrdre: pageOrdre, pageTrous: pageTrous, pageExamen: pageExamen,
+    pageCartes: pageCartes, TOUT: TOUT, pageOrdre: pageOrdre, pageTrous: pageTrous, pageExamen: pageExamen,
     pageExpress: pageExpress, encadreEssentiel: encadreEssentiel,
     definirClavier: function (fn) { clavier = fn; }
   };

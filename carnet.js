@@ -20,7 +20,8 @@ var Carnet = (function () {
     { id: 'e42', nom: 'E42 · ADOC (oral)', matieres: ['adoc'] },
     { id: 'e5', nom: 'E5 · Gestion opérationnelle (écrit)', matieres: ['gestion'] },
     { id: 'e6', nom: 'E6 · Management (écrit)', matieres: ['management'] },
-    { id: 'e2', nom: 'E2 · Anglais', matieres: ['anglais'] }
+    { id: 'e2', nom: 'E2 · Anglais', matieres: ['anglais'] },
+    { id: 'e3', nom: 'E3 · CEJM (écrit)', matieres: ['cejm'] }
   ];
   function dates() { var r = E().reglages || {}; return r.examens || {}; }
   function prochaine() {
@@ -68,6 +69,56 @@ var Carnet = (function () {
     return jours;
   }
 
+  // Niveau par matière : réussite aux questions (par fiche) et fiches lues.
+  function bilanMatieres() {
+    var pf = E().parFiche || {}, lues = E().lues || {};
+    return R.matieres.filter(function (m) { return fichesDe(m.id).length; }).map(function (m) {
+      var fs = fichesDe(m.id), ok = 0, tot = 0, testees = 0, nl = 0;
+      fs.forEach(function (f) { var t = pf[f.id]; if (t && t[1]) { ok += t[0]; tot += t[1]; testees++; } if (lues[f.id]) nl++; });
+      return { m: m, fiches: fs.length, testees: testees, lues: nl, taux: tot ? ok / tot : null };
+    });
+  }
+  // Fiches à travailler en priorité : d'abord celles où tu rates le plus, puis celles jamais testées.
+  function pointsFaibles(n) {
+    var pf = E().parFiche || {};
+    var testees = [], jamais = [];
+    R.fiches.forEach(function (f) {
+      var t = pf[f.id];
+      if (t && t[1] >= 2) { if (t[0] / t[1] < 0.75) testees.push({ f: f, taux: t[0] / t[1] }); }
+      else jamais.push({ f: f, taux: null });
+    });
+    testees.sort(function (a, b) { return a.taux - b.taux; });
+    return testees.concat(jamais).slice(0, n);
+  }
+  function lundi(d) { var x = new Date(d + 'T12:00'), j = (x.getDay() + 6) % 7; return plusJours(d, -j); }
+  // Vue semaine par semaine jusqu'à la dernière épreuve : épreuves de la semaine et matières à prioriser.
+  function semaines() {
+    var d = dates(), auj = Jeu.jour(), fins = EPREUVES.map(function (e) { return d[e.id]; }).filter(function (x) { return x && x >= auj; }).sort();
+    if (!fins.length) return [];
+    var bil = {}; bilanMatieres().forEach(function (b) { bil[b.m.id] = b; });
+    var out = [], debut = lundi(auj), fin = fins[fins.length - 1], recent = {};
+    function dateEp(e) { return d[e.id] || fin; } // matière sans date : on vise la dernière épreuve
+    for (var k = 0; k < 52; k++) {
+      var l = plusJours(debut, 7 * k), dim = plusJours(l, 6);
+      if (l > fin) break;
+      var ici = EPREUVES.filter(function (e) { return d[e.id] && d[e.id] >= l && d[e.id] <= dim && d[e.id] >= auj; })
+        .sort(function (a, b) { return d[a.id] < d[b.id] ? -1 : 1; });
+      // Score : matière faible + épreuve proche = priorité ; une matière vue les semaines précédentes laisse la place (rotation).
+      // Une matière dont l'épreuve est passée sort du programme.
+      var cand = EPREUVES.filter(function (e) { return dateEp(e) >= l && bil[e.matieres[0]]; }).map(function (e) {
+        var b = bil[e.matieres[0]], faib = b.taux === null ? 0.6 : 1 - b.taux, sem = Math.max(0, joursEntre(l, dateEp(e))) / 7;
+        // Épreuve dans moins de 2 semaines : pas de rotation, elle reste prioritaire.
+        return { e: e, m: b.m, score: faib + 1.2 / (sem + 1) - (d[e.id] && sem < 2 ? -1 : recent[b.m.id] || 0) };
+      }).sort(function (a, b) { return b.score - a.score; });
+      var focus = cand.slice(0, 2);
+      Object.keys(recent).forEach(function (id) { recent[id] /= 2; });
+      focus.forEach(function (c) { recent[c.m.id] = (recent[c.m.id] || 0) + 0.5; });
+      var avant = cand.filter(function (c) { if (!d[c.e.id]) return false; var r = joursEntre(dim, d[c.e.id]); return r > 0 && r <= 7; });
+      out.push({ lundi: l, epreuves: ici, focus: focus, blanc: avant.map(function (c) { return c.m; }) });
+    }
+    return out;
+  }
+
   function pagePlanning(app) {
     document.title = 'Mon planning · Révisions BTS MCO';
     var d = dates(), p = prochaine(), jours = planning(14);
@@ -78,6 +129,7 @@ var Carnet = (function () {
           return '<label><span>' + esc(e.nom) + '</span><input type="date" data-ep="' + e.id + '" value="' + (d[e.id] || '') + '"></label>';
         }).join('') + '</div>' +
       '</section>' +
+      blocDuJour() +
       '<h2 class="titre-section">Les 14 prochains jours</h2>' +
       '<div class="planning">' + jours.map(function (j, i) {
         return '<a class="plan-jour' + (i === 0 ? ' aujourdhui' : '') + (j.urgent ? ' urgent' : '') + '" href="' + j.lien + '" style="--c:' + j.m.couleur + '">' +
@@ -85,7 +137,8 @@ var Carnet = (function () {
           '<span class="plan-ico">' + j.ico + '</span>' +
           '<span class="plan-txt"><b>' + esc(j.txt) + '</b><span>' + esc(j.m.nom) + ' · ' + esc(j.f.titre) + '</span></span></a>';
       }).join('') + '</div>' +
-      '<p class="astuce">Le planning fait tourner les matières, commence par tes chapitres les plus faibles, et resserre les révisions dans les 3 jours avant chaque épreuve.</p>';
+      '<p class="astuce">Le planning fait tourner les matières, commence par tes chapitres les plus faibles, et resserre les révisions dans les 3 jours avant chaque épreuve.</p>' +
+      blocFaibles() + blocSemaines();
     Array.prototype.forEach.call(app.querySelectorAll('input[data-ep]'), function (inp) {
       inp.addEventListener('change', function () {
         var r = E().reglages = E().reglages || {};
@@ -95,6 +148,41 @@ var Carnet = (function () {
         pagePlanning(app);
       });
     });
+  }
+
+  function blocDuJour() {
+    var st = Activites.etatCartes(Activites.TOUT), n = st.dues.length, nv = Math.min(10, st.nouvelles.length);
+    return '<a class="plan-cartes" href="#/cartes"><span class="plan-ico">' + Icone('cartes') + '</span><span class="plan-txt"><b>Cartes du jour : ' + (n ? n + ' à revoir' : 'rien à revoir') + (nv ? ' + ' + nv + ' nouvelle' + (nv > 1 ? 's' : '') : '') + '</b>' +
+      '<span>Toutes matières mélangées. Les cartes ratées reviennent demain, les sues dans 3, 7, 14 puis 30 jours.</span></span></a>';
+  }
+  function pct(x) { return Math.round(x * 100) + ' %'; }
+  function blocFaibles() {
+    var b = bilanMatieres(), pf = pointsFaibles(6);
+    return '<h2 class="titre-section">Mes points faibles</h2>' +
+      '<div class="niveaux">' + b.map(function (x) {
+        var v = x.taux === null ? 0 : Math.round(x.taux * 100);
+        return '<a class="niveau" href="#/' + x.m.id + '/entrainement" style="--c:' + x.m.couleur + '"><span class="niveau-nom">' + esc(x.m.nom) + '</span>' +
+          '<span class="niveau-barre"><i style="width:' + v + '%"></i></span>' +
+          '<span class="niveau-val">' + (x.taux === null ? '—' : pct(x.taux)) + '</span>' +
+          '<span class="niveau-info">' + x.testees + '/' + x.fiches + ' fiches testées · ' + x.lues + ' lue' + (x.lues > 1 ? 's' : '') + '</span></a>';
+      }).join('') + '</div>' +
+      (pf.length ? '<p class="astuce">À travailler en priorité :</p><div class="planning">' + pf.map(function (x) {
+        var m = Activites.matiere(x.f.matiere);
+        return '<a class="plan-jour" href="#/' + m.id + '/' + x.f.id + '" style="--c:' + m.couleur + '"><span class="plan-date' + (x.taux === null ? ' brut' : ' faible') + '">' + (x.taux === null ? 'Jamais testée' : pct(x.taux) + ' juste') + '</span>' +
+          '<span class="plan-ico">' + Icone(x.taux === null ? 'livre' : 'repeter') + '</span><span class="plan-txt"><b>' + esc(x.f.titre) + '</b><span>' + esc(m.nom) + '</span></span></a>';
+      }).join('') + '</div>' : '<p class="astuce">Bravo : plus de 75 % de réussite partout. Continue les cartes du jour pour ne rien oublier.</p>');
+  }
+  function blocSemaines() {
+    var s = semaines(), d = dates();
+    if (!s.length) return '<h2 class="titre-section">Jusqu’au BTS</h2><p class="vide">Entre au moins une date d’épreuve en haut de la page : le site te prépare le programme semaine par semaine.</p>';
+    return '<h2 class="titre-section">Jusqu’au BTS · ' + s.length + ' semaine' + (s.length > 1 ? 's' : '') + '</h2><ol class="semaines">' + s.map(function (w, i) {
+      var quoi = w.epreuves.map(function (e) { return '<b class="sem-ep">' + Icone('cible') + ' ' + esc(e.nom) + ' · ' + dateFr(d[e.id]) + '</b>'; }).join('');
+      var foc = w.focus.map(function (c) { return '<a class="sem-mat" href="#/' + c.m.id + '/entrainement" style="--c:' + c.m.couleur + '">' + esc(c.m.nom) + '</a>'; }).join('');
+      var blanc = w.blanc.length ? '<span class="sem-blanc">' + Icone('copie') + '<span>Examen blanc : ' + w.blanc.map(function (m) { return '<a href="#/' + m.id + '/examen">' + esc(m.nom) + '</a>'; }).join(', ') + '</span></span>' : '';
+      return '<li class="semaine' + (i === 0 ? ' actuelle' : '') + '"><span class="sem-date">' + (i === 0 ? 'Cette semaine' : 'Semaine du ' + dateFr(w.lundi)) + '</span>' +
+        '<span class="sem-corps">' + quoi + (foc ? '<span class="sem-focus">Priorité : ' + foc + '</span>' : '') + blanc + '</span></li>';
+    }).join('') + '</ol>' +
+    '<p class="astuce">Priorité = matière où tu rates le plus + épreuve qui approche. Le programme se met à jour à chaque QCM.</p>';
   }
 
   // ---------- Lexique ----------
@@ -196,6 +284,13 @@ var Carnet = (function () {
       a.className = 'hero-decompte'; a.href = '#/planning';
       a.innerHTML = p ? Icone('calendrier') + ' <b>J-' + p.j + '</b> avant ' + esc(p.e.nom.split(' (')[0]) : Icone('calendrier') + ' Ajouter mes dates d’examen';
       salut.appendChild(a);
+      var dues = Activites.etatCartes(Activites.TOUT).dues.length;
+      if (dues) {
+        var c = document.createElement('a');
+        c.className = 'hero-decompte'; c.href = '#/cartes';
+        c.innerHTML = Icone('cartes') + ' <b>' + dues + '</b> carte' + (dues > 1 ? 's' : '') + ' à revoir';
+        salut.appendChild(c);
+      }
       // Rappel de sauvegarde quand il y a de quoi perdre et que la dernière date de plus de 2 semaines.
       var der = (E().reglages || {}).sauvegarde;
       if (E().xp >= 300 && (!der || joursEntre(der, Jeu.jour()) > 14)) {
@@ -277,6 +372,7 @@ var Carnet = (function () {
   // ---------- Branchements ----------
 
   Activites.ajouterPageGlobale('planning', pagePlanning);
+  Activites.ajouterPageGlobale('cartes', function (app) { Activites.pageCartes(app, Activites.TOUT); });
   Activites.ajouterPageGlobale('lexique', pageLexique);
   Activites.ajouterPageGlobale('carnet', pageCarnet);
 

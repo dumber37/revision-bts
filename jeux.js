@@ -134,7 +134,8 @@ var Jeux = (function () {
     adoc: ['adoc', 'Le chef de rayon pointilleux'],
     management: ['management', 'Le DRH exigeant'],
     gestion: ['gestion', 'Le contrôleur de gestion'],
-    anglais: ['anglais', 'The British buyer']
+    anglais: ['anglais', 'The British buyer'],
+    cejm: ['cejm', 'L’économiste sceptique']
   };
   function bossDe(m) { var b = BOSS[m.id] || ['couronne', 'Le boss']; return [Icone(b[0]), b[1]]; }
 

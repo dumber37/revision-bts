@@ -471,3 +471,73 @@ R.lexique = [
   ['Self-scanning', 'Le client scanne lui-même ses articles : illustre son autonomie.', 'experience-achat'],
   ['Omnicanal', 'Stratégie où tous les canaux sont connectés pour un parcours client fluide.', 'numerique']
 ];
+
+// ---------- CEJM ----------
+
+R.essentiel['eco-numerique'] = [
+  'Économie numérique = activités fondées sur les données codées en nombres (big data, IA).',
+  '3 piliers : technologique (outils), économique (GAFAM, pure players, nouveaux secteurs), social (nouveaux usages).',
+  '3 bouleversements : innovations plus rapides, dématérialisation et mondialisation, nouvelles concurrences (pure players, particuliers, ubérisation).'
+];
+R.essentiel['echanges-numeriques'] = [
+  'Relations marchandes : BtoB, BtoC, CtoC, BtoG (Business to Government). Non marchandes : administration, associations, prêt, information.',
+  'L’e-commerce BtoC grimpe grâce au smartphone (m-commerce) ; les places de marché prennent une commission sur chaque vente.',
+  'Désintermédiation (moins d’intermédiaires) puis réintermédiation : la plateforme devient le nouvel intermédiaire incontournable.'
+];
+R.essentiel['plateformes'] = [
+  '4 types de plateformes : échange direct, audience et contenus, travail, financement.',
+  'Plateforme multiface (YouTube : 3 faces) ; effet de réseau : plus il y a d’utilisateurs, plus le service a de valeur.',
+  'Enjeux : marché plus transparent et concurrentiel, mais rendements croissants + effets de réseau = risque de monopole numérique.'
+];
+R.trous['eco-numerique'] = [
+  ['Le stockage d’un énorme volume de données s’appelle le ___.', 'big data', ['m-commerce', 'pure player', 'CtoC']],
+  ['Une entreprise qui vend uniquement en ligne est un ___.', 'pure player', ['grossiste', 'franchisé', 'GAFAM']],
+  ['Les GAFAM relèvent du pilier ___ de l’économie numérique.', 'économique', ['social', 'technologique', 'juridique']],
+  ['L’arrivée d’une plateforme qui bouscule un secteur classique s’appelle l’___.', 'ubérisation', ['inflation', 'externalisation', 'intermédiation']]
+];
+R.trous['echanges-numeriques'] = [
+  ['Une vente entre deux particuliers relève du ___.', 'CtoC', ['BtoB', 'BtoC', 'BtoG']],
+  ['Les achats faits sur smartphone s’appellent le ___.', 'm-commerce', ['e-mailing', 'big data', 'drive']],
+  ['Le site qui accueille une place de marché prend une ___ sur chaque vente.', 'commission', ['subvention', 'taxe', 'remise']],
+  ['Quand la plateforme devient le nouvel intermédiaire, on parle de ___.', 'réintermédiation', ['désintermédiation', 'mondialisation', 'dématérialisation']]
+];
+R.trous['plateformes'] = [
+  ['Une plateforme qui met en relation plusieurs catégories d’utilisateurs est dite ___.', 'multiface', ['monopole', 'pure player', 'collaborative']],
+  ['La satisfaction qui augmente avec le nombre d’utilisateurs s’appelle l’effet de ___.', 'réseau', ['levier', 'mode', 'prix']],
+  ['Les avis clients réduisent l’asymétrie d’___.', 'information', ['offre', 'emploi', 'impôt']],
+  ['Un coût moyen qui baisse quand les ventes augmentent traduit des rendements ___.', 'croissants', ['décroissants', 'constants', 'négatifs']]
+];
+R.chasse['eco-numerique'] = [
+  ['Un pure player vend uniquement en ligne.', 'Un pure player vend uniquement en magasin.'],
+  ['Le big data désigne le stockage d’un énorme volume de données.', 'Le big data désigne un très gros ordinateur.'],
+  ['Les 3 piliers sont technologique, économique et social.', 'Les 3 piliers sont technologique, juridique et fiscal.'],
+  ['Le numérique abaisse les barrières à l’entrée sur les marchés.', 'Le numérique augmente toujours les barrières à l’entrée sur les marchés.']
+];
+R.chasse['echanges-numeriques'] = [
+  ['BtoG signifie Business to Government.', 'BtoG signifie Business to Group.'],
+  ['BlaBlaCar est un exemple de CtoC.', 'BlaBlaCar est un exemple de BtoB.'],
+  ['Une place de marché se rémunère par une commission sur chaque vente.', 'Une place de marché se rémunère en achetant le stock des vendeurs.'],
+  ['La crise sanitaire a fait bondir les achats en ligne en 2020.', 'La crise sanitaire a fait chuter les achats en ligne en 2020.']
+];
+R.chasse['plateformes'] = [
+  ['YouTube a 3 faces selon le cours.', 'YouTube a une seule face selon le cours.'],
+  ['Sur Airbnb, la face demande est bien plus grande que la face offre.', 'Sur Airbnb, la face offre est bien plus grande que la face demande.'],
+  ['Sur un site marchand, les coûts sont surtout fixes.', 'Sur un site marchand, les coûts sont surtout variables.'],
+  ['Les avis clients réduisent l’asymétrie d’information.', 'Les avis clients augmentent l’asymétrie d’information.']
+];
+R.lexique.push(
+  ['Économie numérique', 'Ensemble des activités et des acteurs fondés sur l’exploitation des données numériques.', 'eco-numerique'],
+  ['Big data', 'Stockage et analyse d’un énorme volume de données (mégadonnées, données massives).', 'eco-numerique'],
+  ['Pure player', 'Entreprise qui exerce son activité commerciale uniquement en ligne.', 'eco-numerique'],
+  ['GAFAM', 'Google, Apple, Facebook, Amazon, Microsoft : les géants du numérique.', 'eco-numerique'],
+  ['Ubérisation', 'Arrivée d’une plateforme qui met en contact direct clients et prestataires et bouscule un secteur classique.', 'eco-numerique'],
+  ['BtoB, BtoC, CtoC, BtoG', 'Entre entreprises ; entreprise vers particulier ; entre particuliers ; entreprise vers administration.', 'echanges-numeriques'],
+  ['M-commerce', 'Commerce en ligne réalisé sur smartphone.', 'echanges-numeriques'],
+  ['Place de marché', 'Plateforme qui accueille des vendeurs extérieurs, rémunérée par une commission sur chaque vente.', 'echanges-numeriques'],
+  ['Désintermédiation', 'Suppression d’intermédiaires entre le producteur et le client final.', 'echanges-numeriques'],
+  ['Réintermédiation', 'La plateforme devient elle-même un nouvel intermédiaire incontournable.', 'echanges-numeriques'],
+  ['Plateforme multiface', 'Intermédiaire qui met en relation plusieurs catégories d’utilisateurs.', 'plateformes'],
+  ['Effet de réseau', 'La valeur d’un service augmente avec le nombre de ses utilisateurs (externalité de réseau).', 'plateformes'],
+  ['Asymétrie d’information', 'Situation où une partie à l’échange en sait plus que l’autre.', 'plateformes'],
+  ['Rendements croissants', 'Le coût moyen baisse quand la quantité produite ou vendue augmente.', 'plateformes']
+);

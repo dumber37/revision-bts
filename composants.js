@@ -648,6 +648,85 @@ var Composants = (function () {
           }).join('') +
           '</svg>';
       }
+    },
+    // CEJM : les 3 piliers de l'économie numérique, posés sur les données.
+    piliers: {
+      legende: 'L’économie numérique repose sur les <b>données codées en nombres</b>. Trois piliers la portent : <b>technologique</b> (les outils), <b>économique</b> (les acteurs et secteurs) et <b>social</b> (les usages).',
+      svg: function () {
+        var col = [['Technologique', 'stocker, traiter,', 'transmettre'], ['Économique', 'GAFAM,', 'pure players'], ['Social', 'nouveaux usages,', 'réseaux sociaux']];
+        return '<svg viewBox="0 0 340 210" role="img" aria-label="Les trois piliers de l’économie numérique">' +
+          '<rect class="barre-svg fort a-large" x="16" y="172" width="308" height="26" rx="4"/>' + txt(170, 189, 'Données numériques · big data', 'blanc', ' text-anchor="middle"') +
+          col.map(function (c, i) {
+            var x = 26 + i * 103, t = .4 + i * .3;
+            return '<rect class="barre-svg a-monte" x="' + x + '" y="72" width="82" height="100" rx="3"' + d(t) + '/>' +
+              txt(x + 41, 108, c[0], 'fort a-fondu', ' text-anchor="middle"' + d(t + .4)) +
+              txt(x + 41, 130, c[1], 'mini a-fondu', ' text-anchor="middle"' + d(t + .5)) + txt(x + 41, 142, c[2], 'mini a-fondu', ' text-anchor="middle"' + d(t + .5));
+          }).join('') +
+          '<path class="barre-svg fort a-fondu" d="M14 68 L170 14 L326 68 Z"' + d(1.5) + '/>' +
+          txt(170, 56, 'Économie numérique', 'blanc a-fondu', ' text-anchor="middle"' + d(1.7)) +
+          '</svg>';
+      }
+    },
+    // CEJM : une plateforme multiface (YouTube, 3 faces).
+    faces: {
+      legende: 'YouTube a <b>3 faces</b> : ceux qui regardent, ceux qui publient et les annonceurs. La plateforme gagne à attirer <b>chaque</b> face, car chacune attire les autres.',
+      svg: function () {
+        var F = [[8, 14, 'Spectateurs', 'cherchent du contenu', 'vues'], [222, 14, 'Créateurs', 'publient des vidéos', 'vidéos'], [115, 168, 'Annonceurs', 'paient la publicité', '€ pub']];
+        return '<svg viewBox="0 0 340 214" role="img" aria-label="Plateforme multiface : YouTube et ses trois faces">' +
+          F.map(function (f, i) {
+            var bx = f[0] + 55, by = f[1] + 20, t = .5 + i * .5;
+            return '<path class="courbe a-trace" pathLength="1" style="--t:.5s;--d:' + t + 's" d="M170 100 L' + bx + ' ' + by + '"/>' +
+              txt((170 + bx) / 2 + (i === 2 ? 8 : 0), (100 + by) / 2 - (i === 2 ? 0 : 4), f[4], 'petit or a-fondu', (i === 2 ? '' : ' text-anchor="middle"') + d(t + .4));
+          }).join('') +
+          '<circle class="noeud plein a-pop" cx="170" cy="100" r="34"/>' + txt(170, 97, 'YouTube', 'blanc', ' text-anchor="middle"') + txt(170, 111, 'plateforme', 'blanc mini', ' text-anchor="middle"') +
+          F.map(function (f, i) {
+            var t = .8 + i * .5;
+            return '<rect class="boite a-pop" x="' + f[0] + '" y="' + f[1] + '" width="110" height="40" rx="8"' + d(t) + '/>' +
+              txt(f[0] + 55, f[1] + 17, f[2], 'fort a-fondu', ' text-anchor="middle"' + d(t)) + txt(f[0] + 55, f[1] + 31, f[3], 'mini a-fondu', ' text-anchor="middle"' + d(t));
+          }).join('') +
+          '</svg>';
+      }
+    },
+    // CEJM : l'effet de réseau, les connexions possibles explosent avec le nombre d'utilisateurs.
+    reseau: {
+      legende: 'Avec <b>n</b> utilisateurs, il y a n × (n − 1) ÷ 2 mises en relation possibles : 2 utilisateurs, 1 lien ; 8 utilisateurs, <b>28 liens</b>. Chaque nouveau venu rend le service plus utile à tous : c’est l’<b>effet de réseau</b>.',
+      svg: function () {
+        var G = [[42, 2, 0], [122, 3, 16], [208, 5, 24], [294, 8, 30]], out = '';
+        G.forEach(function (g, k) {
+          var cx = g[0], cy = 82, n = g[1], r = g[2] || 14, P = [], t = .3 + k * .9, liens = '';
+          for (var i = 0; i < n; i++) { var a = (-90 + 360 / n * i) * Math.PI / 180; P.push([cx + r * Math.cos(a), cy + r * Math.sin(a)]); }
+          for (var i2 = 0; i2 < n; i2++) for (var j = i2 + 1; j < n; j++) liens += 'M' + P[i2][0].toFixed(1) + ' ' + P[i2][1].toFixed(1) + ' L' + P[j][0].toFixed(1) + ' ' + P[j][1].toFixed(1) + ' ';
+          out += '<path class="courbe douce a-fondu" style="stroke-width:1.2;--d:' + (t + .3).toFixed(1) + 's" d="' + liens + '"/>' +
+            P.map(function (p) { return '<circle class="point a-pop" cx="' + p[0].toFixed(1) + '" cy="' + p[1].toFixed(1) + '" r="5"' + d(t) + '/>'; }).join('') +
+            txt(cx, 136, n + ' utilisateurs', 'petit a-fondu', ' text-anchor="middle"' + d(t)) +
+            txt(cx, 154, n * (n - 1) / 2 + ' lien' + (n > 2 ? 's' : ''), 'fort a-fondu', ' text-anchor="middle"' + d(t + .3));
+        });
+        return '<svg viewBox="0 0 340 196" role="img" aria-label="Effet de réseau : le nombre de liens possibles grandit plus vite que le nombre d’utilisateurs">' + out +
+          '<path class="fleche a-fondu" d="M20 176 H320 m-7 -5 l7 5 l-7 5"' + d(3.4) + '/>' + txt(170, 192, 'plus d’utilisateurs = plus de valeur pour chacun', 'petit or a-fondu', ' text-anchor="middle"' + d(3.5)) +
+          '</svg>';
+      }
+    },
+    // CEJM : le cercle qui renforce la plateforme dominante.
+    monopole: {
+      legende: 'Le cercle se renforce tout seul : plus d’utilisateurs attirent plus d’offres, le service s’améliore, le coût moyen baisse… et encore plus d’utilisateurs arrivent. Au bout : un <b>monopole numérique</b>.',
+      svg: function () {
+        var cx = 170, cy = 112, rx = 104, ry = 86, B = [['Plus', 'd’utilisateurs', 0, -1], ['Plus d’offres', 'et de données', 1, 0], ['Un meilleur', 'service', 0, 1], ['Un coût moyen', 'plus bas', -1, 0]];
+        return '<svg viewBox="0 0 340 226" role="img" aria-label="Cercle des effets de réseau et des rendements croissants">' +
+          '<path class="courbe douce a-trace" pathLength="1" style="--t:2.8s" d="M' + cx + ' ' + (cy - ry) + ' A' + rx + ' ' + ry + ' 0 1 1 ' + cx + ' ' + (cy + ry) + ' A' + rx + ' ' + ry + ' 0 1 1 ' + cx + ' ' + (cy - ry) + '"/>' +
+          [0, 1, 2, 3].map(function (i) {
+            var a = (-45 + 90 * i) * Math.PI / 180, x = cx + rx * Math.cos(a), y = cy + ry * Math.sin(a), ux = -rx * Math.sin(a), uy = ry * Math.cos(a), L = Math.hypot(ux, uy); ux /= L; uy /= L;
+            var nx = uy, ny = -ux;
+            function p(k, m) { return (x + ux * k + nx * m).toFixed(1) + ' ' + (y + uy * k + ny * m).toFixed(1); }
+            return '<path class="fleche a-fondu" d="M' + p(-4, 5) + ' L' + p(3, 0) + ' L' + p(-4, -5) + '"' + d(.6 + i * .7) + '/>';
+          }).join('') +
+          B.map(function (b, i) {
+            var x = cx + rx * b[2], y = cy + ry * b[3], t = .1 + i * .7;
+            return '<rect class="boite a-pop" x="' + (x - 56) + '" y="' + (y - 19) + '" width="112" height="38" rx="8"' + d(t) + '/>' +
+              txt(x, y - 3, b[0], 'fort a-fondu', ' text-anchor="middle"' + d(t)) + txt(x, y + 11, b[1], 'petit a-fondu', ' text-anchor="middle"' + d(t));
+          }).join('') +
+          txt(cx, cy - 2, 'Position', 'grand a-fondu', ' text-anchor="middle"' + d(3)) + txt(cx, cy + 16, 'dominante', 'grand a-fondu', ' text-anchor="middle"' + d(3)) +
+          '</svg>';
+      }
     }
   };
 
@@ -691,7 +770,10 @@ var Composants = (function () {
     gestion: '<rect class="sc-produit sc-tombe t1" x="12" y="52" width="22" height="18" rx="2"/><rect class="sc-produit2 sc-tombe t2" x="36" y="52" width="22" height="18" rx="2"/><rect class="sc-produit sc-tombe t3" x="24" y="34" width="22" height="18" rx="2"/>' +
       '<path class="sc-courbe" pathLength="1" d="M66 62 L80 50 L92 56 L110 26"/><circle class="sc-fin" cx="110" cy="26" r="4"/>',
     anglais: '<rect class="sc-bulle" x="6" y="8" width="70" height="30" rx="10"/><text class="sc-mot haut m1" x="41" y="28" text-anchor="middle">Hello</text><text class="sc-mot haut m2" x="41" y="28" text-anchor="middle">Bonjour</text>' +
-      '<rect class="sc-bulle2" x="44" y="44" width="70" height="28" rx="10"/><text class="sc-mot bas m1" x="79" y="63" text-anchor="middle">Deal?</text><text class="sc-mot bas m2" x="79" y="63" text-anchor="middle">Marché ?</text>'
+      '<rect class="sc-bulle2" x="44" y="44" width="70" height="28" rx="10"/><text class="sc-mot bas m1" x="79" y="63" text-anchor="middle">Deal?</text><text class="sc-mot bas m2" x="79" y="63" text-anchor="middle">Marché ?</text>',
+    cejm: '<path class="sc-courbe" pathLength="1" d="M48 26 L16 14 M72 26 L104 14 M48 52 L16 66 M72 52 L104 66"/>' +
+      '<rect class="sc-bulle2" x="46" y="8" width="28" height="62" rx="6"/><rect class="sc-bulle" x="50" y="15" width="20" height="44" rx="2"/>' +
+      '<circle class="sc-tete sc-pop" cx="14" cy="13" r="6"/><circle class="sc-etoile sc-pop" cx="106" cy="13" r="6"/><circle class="sc-etoile sc-pop" cx="14" cy="67" r="6"/><circle class="sc-tete sc-pop" cx="106" cy="67" r="6"/>'
   };
   function scene(id) {
     return SCENES[id] ? '<svg class="scene" viewBox="0 0 120 80" aria-hidden="true" focusable="false">' + SCENES[id] + '</svg>' : '';

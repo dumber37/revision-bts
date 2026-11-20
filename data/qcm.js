@@ -326,3 +326,41 @@ R.qcm = {
     ['Le passif de « can sell » est…', ['can be sold', 'can sold', 'can been sold', 'can is sold'], '']
   ]
 };
+
+// ---------- CEJM ----------
+
+R.qcm['eco-numerique'] = [
+  ['Sur quoi repose l’économie numérique ?', ['L’exploitation des données codées en nombres', 'La vente en magasin uniquement', 'L’industrie lourde', 'Le commerce de gros'], 'Toute information est codée en nombres : on peut la stocker, la traiter et la transmettre en masse.'],
+  ['Comment appelle-t-on le stockage et l’analyse d’un énorme volume de données ?', ['Le big data', 'Le m-commerce', 'Le CtoC', 'L’ubérisation'], 'On dit aussi mégadonnées ou données massives.'],
+  ['Quels sont les 3 piliers de l’économie numérique ?', ['Technologique, économique, social', 'Juridique, fiscal, social', 'Produit, prix, place', 'Local, national, mondial'], 'Les outils, les acteurs et secteurs, les usages.'],
+  ['Un pure player, c’est une entreprise qui…', ['Vend uniquement en ligne', 'Vend uniquement en magasin', 'Fabrique des ordinateurs', 'N’a pas de concurrents'], 'Elle n’a pas de magasin physique.'],
+  ['L’apparition des GAFAM relève de quel pilier ?', ['Économique', 'Technologique', 'Social', 'Juridique'], 'Le pilier économique : nouveaux acteurs et nouveaux secteurs.'],
+  ['Les réseaux sociaux et la consommation collaborative relèvent de quel pilier ?', ['Social', 'Économique', 'Technologique', 'Financier'], 'Ce sont de nouveaux usages des particuliers.'],
+  ['Pourquoi une entreprise qui ne passe pas au numérique risque-t-elle de disparaître ?', ['Ses clients partent vers des concurrents plus innovants', 'L’État l’interdit', 'Ses coûts fixes baissent', 'Ses fournisseurs refusent de la livrer'], 'Les cycles d’innovation s’accélèrent et les clients réclament une bonne expérience.'],
+  ['Qu’est-ce que l’ubérisation ?', ['Une plateforme qui met en contact direct clients et prestataires et bouscule un secteur classique', 'La vente de voitures en ligne', 'La fermeture des magasins le dimanche', 'Un impôt sur le numérique'], 'Le mot vient d’Uber, face aux taxis.'],
+  ['Quelles sont les 2 nouvelles concurrences des entreprises traditionnelles ?', ['Les pure players et les consommateurs eux-mêmes', 'Les banques et les assurances', 'L’État et les syndicats', 'Les fournisseurs et les transporteurs'], 'Les particuliers vendent ou louent aussi via des plateformes.']
+];
+R.qcm['echanges-numeriques'] = [
+  ['Un particulier vend son vélo à un autre particulier sur Leboncoin. C’est du…', ['CtoC', 'BtoC', 'BtoB', 'BtoG'], 'Consumer to Consumer : entre particuliers.'],
+  ['Valeo vend des pièces à un constructeur automobile. C’est du…', ['BtoB', 'BtoC', 'CtoC', 'BtoG'], 'Business to Business : entre entreprises.'],
+  ['Que signifie BtoG ?', ['Business to Government', 'Business to Group', 'Buy to Give', 'Commerce to gouvernement'], 'Une entreprise vend à une administration, par exemple après un appel d’offres.'],
+  ['Qu’est-ce que le m-commerce ?', ['Les achats en ligne faits sur smartphone', 'Le commerce de marchandises lourdes', 'Le commerce en magasin', 'Le commerce entre mairies'], 'm comme mobile.'],
+  ['Laquelle de ces relations est non marchande ?', ['Regarder une vidéo gratuite sur YouTube', 'Acheter des baskets sur Amazon', 'Vendre un vélo sur Leboncoin', 'Répondre à un appel d’offres'], 'Pas de prix : c’est un accès à l’information.'],
+  ['Comment se rémunère un site qui accueille une place de marché ?', ['Par une commission sur chaque vente', 'En achetant le stock des vendeurs', 'Par une subvention publique', 'Il ne gagne rien'], 'Il prélève un pourcentage sur chaque vente des vendeurs extérieurs.'],
+  ['Quel est l’avantage d’une place de marché pour un petit commerçant ?', ['Profiter du trafic d’un grand site', 'Ne payer aucune commission', 'Garder seul la relation client', 'Supprimer toute concurrence'], 'Il trouve des clients grâce à la fréquentation du site.'],
+  ['Selon ton cours, quelle part des consommateurs achète plutôt sur une marketplace que sur le site d’une marque ?', ['61 %', '16 %', '40 %', '90 %'], '61 % en 2025, d’après le cours.'],
+  ['La désintermédiation, c’est…', ['Supprimer des intermédiaires entre producteur et client', 'Ajouter des grossistes', 'Fermer un site internet', 'Augmenter les prix'], 'La plateforme met directement en contact le producteur et le client final.'],
+  ['Pourquoi parle-t-on ensuite de réintermédiation ?', ['La plateforme devient elle-même un nouvel intermédiaire incontournable', 'Les grossistes reviennent', 'Les clients retournent en magasin', 'L’État reprend le contrôle'], 'Amazon, Uber ou Google sont devenus les nouveaux intermédiaires.']
+];
+R.qcm['plateformes'] = [
+  ['Spotify et YouTube sont des plateformes…', ['d’audience et de contenus', 'de financement', 'de travail', 'd’échange direct'], 'Elles diffusent des contenus à un large public.'],
+  ['Ulule et KissKissBankBank sont des plateformes…', ['de financement', 'de travail', 'd’audience', 'd’échange direct'], 'Financement participatif.'],
+  ['L’ENT de ton lycée est une plateforme…', ['de travail', 'de financement', 'd’audience', 'de place de marché'], 'Un outil pour travailler ensemble.'],
+  ['Une plateforme « multiface », c’est une plateforme qui…', ['Met en relation plusieurs catégories d’utilisateurs', 'A plusieurs sites internet', 'Vend plusieurs produits', 'Appartient à plusieurs entreprises'], 'Ex. YouTube : spectateurs, créateurs, annonceurs.'],
+  ['Combien de faces a YouTube selon ton cours ?', ['3', '2', '1', '4'], 'Ceux qui cherchent du contenu, ceux qui en publient, les annonceurs.'],
+  ['Sur Airbnb, quelle face est la plus grande ?', ['La demande (les voyageurs)', 'L’offre (les hôtes)', 'Les annonceurs', 'Les deux sont égales'], 'Très peu d’utilisateurs sont à la fois hôtes et voyageurs.'],
+  ['Qu’est-ce qu’un effet de réseau ?', ['La satisfaction augmente avec le nombre d’utilisateurs', 'Une panne d’internet', 'Une hausse des prix', 'La baisse du nombre de clients'], 'On parle aussi d’externalité de réseau.'],
+  ['Comment les avis clients améliorent-ils le marché ?', ['Ils réduisent l’asymétrie d’information', 'Ils augmentent les prix', 'Ils suppriment la concurrence', 'Ils remplacent les vendeurs'], 'Le futur client dispose de plus d’informations.'],
+  ['Pourquoi le coût moyen d’une plateforme baisse-t-il quand elle vend plus ?', ['Ses coûts sont surtout fixes', 'Ses coûts variables sont très élevés', 'L’État paie ses salariés', 'Elle augmente ses prix'], 'Une vente de plus ne coûte presque rien : ce sont des rendements croissants.'],
+  ['Effets de réseau et rendements croissants peuvent mener à…', ['Un monopole numérique', 'Une concurrence parfaite', 'La disparition de la plateforme', 'Une baisse du trafic'], 'Ex. l’écosystème Google.']
+];

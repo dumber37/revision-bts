@@ -20,10 +20,10 @@ La durée sert aussi de numéro de version dans l'adresse du MP3 (`?d=`) : l'anc
 
 ## Code
 - `jeu.js` : progression (XP, grades, flamme, étoiles, badges, missions du jour, révision des erreurs, Défi éclair).
-- `activites.js` : séries de questions, onglet S'entraîner (cartes mémo, ordre, trous, examen blanc), l'essentiel en 1 minute.
+- `activites.js` : séries de questions, onglet S'entraîner (cartes mémo à répétition espacée, ordre, trous, examen blanc), cartes du jour toutes matières (#/cartes), l'essentiel en 1 minute.
 - `jeux.js` : magasin qui s'agrandit, boss, duel, chasse à l'erreur, memory.
 - `outils.js` : mes points faibles, calculs à l'infini (16 types, dont cadencier et fiche de stock en tableau), transfert de progression, simulateur d'oral et oral blanc E42 chronométré.
-- `carnet.js` : planning d'examen, lexique, notes, favoris, taille du texte.
+- `carnet.js` : planning d'examen (14 jours, points faibles, programme semaine par semaine jusqu'au BTS), lexique, notes, favoris, taille du texte.
 - `bonus.js` : écoute des fiches, méthodologie, études de cas, défi de la semaine.
 - `ambiance.js` : sons (désactivables) et animations.
 - `composants.js`, `app.js` : composants des fiches (calculatrices, schémas animés `data-anim`, carte mentale de chaque matière), pages et navigation.

@@ -75,7 +75,9 @@ var Icone = (function () {
     // Gestion : graphique en barres avec tendance
     gestion: '<path d="M4 4v16h16"/><path d="M8 16v-4M12 16V9M16 16v-6"/><path d="m7 9.5 4-3.5 3 2 5-4.5"/><path d="M16.5 3.5H19V6"/>',
     // Anglais : un globe
-    anglais: '<circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17"/><path d="M12 3.5c2.6 2.4 3.8 5.3 3.8 8.5s-1.2 6.1-3.8 8.5c-2.6-2.4-3.8-5.3-3.8-8.5s1.2-6.1 3.8-8.5z"/><path d="M5.2 7.5h13.6M5.2 16.5h13.6"/>'
+    anglais: '<circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17"/><path d="M12 3.5c2.6 2.4 3.8 5.3 3.8 8.5s-1.2 6.1-3.8 8.5c-2.6-2.4-3.8-5.3-3.8-8.5s1.2-6.1 3.8-8.5z"/><path d="M5.2 7.5h13.6M5.2 16.5h13.6"/>',
+    // CEJM : une balance (économie, droit, management)
+    cejm: '<path d="M12 4v16M8 20h8"/><path d="M5 7h14"/><path d="M5 7 2.5 13a2.5 2.5 0 0 0 5 0z"/><path d="M19 7l-2.5 6a2.5 2.5 0 0 0 5 0z"/><circle cx="12" cy="4" r="1"/>'
   };
 
   function Icone(nom, cls) {
