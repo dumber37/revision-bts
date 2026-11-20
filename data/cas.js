@@ -275,5 +275,97 @@ R.cas = [
         corrige: `<p><b>Intérêts</b> : pour Auchan, moins de ruptures, approvisionnement sûr, meilleures conditions, moins de stocks ; pour le fournisseur, débouchés stables, volumes prévisibles, visibilité, moins de risque de déréférencement. Le partenariat doit rester équilibré.</p>
           <p><b>Note (extrait)</b> : objet « Proposition de partenariat avec QualiDat ». Contenu : opérations promotionnelles communes préparées à l’avance (ramadan, anniversaire), coopération merchandising (18 m linéaires, merchandiser, ILV/PLV), logistique commune (prévisions partagées pour livrer sous 5 jours). Justification : demande très élastique (− 3,65) ; on formalise l’existant ; l’ECR et la GPA sont trop lourds pour une seule famille de produits au début. Vigilance : engagements écrits, seuil de revente à perte, services de coopération réellement rendus.</p>` }
     ]
+  },
+  {
+    id: 'epicerie-halles-stocks',
+    matiere: 'gestion',
+    titre: 'Épicerie des Halles : approvisionnements et stocks',
+    resume: 'Wilson, deux cadenciers, démarque, fiche de stock au CMP, méthode des 20/80, rotation : tout le chapitre en un cas.',
+    contexte: `
+      <p>L’<b>Épicerie des Halles</b> est une épicerie fine du centre de Tours. Sa clientèle vient pour la qualité des produits. Le magasin est ouvert toute l’année ; par convention, on retient une année de <b>360 jours</b>.</p>
+      <p>Son produit phare est le paquet de café « Grand Cru Éthiopie » 250 g. Tu assistes la gérante dans la gestion de ses approvisionnements et de ses stocks.</p>`,
+    annexes: `
+      <h3>Document 1 : le café « Grand Cru Éthiopie »</h3>
+      <ul><li>Ventes : 3 600 paquets par an, à un rythme régulier</li><li>Coût d’achat : 5,00 € HT le paquet, transport inclus</li>
+        <li>Prix de vente : 8,00 € HT (TVA 5,5 %)</li><li>Coût de passation d’une commande : 18 €</li>
+        <li>Taux de possession : 20 % de la valeur du stock moyen</li><li>Rythme actuel : 12 commandes par an</li></ul>
+      <h3>Document 2 : le coffret cadeau « Gourmand »</h3>
+      <table><tr><th>Semaine</th><th>S1 (30/11)</th><th>S2 (07/12)</th><th>S3 (14/12)</th><th>S4 (21/12)</th></tr>
+        <tr><td>Ventes prévues</td><td>20</td><td>35</td><td>60</td><td>15</td></tr></table>
+      <p>Stock au 30 novembre : 10 coffrets. Stock de sécurité : 5. Livraison par lots de 12, une semaine après la commande. Coût d’achat : 22 € HT.<br>
+      Inventaire : le logiciel annonce 46 coffrets ; le comptage en rayon et en réserve en trouve 43.</p>
+      <h3>Document 3 : mouvements du café en novembre</h3>
+      <table><tr><th>Date</th><th>Mouvement</th><th>Quantité</th><th>Coût unitaire HT</th></tr>
+        <tr><td>01/11</td><td>Stock initial</td><td>200</td><td>5,00 €</td></tr>
+        <tr><td>05/11</td><td>Entrée, bon n° 41</td><td>400</td><td>5,25 €</td></tr>
+        <tr><td>12/11</td><td>Sortie, bon n° 87</td><td>300</td><td></td></tr>
+        <tr><td>18/11</td><td>Entrée, bon n° 42</td><td>200</td><td>5,50 €</td></tr>
+        <tr><td>26/11</td><td>Sortie, bon n° 88</td><td>320</td><td></td></tr></table>
+      <p>Le magasin valorise son stock au coût moyen pondéré calculé en fin de période.</p>
+      <h3>Document 4 : le rayon thés (10 références, 60 000 € de CA annuel)</h3>
+      <table><tr><th>Référence</th><th>CA annuel</th></tr>
+        <tr><td>Darjeeling</td><td>3 000 €</td></tr><tr><td>Earl Grey</td><td>27 000 €</td></tr><tr><td>Rooibos</td><td>2 400 €</td></tr>
+        <tr><td>Thé blanc</td><td>1 800 €</td></tr><tr><td>Thé vert à la menthe</td><td>21 000 €</td></tr><tr><td>Cinq autres références (ensemble)</td><td>4 800 €</td></tr></table>
+      <h3>Document 5 : le stock de café sur deux ans</h3>
+      <table><tr><th></th><th>Année N-1</th><th>Année N</th></tr>
+        <tr><td>Stock au début de l’année (paquets)</td><td>400</td><td>200</td></tr>
+        <tr><td>Stock à la fin de l’année (paquets)</td><td>200</td><td>160</td></tr>
+        <tr><td>Quantité vendue (paquets)</td><td>3 300</td><td>3 600</td></tr></table>`,
+    questions: [
+      { q: 'Document 1. Calculez le nombre optimal de commandes de café et la quantité par commande avec le modèle de Wilson. Comparez le coût obtenu à celui du rythme actuel.', points: 4,
+        corrige: `<p>C × PU × T = 3 600 × 5 × 0,20 = 3 600. 2 × P = 2 × 18 = 36. 3 600 ÷ 36 = 100. <b>N = √100 = 10 commandes</b> ; <b>Q = 3 600 ÷ 10 = 360 paquets</b>.</p>
+          <p>Coût à l’optimum : possession (360 ÷ 2) × 5 × 0,20 = 180 € ; passation 10 × 18 = 180 € ; <b>total 360 €</b>. Les deux coûts sont égaux.</p>
+          <p>Rythme actuel, 12 commandes de 300 : possession 150 × 5 × 0,20 = 150 € ; passation 12 × 18 = 216 € ; total <b>366 €</b>. L’économie n’est que de 6 € par an : une commande par mois, plus simple à organiser, reste défendable.</p>
+          <div data-calc="wilson"></div>` },
+      { q: 'Document 2. Établissez le cadencier d’approvisionnement du coffret sur les quatre semaines, si l’épicerie choisit ses dates de livraison.', points: 3,
+        corrige: `<table><tr><th></th><th>S1</th><th>S2</th><th>S3</th><th>S4</th></tr>
+          <tr><td>Ventes prévues</td><td>20</td><td>35</td><td>60</td><td>15</td></tr>
+          <tr><td>Besoin (ventes + 5)</td><td>25</td><td>40</td><td>65</td><td>20</td></tr>
+          <tr><td>Stock initial</td><td>10</td><td>14</td><td>15</td><td>15</td></tr>
+          <tr><td>Quantité livrée (lots de 12)</td><td>24</td><td>36</td><td>60</td><td>12</td></tr>
+          <tr><td>Stock final</td><td>14</td><td>15</td><td>15</td><td>12</td></tr>
+          <tr><td>Date de commande</td><td>23/11</td><td>30/11</td><td>07/12</td><td>14/12</td></tr></table>
+          <p>S1 : il manque 25 − 10 = 15, donc 2 lots (24). Stock final 10 + 24 − 20 = 14. S3 : il manque 50, 50 ÷ 12 = 4,17, donc 5 lots (60).</p>` },
+      { q: 'Document 2. Refaites le cadencier si le fournisseur ne livre qu’en S1 et en S3. Comparez les deux situations.', points: 3,
+        corrige: `<table><tr><th></th><th>S1</th><th>S2</th><th>S3</th><th>S4</th></tr>
+          <tr><td>Ventes prévues</td><td>20</td><td>35</td><td>60</td><td>15</td></tr>
+          <tr><td>Besoin</td><td>60</td><td>—</td><td>80</td><td>—</td></tr>
+          <tr><td>Stock initial</td><td>10</td><td>50</td><td>15</td><td>27</td></tr>
+          <tr><td>Quantité livrée</td><td>60</td><td>0</td><td>72</td><td>0</td></tr>
+          <tr><td>Stock final</td><td>50</td><td>15</td><td>27</td><td>12</td></tr>
+          <tr><td>Date de commande</td><td>23/11</td><td>—</td><td>07/12</td><td>—</td></tr></table>
+          <p>S1 : besoin = 20 + 35 + 5 = 60, manque 50, 5 lots. S3 : 60 + 15 + 5 = 80, manque 65, 65 ÷ 12 = 5,42, donc 6 lots (72).</p>
+          <p><b>Comparaison :</b> même total livré (132 coffrets), mais stock final moyen de 26 coffrets contre 14. Le magasin immobilise plus d’argent et de place pour le même chiffre d’affaires : la fréquence de livraison est à négocier avec le fournisseur (levier 6), comme le prix.</p>` },
+      { q: 'Document 2. Chiffrez la démarque constatée à l’inventaire, en quantité et en valeur.', points: 2,
+        corrige: `<p>46 − 43 = <b>3 coffrets</b> manquants : le stock réel est inférieur au théorique, c’est une <b>démarque</b>. Valeur : 3 × 22 = <b>66 €</b> au coût d’achat. Le logiciel est corrigé à 43. Causes possibles : vol, coffret abîmé jeté sans saisie, erreur de caisse.</p>` },
+      { q: 'Document 3. Établissez la fiche de stock du café en novembre. Calculez le coût moyen pondéré, la valeur du stock final et la marge réalisée sur les ventes du mois.', points: 4,
+        corrige: `<table><tr><th>Date</th><th>Libellé</th><th>Entrée</th><th>PU</th><th>Valeur</th><th>Sortie</th><th>CMP</th><th>Valeur</th><th>Stock</th></tr>
+          <tr><td>01/11</td><td>Stock initial</td><td>200</td><td>5,00</td><td>1 000,00</td><td></td><td></td><td></td><td>200</td></tr>
+          <tr><td>05/11</td><td>BE n° 41</td><td>400</td><td>5,25</td><td>2 100,00</td><td></td><td></td><td></td><td>600</td></tr>
+          <tr><td>12/11</td><td>BS n° 87</td><td></td><td></td><td></td><td>300</td><td>5,25</td><td>1 575,00</td><td>300</td></tr>
+          <tr><td>18/11</td><td>BE n° 42</td><td>200</td><td>5,50</td><td>1 100,00</td><td></td><td></td><td></td><td>500</td></tr>
+          <tr><td>26/11</td><td>BS n° 88</td><td></td><td></td><td></td><td>320</td><td>5,25</td><td>1 680,00</td><td>180</td></tr>
+          <tr><td>30/11</td><td>Total</td><td>800</td><td>5,25</td><td>4 200,00</td><td>620</td><td>5,25</td><td>3 255,00</td><td>180</td></tr></table>
+          <p><b>CMP</b> = 4 200 ÷ 800 = <b>5,25 €</b>. <b>Stock final</b> = 180 × 5,25 = <b>945 €</b>. Contrôle : 3 255 + 945 = 4 200 €.</p>
+          <p><b>Marge</b> = 620 × (8,00 − 5,25) = <b>1 705 €</b>. Avec l’ancien coût de 5 €, l’épicerie aurait cru gagner 1 860 € : la hausse du prix d’achat lui coûte 155 € de marge en un mois.</p>` },
+      { q: 'Document 4. Appliquez la méthode des 20/80 au rayon thés. Quelles références faut-il suivre en priorité ?', points: 2,
+        corrige: `<table><tr><th>Rang</th><th>Référence</th><th>CA</th><th>Part</th><th>Cumul</th></tr>
+          <tr><td>1</td><td>Earl Grey</td><td>27 000 €</td><td>45,0 %</td><td>45,0 %</td></tr>
+          <tr><td>2</td><td>Thé vert à la menthe</td><td>21 000 €</td><td>35,0 %</td><td>80,0 %</td></tr>
+          <tr><td>3</td><td>Darjeeling</td><td>3 000 €</td><td>5,0 %</td><td>85,0 %</td></tr>
+          <tr><td>4</td><td>Rooibos</td><td>2 400 €</td><td>4,0 %</td><td>89,0 %</td></tr>
+          <tr><td>5</td><td>Thé blanc</td><td>1 800 €</td><td>3,0 %</td><td>92,0 %</td></tr>
+          <tr><td>6 à 10</td><td>Cinq autres</td><td>4 800 €</td><td>8,0 %</td><td>100,0 %</td></tr></table>
+          <p>2 références sur 10, soit 20 % de l’assortiment, font 80 % du CA : la loi est vérifiée. L’<b>Earl Grey</b> et le <b>thé vert à la menthe</b> sont à suivre en priorité (stock de sécurité calculé, inventaire fréquent, commande surveillée) ; une rupture sur le thé blanc est sans gravité.</p>` },
+      { q: 'Document 5. Calculez le stock moyen, la rotation et la durée moyenne de stockage du café pour les deux années. Commentez l’évolution en trois temps : fait, sens, recommandation.', points: 4,
+        corrige: `<table><tr><th></th><th>N-1</th><th>N</th></tr>
+          <tr><td>Stock moyen</td><td>(400 + 200) ÷ 2 = 300</td><td>(200 + 160) ÷ 2 = 180</td></tr>
+          <tr><td>Rotation</td><td>3 300 ÷ 300 = 11</td><td>3 600 ÷ 180 = 20</td></tr>
+          <tr><td>Durée de stockage</td><td>(300 ÷ 3 300) × 360 = 32,7 jours</td><td>360 ÷ 20 = 18 jours</td></tr></table>
+          <p><b>Fait.</b> Le stock moyen passe de 300 à 180 paquets alors que les ventes progressent de 3 300 à 3 600. Le stock tourne 20 fois par an contre 11 ; un paquet reste 18 jours en stock au lieu de 33.</p>
+          <p><b>Sens.</b> L’épicerie vend plus avec moins de stock : 120 paquets × 5,25 € = 630 € de trésorerie libérée, et un café plus frais (levier 7).</p>
+          <p><b>Recommandation.</b> Maintenir le rythme de commande et surveiller les ruptures : si elles apparaissent, relever le stock de sécurité (levier 2, fidélité).</p>
+          <div data-calc="rotation" data-valeurs="si=400;sf=200;v=3300" data-titre="Calculatrice : indicateurs (change pour N-1 ou N)"></div>` }
+    ]
   }
 ];

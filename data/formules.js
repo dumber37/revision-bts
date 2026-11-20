@@ -22,7 +22,19 @@ R.formules = `
     <tr><td>Taux de marge</td><td>Marge ÷ coût d'achat HT × 100</td></tr>
     <tr><td>Taux de marque</td><td>Marge ÷ prix de vente HT × 100</td></tr>
     <tr><td>Coefficient multiplicateur</td><td>Prix de vente TTC ÷ coût d'achat HT</td></tr>
+    <tr><td>PV HT avec un taux de marque</td><td>Coût d'achat HT ÷ (1 − taux de marque)</td></tr>
+    <tr><td>Prix HT</td><td>Prix TTC ÷ (1 + taux de TVA)</td></tr>
+    <tr><td>Coût de possession</td><td>(Q ÷ 2) × coût d'achat unitaire × taux de possession</td></tr>
+    <tr><td>Coût de passation</td><td>Nombre de commandes × coût d'une commande</td></tr>
+    <tr><td>Modèle de Wilson</td><td>N = √[(C × PU × T) ÷ (2 × P)], puis Q = C ÷ N</td></tr>
+    <tr><td>Stock d'alerte</td><td>Stock minimum (ventes/jour × délai) + stock de sécurité</td></tr>
+    <tr><td>Cadencier</td><td>Besoin = ventes + sécurité ; stock final = initial + livraison − ventes</td></tr>
+    <tr><td>Coût moyen pondéré</td><td>Valeur (stock initial + entrées) ÷ quantité (stock initial + entrées)</td></tr>
+    <tr><td>Stock moyen</td><td>(Stock début + stock fin) ÷ 2</td></tr>
+    <tr><td>Ratio de rotation</td><td>Quantité vendue ÷ stock moyen</td></tr>
+    <tr><td>Durée moyenne de stockage</td><td>(Stock moyen ÷ quantité vendue) × nombre de jours</td></tr>
   </table>
+  <p>Les calculs d'approvisionnement et de stock sont détaillés, avec leurs calculatrices, dans les fiches <a href="#/gestion/approvisionnements">Approvisionnements</a> et <a href="#/gestion/gestion-stocks">Gestion des stocks</a>.</p>
 
   <h2>Les calculs en situation</h2>
   <p>Lis la situation, fais le calcul de ton côté, puis ouvre la correction.</p>

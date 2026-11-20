@@ -154,6 +154,55 @@ R.qcm = {
     ['Délai de paiement selon ton cours :', ['30 jours après réception, ou 45 jours fin de mois', '90 jours dans tous les cas', '7 jours après réception', 'Aucun délai légal'], 'Version du cours ; vérifie celle attendue par ton prof.']
   ],
 
+  'boite-outils': [
+    ['Le CA passe de 380 000 € à 408 500 €. Taux d’évolution ?', ['+7,5 %', '+7 %', '+28,5 %', '+6,98 %'], '28 500 ÷ 380 000 = 0,075. On divise par la valeur de départ.'],
+    ['Lucas vend 27 000 €, soit 18 % du CA de son magasin. CA du magasin ?', ['150 000 €', '4 860 €', '31 860 €', '48 600 €'], '27 000 ÷ 0,18. Le total est forcément plus grand que la partie.'],
+    ['126,60 € TTC avec une TVA de 5,5 %. Prix HT ?', ['120 €', '119,64 €', '133,56 €', '121,10 €'], '126,60 ÷ 1,055. On ne retire pas 5,5 % au TTC.'],
+    ['Un client paie 391 € après une remise de 15 %. Prix avant remise ?', ['460 €', '449,65 €', '450 €', '332,35 €'], '391 ÷ 0,85 = 460.'],
+    ['Remises successives de 10 % puis 5 % : remise globale ?', ['14,5 %', '15 %', '15,5 %', '5 %'], '0,90 × 0,95 = 0,855 : la 2e remise porte sur un montant déjà réduit.'],
+    ['Coût d’achat 32 €, taux de marque voulu 36 %. Prix de vente HT ?', ['50 €', '43,52 €', '44,44 €', '60 €'], '32 ÷ (1 − 0,36) = 32 ÷ 0,64.'],
+    ['Coût d’achat 32 €, taux de marge 36 %. Prix de vente HT ?', ['43,52 €', '50 €', '20,48 €', '36 €'], '32 × 1,36.'],
+    ['Montre achetée 48 € + 2 € de transport, vendue 75 € HT. Taux de marge ?', ['50 %', '56,25 %', '33,3 %', '25 %'], 'Coût d’achat 50 € (avec le transport), marge 25 €, 25 ÷ 50.'],
+    ['Quel est le levier 7 de performance ?', ['Les stocks', 'La fidélité des clients', 'Les créances clients', 'Investir intelligemment'], '1 CA, 2 fidélité, 3 baisse des coûts, 4 ressources, 5 créances, 6 dettes fournisseurs, 7 stocks, 8 investir.'],
+    ['Choisir un fournisseur qui accorde un long délai de paiement actionne le levier…', ['6, les dettes fournisseurs', '5, les créances clients', '1, le chiffre d’affaires', '4, les ressources'], 'On paie plus tard : la trésorerie respire.'],
+    ['Dans quel ordre rédige-t-on un commentaire de gestion ?', ['Fait, sens, recommandation', 'Sens, fait, conclusion', 'Recommandation, fait, sens', 'Calcul, résultat, fin'], 'Fait chiffré, explication, action avec une condition.'],
+    ['Par convention en gestion, une année compte…', ['360 jours', '365 jours', '52 semaines de 7 jours', '300 jours'], 'Et un mois 30 jours.']
+  ],
+
+  'approvisionnements': [
+    ['Le coût de possession augmente quand on…', ['Commande rarement, en grosses quantités', 'Commande souvent, en petites quantités', 'Baisse le stock de sécurité', 'Négocie le prix'], 'Gros stock moyen = plus d’argent immobilisé.'],
+    ['Avec Q = 720, PU = 8 € et un taux de 15 %, le coût de possession vaut…', ['432 €', '864 €', '108 €', '5 760 €'], '(720 ÷ 2) × 8 × 0,15.'],
+    ['Wilson : N = √[(C × PU × T) ÷ ?]', ['2 × P', 'P', 'P ÷ 2', '2 × C'], 'P = coût de passation d’une commande.'],
+    ['Café : C = 3 600, PU = 5 €, T = 20 %, P = 18 €. Nombre optimal de commandes ?', ['10', '12', '100', '6'], '√(3 600 ÷ 36) = √100.'],
+    ['À l’optimum de Wilson…', ['Coût de passation = coût de possession', 'Le coût de passation est nul', 'Le stock de sécurité est nul', 'On commande une fois par mois'], 'C’est l’égalité que résout la formule.'],
+    ['Wilson donne N = 10,39. Règle d’examen ?', ['Arrondir à l’entier supérieur : 11', 'Garder 10,39', 'Arrondir à 10', 'Recalculer sans racine'], 'Sauf consigne contraire. En entreprise, on compare 10 et 11.'],
+    ['Quelle hypothèse le modèle de Wilson fait-il ?', ['La demande est régulière et connue', 'Les remises par quantité sont prises en compte', 'Le fournisseur livre par lots', 'Le stock est périssable'], 'Ses limites : saisonnalité, remises, lots, place et péremption.'],
+    ['20 ventes par jour, délai de livraison 9 jours, sécurité 3 jours. Stock d’alerte ?', ['240', '180', '60', '200'], 'Minimum 180 + sécurité 60.'],
+    ['Dans un cadencier, le besoin d’une période =', ['Ventes prévues + stock de sécurité', 'Ventes prévues − stock initial', 'Stock initial + livraison', 'Ventes prévues × délai'], ''],
+    ['Le stock final d’une période se calcule avec…', ['Les ventes prévues', 'Le besoin', 'Le stock de sécurité seul', 'La quantité commandée seule'], 'Stock initial + livraison − ventes : la sécurité reste en rayon.'],
+    ['Il manque 50 coffrets, le fournisseur livre par lots de 12. On fait livrer…', ['60 coffrets', '48 coffrets', '50 coffrets', '62 coffrets'], '50 ÷ 12 = 4,17 : toujours au lot supérieur, 5 lots.'],
+    ['Le fournisseur impose ses dates de livraison : c’est…', ['La gestion calendaire', 'Le point de commande', 'Le modèle de Wilson', 'L’inventaire tournant'], 'Chaque livraison couvre les ventes jusqu’à la suivante.'],
+    ['Pourquoi la gestion calendaire coûte-t-elle plus cher en stock ?', ['Chaque livraison doit couvrir plusieurs périodes', 'Les lots sont plus petits', 'Le stock de sécurité disparaît', 'Les ventes baissent'], 'Coffrets : stock final moyen de 26 au lieu de 14.'],
+    ['Le coût de passation baisse (commande automatique). On va…', ['Commander plus souvent et stocker moins', 'Commander moins souvent', 'Augmenter le stock moyen', 'Ne rien changer'], 'Logique du flux tendu : de 10 à 20 commandes.']
+  ],
+
+  'gestion-stocks': [
+    ['Le stock réel est inférieur au stock théorique : c’est…', ['Une démarque', 'Une surmarque', 'Une rupture', 'Une rotation'], 'Vol, casse, péremption, erreur de caisse…'],
+    ['Une livraison reçue mais non enregistrée provoque…', ['Une surmarque', 'Une démarque', 'Une démarque connue', 'Rien'], 'Le réel dépasse le théorique.'],
+    ['Après un inventaire, quelle quantité fait foi ?', ['Le stock compté', 'Le stock du logiciel', 'La moyenne des deux', 'Le stock de sécurité'], 'Le logiciel est corrigé.'],
+    ['Logiciel 46 coffrets, comptage 43, coût d’achat 22 €. Démarque en valeur ?', ['66 €', '946 €', '22 €', '129 €'], '3 × 22.'],
+    ['Quelle est la première cause de démarque inconnue ?', ['Le vol', 'La casse notée', 'Les soldes', 'Les retours'], 'La casse notée est une démarque connue.'],
+    ['L’inventaire tournant, c’est…', ['Compter quelques références à tour de rôle toute l’année', 'Tout compter en une fois', 'Compter seulement la réserve', 'Compter une fois tous les 5 ans'], 'Pas de fermeture, mais logiciel et rigueur nécessaires.'],
+    ['Stock initial 200 à 5 €, entrées 400 à 5,25 € et 200 à 5,50 €. CMP ?', ['5,25 €', '5,30 €', '5,00 €', '5,50 €'], '4 200 ÷ 800 = 5,25 €.'],
+    ['Pourquoi (48 + 50 + 51) ÷ 3 n’est-il pas le CMP ?', ['Il ne tient pas compte des quantités achetées à chaque prix', 'Il faut diviser par 2', 'Il faut prendre le dernier prix', 'Il faut ajouter la TVA'], 'Le CMP est pondéré par les quantités.'],
+    ['Contrôle d’une fiche de stock :', ['Sorties + stock final = total des entrées', 'Entrées = sorties', 'Stock final = stock initial', 'CMP × 2 = total'], 'Café : 3 255 + 945 = 4 200 €.'],
+    ['La loi des 20/80 dit qu’environ…', ['20 % des références font 80 % du CA', '80 % des références font 80 % du CA', '20 % des clients font 20 % du CA', '20 % du stock est perdu'], 'Loi de Pareto.'],
+    ['Première étape de la méthode des 20/80 ?', ['Classer les références par CA décroissant', 'Calculer le cumul', 'Supprimer les petites références', 'Calculer le CMP'], 'Puis parts, cumul, repérer les 80 %.'],
+    ['Stock début 200, fin 160, 3 600 vendus. Rotation ?', ['20', '18', '11', '22,5'], 'Stock moyen 180, 3 600 ÷ 180.'],
+    ['Rotation de 20 sur 360 jours : durée moyenne de stockage ?', ['18 jours', '20 jours', '7 200 jours', '36 jours'], '360 ÷ 20.'],
+    ['Le ratio de rotation, on souhaite qu’il…', ['Augmente, sans provoquer de ruptures', 'Baisse', 'Reste à 1', 'Soit égal au stock moyen'], 'Le levier 7 sous la contrainte du levier 2.']
+  ],
+
   // ---------- Anglais ----------
 
   'vocabulaire-anglais': [

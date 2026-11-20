@@ -64,6 +64,21 @@ R.essentiel = {
     'Scoring : note pondérée = Σ (note × coefficient), la plus haute gagne.',
     'Interdits : revente à perte, prix imposés, refus de vente à un particulier.'
   ],
+  'boite-outils': [
+    'Évolution = (arrivée − départ) ÷ départ ; HT = TTC ÷ (1 + TVA) ; brut = net ÷ (1 − remise).',
+    'Taux de marque → PV = coût ÷ (1 − taux). Taux de marge → PV = coût × (1 + taux).',
+    'Après chaque calcul : fait, sens, recommandation, et le levier de performance concerné.'
+  ],
+  'approvisionnements': [
+    'Coût total = possession (Q ÷ 2 × PU × T) + passation (N × P), minimal quand les deux sont égaux.',
+    'Wilson : N = √[(C × PU × T) ÷ 2P], Q = C ÷ N, seulement si la demande est régulière.',
+    'Demande irrégulière : cadencier. Besoin = ventes + sécurité, livraison au lot supérieur, stock final = initial + livraison − ventes.'
+  ],
+  'gestion-stocks': [
+    'Seul l’inventaire dit la vérité : réel < théorique = démarque, réel > théorique = surmarque.',
+    'CMP = valeur (stock initial + entrées) ÷ quantité ; contrôle : sorties + stock final = entrées.',
+    'Rotation = ventes ÷ stock moyen (à augmenter) ; durée = jours ÷ rotation ; 20 % des références font 80 % du CA.'
+  ],
   'vocabulaire-anglais': [
     'turnover = chiffre d’affaires ; staff turnover = rotation du personnel ; market share = part de marché.',
     'Clients : customer journey (parcours), loyalty (fidélité), retention (rétention), expectations (attentes).',
@@ -163,6 +178,27 @@ R.trous = {
     ['Note pondérée = somme des (notes × ___).', 'coefficients', ['prix', 'quantités', 'délais']],
     ['Dans les promotions alimentaires, on dit « offert » et pas « ___ ».', 'gratuit', ['remise', 'promo', 'réduit']],
     ['L’___ automatise l’échange des commandes et des factures.', 'EDI', ['ECR', 'SCM', 'SRM']]
+  ],
+  'boite-outils': [
+    ['Pour passer du TTC au HT, on ___ par (1 + taux de TVA).', 'divise', ['multiplie', 'soustrait', 'ajoute']],
+    ['Avec un taux de marque, PV HT = coût d’achat ÷ (1 ___ taux).', '−', ['+', '×', '÷']],
+    ['Deux remises successives de 10 % et 5 % font une remise globale de ___.', '14,5 %', ['15 %', '15,5 %', '5 %']],
+    ['Un commentaire de gestion suit trois temps : fait, sens, ___.', 'recommandation', ['conclusion', 'calcul', 'hypothèse']],
+    ['Le levier 6 de performance, ce sont les ___.', 'dettes fournisseurs', ['créances clients', 'stocks', 'investissements']]
+  ],
+  'approvisionnements': [
+    ['Le coût de ___ augmente quand on commande souvent.', 'passation', ['possession', 'stockage', 'achat']],
+    ['Stock d’alerte = stock minimum + stock de ___.', 'sécurité', ['réserve', 'rotation', 'commande']],
+    ['Dans la formule de Wilson, le dénominateur est 2 × ___.', 'P', ['C', 'PU', 'T']],
+    ['Dans un cadencier, on arrondit toujours au lot ___.', 'supérieur', ['inférieur', 'le plus proche', 'précédent']],
+    ['Quand le fournisseur impose ses dates, on parle de gestion ___.', 'calendaire', ['à point de commande', 'tournante', 'en flux tendu']]
+  ],
+  'gestion-stocks': [
+    ['Un stock réel supérieur au stock théorique est une ___.', 'surmarque', ['démarque', 'rupture', 'rotation']],
+    ['Le CMP est une moyenne ___ par les quantités.', 'pondérée', ['simple', 'mobile', 'arrondie']],
+    ['Ratio de rotation = quantité vendue ÷ ___.', 'stock moyen', ['stock final', 'stock initial', 'CA']],
+    ['Compter quelques références à tour de rôle toute l’année : inventaire ___.', 'tournant', ['complet', 'annuel', 'théorique']],
+    ['Environ 20 % des références réalisent ___ du chiffre d’affaires.', '80 %', ['20 %', '50 %', '100 %']]
   ],
   'vocabulaire-anglais': [
     ['« Part de marché » se dit market ___.', 'share', ['part', 'research', 'target']],
@@ -267,6 +303,24 @@ R.chasse = {
     ['Le mot « gratuit » est interdit dans les promotions alimentaires.', 'Le mot « offert » est interdit dans les promotions alimentaires.'],
     ['L’ECR vise le bon produit, au bon moment, au bon prix.', 'L’ECR est un logiciel de caisse.']
   ],
+  'boite-outils': [
+    ['Un taux d’évolution se calcule en divisant par la valeur de départ.', 'Un taux d’évolution se calcule en divisant par la valeur d’arrivée.'],
+    ['Avec un coût d’achat de 32 € et un taux de marque de 36 %, le prix HT est de 50 €.', 'Avec un coût d’achat de 32 € et un taux de marque de 36 %, le prix HT est de 43,52 €.'],
+    ['Le transport fait partie du coût d’achat.', 'Le transport ne fait pas partie du coût d’achat.'],
+    ['Deux remises de 10 % et 5 % ne font pas 15 % de remise globale.', 'Deux remises de 10 % et 5 % font exactement 15 % de remise globale.']
+  ],
+  'approvisionnements': [
+    ['À l’optimum de Wilson, coût de passation et coût de possession sont égaux.', 'À l’optimum de Wilson, le coût de passation est nul.'],
+    ['Le modèle de Wilson ne convient pas à un produit saisonnier.', 'Le modèle de Wilson est idéal pour un produit saisonnier.'],
+    ['Dans un cadencier, le stock final se calcule avec les ventes prévues.', 'Dans un cadencier, le stock final se calcule avec le besoin.'],
+    ['Quand commander coûte moins cher, on commande plus souvent.', 'Quand commander coûte moins cher, on commande moins souvent.']
+  ],
+  'gestion-stocks': [
+    ['Après l’inventaire, le logiciel est corrigé avec le stock compté.', 'Après l’inventaire, on garde le stock du logiciel.'],
+    ['Une surmarque ne compense pas une démarque.', 'Une surmarque compense une démarque.'],
+    ['Le CMP n’est pas la moyenne simple des prix d’achat.', 'Le CMP est la moyenne simple des prix d’achat.'],
+    ['Une rotation plus élevée signifie un stock qui se renouvelle plus vite.', 'Une rotation plus élevée signifie un stock qui dort plus longtemps.']
+  ],
   'vocabulaire-anglais': [
     ['« Turnover » signifie chiffre d’affaires.', '« Turnover » signifie bénéfice net.'],
     ['On dit « to make a decision ».', 'On dit « to do a decision ».'],
@@ -317,6 +371,21 @@ R.lexique = [
   ['Cahier des charges', 'Document qui décrit précisément le besoin avant l’appel d’offres.', 'fournisseurs'],
   ['Appel d’offres', 'Mise en concurrence de plusieurs fournisseurs à partir du cahier des charges.', 'fournisseurs'],
   ['Scoring', 'Choix d’un fournisseur par note pondérée : Σ (note × coefficient).', 'fournisseurs'],
+  ['Coût de passation', 'Coût de l’ensemble des commandes : nombre de commandes × coût d’une commande.', 'approvisionnements'],
+  ['Coût de possession', 'Coût du stock qui dort : stock moyen en valeur × taux de possession.', 'approvisionnements'],
+  ['Stock d’alerte', 'Stock minimum + stock de sécurité : niveau qui déclenche la commande.', 'approvisionnements'],
+  ['Modèle de Wilson', 'N = √[(C × PU × T) ÷ 2P] : nombre de commandes le moins coûteux, en demande régulière.', 'approvisionnements'],
+  ['Cadencier', 'Tableau d’approvisionnement période par période, pour une demande irrégulière.', 'approvisionnements'],
+  ['Gestion calendaire', 'Le fournisseur impose ses dates : chaque livraison couvre les ventes jusqu’à la suivante.', 'approvisionnements'],
+  ['Flux tendu', 'Petites livraisons fréquentes pour stocker le moins possible.', 'approvisionnements'],
+  ['Surmarque', 'Stock réel supérieur au stock théorique (saisie oubliée, livraison non enregistrée).', 'gestion-stocks'],
+  ['Inventaire tournant', 'Comptage de quelques références à tour de rôle, toute l’année, sans fermer.', 'gestion-stocks'],
+  ['CMP', 'Coût moyen pondéré : valeur (stock initial + entrées) ÷ quantité (stock initial + entrées).', 'gestion-stocks'],
+  ['Fiche de stock', 'Registre chronologique des entrées (BE) et sorties (BS) d’un article.', 'gestion-stocks'],
+  ['Loi de Pareto (20/80)', 'Environ 20 % des références réalisent 80 % du chiffre d’affaires.', 'gestion-stocks'],
+  ['Ratio de rotation', 'Quantité vendue ÷ stock moyen : nombre de renouvellements du stock.', 'gestion-stocks'],
+  ['Durée moyenne de stockage', '(Stock moyen ÷ quantité vendue) × jours : temps passé en stock.', 'gestion-stocks'],
+  ['Leviers de performance', '1 CA, 2 fidélité, 3 baisse des coûts, 4 ressources, 5 créances, 6 dettes fournisseurs, 7 stocks, 8 investir.', 'boite-outils'],
   ['Turn-over', 'Rotation du personnel : départs et remplacements de salariés.', 'evaluer-motivation'],
   ['Facteurs d’hygiène', 'Selon Herzberg : éléments externes (salaire, ambiance) dont l’absence démotive.', 'facteurs-motivation'],
   ['Facteurs moteurs', 'Selon Herzberg : éléments liés au travail (reconnaissance, contenu) qui motivent vraiment.', 'facteurs-motivation'],

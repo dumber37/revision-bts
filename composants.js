@@ -3,7 +3,7 @@
 //   <ol class="pyramide"><li><b>Haut</b><p>…</p></li>…</ol>             pyramide cliquable (du haut vers le bas)
 //   <div class="cartes"><div><b>Recto</b><p>Verso</p></div>…</div>     cartes à retourner
 //   <div class="barre" data-parts="Libellé|valeur|détail;…"></div>     barre de répartition
-//   <div data-calc="elasticite|paie|marge|scoring"></div>              calculatrices
+//   <div data-calc="elasticite|paie|marge|prixvente|wilson|rotation|scoring"></div>  calculatrices
 var Composants = (function () {
   'use strict';
 
@@ -250,6 +250,58 @@ var Composants = (function () {
             ligne('Prix de vente TTC', fr(v.pv) + ' × (1 + ' + fr(v.tva, 1) + ' %)', fr(ttc) + ' €'),
             ligne('Coefficient multiplicateur', fr(ttc) + ' ÷ ' + fr(v.pa), fr(ttc / v.pa), true)
           ]) + '<p class="calc-verdict">Taux de marge : on divise par le <b>coût d’achat</b>. Taux de marque : par le <b>prix de vente</b>.</p>';
+        });
+    },
+    // Fixer un prix à partir d'un taux : le piège marque / marge.
+    prixvente: function (div) {
+      calculatrice(div, 'Calculatrice : fixer un prix de vente',
+        [['pa', 'Coût d’achat HT (€)', '32'], ['t', 'Taux voulu (%)', '36'], ['tva', 'TVA (%)', '20']],
+        function (v) {
+          var t = v.t / 100, pvMarque = v.pa / (1 - t), pvMarge = v.pa * (1 + t);
+          return tableau([
+            ligne('Avec un taux de <b>marque</b>', fr(v.pa) + ' ÷ (1 − ' + fr(t) + ')', fr(pvMarque) + ' € HT', true),
+            ligne('Prix TTC', fr(pvMarque) + ' × (1 + ' + fr(v.tva, 1) + ' %)', fr(pvMarque * (1 + v.tva / 100)) + ' €'),
+            ligne('Avec un taux de <b>marge</b>', fr(v.pa) + ' × (1 + ' + fr(t) + ')', fr(pvMarge) + ' € HT', true),
+            ligne('Écart par article', fr(pvMarque) + ' − ' + fr(pvMarge), fr(pvMarque - pvMarge) + ' €')
+          ]) + '<p class="calc-verdict">Le taux de marque se calcule sur le prix de vente : le coût d’achat en représente donc (1 − taux).</p>';
+        });
+    },
+    // Modèle de Wilson : N = √(C × PU × T ÷ 2P), Q = C ÷ N, avec les deux entiers voisins.
+    wilson: function (div) {
+      calculatrice(div, 'Calculatrice : modèle de Wilson',
+        [['c', 'Consommation annuelle (unités)', '3600'], ['pu', 'Coût d’achat unitaire (€)', '5'], ['t', 'Taux de possession (%)', '20'], ['p', 'Coût de passation (€)', '18']],
+        function (v) {
+          var t = v.t / 100, num = v.c * v.pu * t, n = Math.sqrt(num / (2 * v.p));
+          function cout(k) { return { k: k, q: v.c / k, pos: v.c / k / 2 * v.pu * t, pas: k * v.p }; }
+          var l = [
+            ligne('C × PU × T', fr(v.c, 0) + ' × ' + fr(v.pu) + ' × ' + fr(t), fr(num)),
+            ligne('2 × P', '2 × ' + fr(v.p), fr(2 * v.p)),
+            ligne('N', '√(' + fr(num) + ' ÷ ' + fr(2 * v.p) + ')', fr(n) + ' commandes', true)
+          ];
+          if (!isFinite(n) || n <= 0) return tableau(l);
+          var entier = Math.abs(n - Math.round(n)) < 1e-9, choix = entier ? [Math.round(n)] : [Math.floor(n), Math.ceil(n)].filter(function (k) { return k > 0; });
+          var res = choix.map(cout);
+          res.forEach(function (r) {
+            l.push(ligne('Pour ' + r.k + ' commande' + (r.k > 1 ? 's' : '') + ' : Q = ' + fr(r.q, r.q % 1 ? 2 : 0),
+              'possession ' + fr(r.pos) + ' + passation ' + fr(r.pas), fr(r.pos + r.pas) + ' €', true));
+          });
+          var verdict = entier
+            ? 'Résultat entier : à l’optimum, possession = passation (' + fr(res[0].pos) + ' €).'
+            : 'N n’est pas entier. Règle d’examen : arrondir à l’entier supérieur (' + Math.ceil(n) + '), sauf consigne contraire. En entreprise, on garde le coût total le plus bas.';
+          return tableau(l) + '<p class="calc-verdict">' + verdict + '</p>';
+        });
+    },
+    // Indicateurs de stock : stock moyen, rotation, durée moyenne de stockage.
+    rotation: function (div) {
+      calculatrice(div, 'Calculatrice : indicateurs de stock',
+        [['si', 'Stock en début de période', '200'], ['sf', 'Stock en fin de période', '160'], ['v', 'Quantité vendue', '3600'], ['j', 'Jours de la période', '360']],
+        function (v) {
+          var sm = (v.si + v.sf) / 2, r = v.v / sm, d = sm / v.v * v.j;
+          return tableau([
+            ligne('Stock moyen', '(' + fr(v.si, 0) + ' + ' + fr(v.sf, 0) + ') ÷ 2', fr(sm, sm % 1 ? 1 : 0), true),
+            ligne('Ratio de rotation', fr(v.v, 0) + ' ÷ ' + fr(sm, sm % 1 ? 1 : 0), fr(r), true),
+            ligne('Durée moyenne de stockage', '(' + fr(sm, sm % 1 ? 1 : 0) + ' ÷ ' + fr(v.v, 0) + ') × ' + fr(v.j, 0), fr(d, 1) + ' jours', true)
+          ]) + '<p class="calc-verdict">Rotation à augmenter, durée à réduire… sans tomber en rupture.</p>';
         });
     },
     scoring: function (div) {
