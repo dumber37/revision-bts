@@ -400,6 +400,13 @@ table.bilan a { color: inherit; }
 .calc-groupe { font-size: .75rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--doux); min-width: 92px; }
 .calc-types a { padding: 4px 12px; border-radius: 999px; border: 1px solid var(--bord); text-decoration: none; font-size: .84rem; background: var(--bg); }
 .calc-types a.actif { background: var(--nuit); color: var(--or); border-color: var(--nuit); font-weight: 700; }
+.calc-grille .table-wrap { grid-column: 1 / -1; margin: 0; }
+.tableau-saisie { border-collapse: collapse; font-size: .86rem; min-width: 100%; }
+.tableau-saisie th, .tableau-saisie td { padding: 4px 6px; border: 1px solid var(--bord); text-align: center; white-space: nowrap; }
+.tableau-saisie th[scope="row"] { text-align: left; }
+.calc-form .tableau-saisie input { width: 6.5em; min-width: 0; padding: 4px 6px; text-align: right; font-size: .9rem; }
+.tableau-corrige { margin: 0 0 12px; }
+.tableau-corrige td, .tableau-corrige th { text-align: center; white-space: nowrap; }
 @media (max-width: 600px) {
   .calc-types { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; margin: 0 -20px 4px; padding: 2px 20px; }
   .calc-types::-webkit-scrollbar { display: none; }
@@ -419,6 +426,12 @@ table.bilan a { color: inherit; }
 .calc-form .ok { border-color: #1d8a5a; background: #e3f3ec; color: #0f4d32; }
 .calc-form .ko { border-color: #c4462b; background: #fbe7e2; color: #7a2412; }
 .calc-correction .qcm-expl { line-height: 1.8; }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .calc-form .ok { border-color: #3fae7c; background: #173528; color: #c9eedb; }
+  :root:not([data-theme="light"]) .calc-form .ko { border-color: #e0694c; background: #3d1d16; color: #f8d4ca; }
+}
+:root[data-theme="dark"] .calc-form .ok { border-color: #3fae7c; background: #173528; color: #c9eedb; }
+:root[data-theme="dark"] .calc-form .ko { border-color: #e0694c; background: #3d1d16; color: #f8d4ca; }
 
 .defi-adversaire { font-size: 1.05rem; padding: 12px 16px; border-radius: 10px; background: var(--actif); border: 1px solid var(--or); }
 .defi-cible { margin: 4px 0 0; font-size: .85rem; color: var(--rouille); font-weight: 700; }

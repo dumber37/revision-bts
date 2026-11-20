@@ -161,16 +161,8 @@ var Outils = (function () {
     cmp: { titre: 'Fiche de stock et CMP', gen: function () {
       // CMP de fin de période, choisi pour tomber juste au centime (comme dans les sujets).
       var q0, p0, q1, p1, q2, p2, s1, s2, val, qt, cmp;
-      // Calcul en centimes : on cherche un 3e prix (en hausse) qui rend la division exacte.
-      var c0, c1, c2, trouve = false;
-      for (var essai = 0; essai < 500 && !trouve; essai++) {
-        q0 = alea(50, 300, 10); c0 = alea(400, 2000, 10); q1 = alea(100, 500, 50); c1 = c0 + alea(5, 60, 5); q2 = alea(100, 400, 50); qt = q0 + q1 + q2;
-        for (c2 = c1 + 5; c2 <= c1 + 80; c2++) { if ((q0 * c0 + q1 * c1 + q2 * c2) % qt === 0) { trouve = true; break; } }
-      }
-      if (!trouve) { q0 = 100; c0 = 1000; q1 = 200; c1 = 1030; q2 = 100; c2 = 1050; qt = 400; }
-      p0 = c0 / 100; p1 = c1 / 100; p2 = c2 / 100;
-      val = (q0 * c0 + q1 * c1 + q2 * c2) / 100; cmp = (q0 * c0 + q1 * c1 + q2 * c2) / qt / 100;
-      s1 = alea(Math.round((q0 + q1) * 0.4 / 10) * 10, q0 + q1 - 10, 10); s2 = alea(Math.round((q0 + q1 - s1 + q2) * 0.4 / 10) * 10, q0 + q1 - s1 + q2 - 20, 10);
+      var t = tirageStock(); q0 = t.q0; q1 = t.q1; q2 = t.q2; qt = t.qt; s1 = t.s1; s2 = t.s2;
+      p0 = t.c0 / 100; p1 = t.c1 / 100; p2 = t.c2 / 100; val = (q0 * t.c0 + q1 * t.c1 + q2 * t.c2) / 100; cmp = t.cmpC / 100;
       var sorties = s1 + s2, final = qt - sorties;
       return { situation: 'Mouvements d’un mois pour une référence de Sport’Tours (CMP calculé en fin de période) :' +
           '<div class="table-wrap"><table class="calc-table"><tr><th>Mouvement</th><th>Quantité</th><th>Coût unitaire</th></tr>' +
@@ -204,13 +196,110 @@ var Outils = (function () {
         champs: [['Taux de transformation (%)', tk / v * 100, '%'], ['Panier moyen (€)', pm, '€'], ['Résultat de l’opération (€)', res, '€']],
         correction: 'Taux de transformation = ' + fr(tk, 0) + ' ÷ ' + fr(v, 0) + ' × 100 = <b>' + fr(tk / v * 100) + ' %</b><br>Panier moyen = ' + fr(ca, 0) + ' ÷ ' + fr(tk, 0) + ' = <b>' + fr(pm) + ' €</b><br>' +
           'Marge supplémentaire = (' + fr(ca, 0) + ' − ' + fr(ca0, 0) + ') × ' + tm + ' % = ' + fr((ca - ca0) * tm / 100) + ' €<br>Résultat = ' + fr((ca - ca0) * tm / 100) + ' − ' + fr(cout, 0) + ' = <b>' + fr(res) + ' €</b> : ' + (res >= 0 ? 'l’opération est rentable.' : 'l’opération n’est pas rentable.') };
+    } },
+    cadencier: { titre: 'Cadencier à remplir', tableau: true, gen: function () {
+      var prod = choisir(['coffrets cadeaux', 'luges', 'bonnets', 'gourdes', 'ballons de foot', 'gants de ski']);
+      var A = [0, 0, 0, 0].map(function () { return alea(10, 80, 5); }), secu = alea(3, 10), lot = choisir([6, 10, 12, 20, 24]), si0 = alea(0, 30);
+      var depart = new Date(2026, choisir([9, 10, 11]), alea(1, 25)), delai = choisir([1, 2]);
+      function date(sem) { var d = new Date(depart); d.setDate(d.getDate() + 7 * sem); return ('0' + d.getDate()).slice(-2) + '/' + ('0' + (d.getMonth() + 1)).slice(-2); }
+      var calendaire = Math.random() < 0.4, champs = [], lignes, i, si = si0, B = [], SI = [], L = [], SF = [];
+      function c(lib, v, u) { champs.push([lib, v, u || '']); return { i: champs.length - 1 }; }
+      for (i = 0; i < 4; i++) {
+        SI[i] = si;
+        if (calendaire) { B[i] = i % 2 === 0 ? A[i] + A[i + 1] + secu : null; L[i] = i % 2 === 0 ? (si < B[i] ? Math.ceil((B[i] - si) / lot) * lot : 0) : 0; }
+        else { B[i] = A[i] + secu; L[i] = si < B[i] ? Math.ceil((B[i] - si) / lot) * lot : 0; }
+        SF[i] = si + L[i] - A[i]; si = SF[i];
+      }
+      var S = [0, 1, 2, 3];
+      lignes = [
+        ['Ventes prévues'].concat(A),
+        ['Besoin'].concat(S.map(function (i) { return B[i] === null ? '—' : c('Besoin S' + (i + 1), B[i]); })),
+        ['Stock initial'].concat(S.map(function (i) { return i === 0 ? si0 : c('Stock initial S' + (i + 1), SI[i]); })),
+        ['Quantité livrée'].concat(S.map(function (i) { return calendaire && i % 2 ? 0 : c('Quantité livrée S' + (i + 1), L[i]); })),
+        ['Stock final'].concat(S.map(function (i) { return c('Stock final S' + (i + 1), SF[i]); }))
+      ];
+      if (!calendaire) lignes.push(['Commande le'].concat(S.map(function (i) { return c('Date de commande S' + (i + 1), L[i] ? date(i - delai) : '—', 'date'); })));
+      var tetes = [''].concat(S.map(function (i) { return 'S' + (i + 1) + ' (' + date(i) + ')'; }));
+      var detail = S.filter(function (i) { return B[i] !== null; }).map(function (i) {
+        var manque = B[i] - SI[i];
+        return 'S' + (i + 1) + ' : besoin ' + (calendaire ? A[i] + ' + ' + A[i + 1] + ' + ' + secu : A[i] + ' + ' + secu) + ' = ' + B[i] + ', stock initial ' + SI[i] +
+          (manque > 0 ? ', manque ' + manque + ' → ' + Math.ceil(manque / lot) + ' lot' + (Math.ceil(manque / lot) > 1 ? 's' : '') + ' de ' + lot + ' = <b>' + L[i] + '</b>' : ' : stock suffisant, <b>pas de livraison</b>') +
+          ' ; stock final ' + SI[i] + ' + ' + L[i] + ' − ' + A[i] + ' = <b>' + SF[i] + '</b>' + (calendaire ? ', puis S' + (i + 2) + ' : ' + SF[i] + ' − ' + A[i + 1] + ' = <b>' + SF[i + 1] + '</b>' : '') + '.';
+      });
+      return { situation: 'Sport’Tours prépare les ' + prod + '. Stock au début de S1 : <b>' + si0 + '</b>. Stock de sécurité : <b>' + secu + '</b>. Livraison par lots de <b>' + lot + '</b>. ' +
+          (calendaire ? 'Le fournisseur <b>impose ses dates</b> : livraison en début de S1 et de S3 seulement (chaque livraison couvre les ventes jusqu’à la suivante).'
+            : 'Le magasin choisit ses dates : délai de livraison de <b>' + (delai === 1 ? 'une semaine' : 'deux semaines') + '</b>. Écris les dates au format jj/mm, et « — » s’il n’y a pas de commande.'),
+        tetes: tetes, lignes: lignes, champs: champs,
+        correction: tableauHTML(tetes, lignes, champs) + detail.join('<br>') +
+          '<br>Rappels : stock final = stock initial + livraison − <b>ventes</b> (pas le besoin) ; toujours arrondir au lot <b>supérieur</b>' + (calendaire ? '.' : ' ; date de commande = date de livraison − délai.') };
+    } },
+    fichestock: { titre: 'Fiche de stock à remplir', tableau: true, gen: function () {
+      var t = tirageStock(), mois = alea(1, 12), mm = ('0' + mois).slice(-2), champs = [];
+      function c(lib, v, u) { champs.push([lib, v, u || '']); return { i: champs.length - 1 }; }
+      var cmp = t.cmpC / 100, st1 = t.q0 + t.q1, st2 = st1 - t.s1, st3 = st2 + t.q2, st4 = st3 - t.s2, ent = t.q1 + t.q2, sor = t.s1 + t.s2;
+      var v0 = t.q0 * t.c0 / 100, v1 = t.q1 * t.c1 / 100, v2 = t.q2 * t.c2 / 100, tot = v0 + v1 + v2;
+      var tetes = ['Date', 'Libellé', 'Entrée', 'PU (€)', 'Valeur (€)', 'Sortie', 'Valeur (€)', 'Stock'];
+      var lignes = [
+        ['01/' + mm, 'Stock initial', t.q0, fr(t.c0 / 100), c('Valeur du stock initial', v0, '€'), '', '', t.q0],
+        ['05/' + mm, 'BE n° ' + alea(10, 60), t.q1, fr(t.c1 / 100), c('Valeur de la 1re entrée', v1, '€'), '', '', c('Stock après la 1re entrée', st1)],
+        ['12/' + mm, 'BS n° ' + alea(61, 99), '', '', '', t.s1, c('Valeur de la 1re sortie', t.s1 * cmp, '€'), c('Stock après la 1re sortie', st2)],
+        ['18/' + mm, 'BE n° ' + alea(10, 60), t.q2, fr(t.c2 / 100), c('Valeur de la 2e entrée', v2, '€'), '', '', c('Stock après la 2e entrée', st3)],
+        ['26/' + mm, 'BS n° ' + alea(61, 99), '', '', '', t.s2, c('Valeur de la 2e sortie', t.s2 * cmp, '€'), c('Stock final', st4)],
+        ['28/' + mm, 'Total', c('Quantité totale (stock initial + entrées)', t.qt), c('CMP', cmp, '€'), c('Valeur totale', tot, '€'), c('Total des sorties', sor), c('Valeur totale des sorties', sor * cmp, '€'), '']
+      ];
+      c('Valeur du stock final', st4 * cmp, '€');
+      return { situation: 'Complète la fiche de stock d’une référence de Sport’Tours. Méthode : <b>CMP de fin de période</b> (stock initial compris). Puis valorise le stock final.',
+        tetes: tetes, lignes: lignes, champs: champs, apres: [champs.length - 1],
+        correction: tableauHTML(tetes, lignes, champs) +
+          'Valeurs des entrées : quantité × PU (' + t.q0 + ' × ' + fr(t.c0 / 100) + ' = ' + fr(v0) + ' ; ' + t.q1 + ' × ' + fr(t.c1 / 100) + ' = ' + fr(v1) + ' ; ' + t.q2 + ' × ' + fr(t.c2 / 100) + ' = ' + fr(v2) + ')<br>' +
+          'CMP = ' + fr(tot) + ' ÷ ' + t.qt + ' = <b>' + fr(cmp) + ' €</b><br>Sorties : ' + sor + ' × ' + fr(cmp) + ' = <b>' + fr(sor * cmp) + ' €</b><br>' +
+          'Stock final : ' + st4 + ' × ' + fr(cmp) + ' = <b>' + fr(st4 * cmp) + ' €</b><br>Contrôle : ' + fr(sor * cmp) + ' + ' + fr(st4 * cmp) + ' = ' + fr(tot) + ' €, la valeur totale.' };
     } }
   };
+  // Tirage d'une fiche de stock dont le CMP tombe juste au centime, avec des prix en hausse (calcul en centimes).
+  function tirageStock() {
+    var q0, c0, q1, c1, q2, c2, qt, trouve = false;
+    for (var essai = 0; essai < 500 && !trouve; essai++) {
+      q0 = alea(50, 300, 10); c0 = alea(400, 2000, 10); q1 = alea(100, 500, 50); c1 = c0 + alea(5, 60, 5); q2 = alea(100, 400, 50); qt = q0 + q1 + q2;
+      for (c2 = c1 + 5; c2 <= c1 + 80; c2++) { if ((q0 * c0 + q1 * c1 + q2 * c2) % qt === 0) { trouve = true; break; } }
+    }
+    if (!trouve) { q0 = 100; c0 = 1000; q1 = 200; c1 = 1030; q2 = 100; c2 = 1050; qt = 400; }
+    var s1 = alea(Math.round((q0 + q1) * 0.4 / 10) * 10, q0 + q1 - 10, 10), s2 = alea(Math.round((q0 + q1 - s1 + q2) * 0.4 / 10) * 10, q0 + q1 - s1 + q2 - 20, 10);
+    return { q0: q0, c0: c0, q1: q1, c1: c1, q2: q2, c2: c2, qt: qt, s1: s1, s2: s2, cmpC: (q0 * c0 + q1 * c1 + q2 * c2) / qt };
+  }
+  // Tableau corrigé : les cases à remplir apparaissent en gras.
+  function tableauHTML(tetes, lignes, champs) {
+    return '<div class="table-wrap"><table class="calc-table tableau-corrige"><tr>' + tetes.map(function (h) { return '<th>' + h + '</th>'; }).join('') + '</tr>' +
+      lignes.map(function (l) { return '<tr>' + l.map(function (x) {
+        if (x && typeof x === 'object') { var v = champs[x.i][1]; return '<td><b>' + (typeof v === 'string' ? v : fr(v, champs[x.i][2] === '€' ? 2 : (v % 1 ? 2 : 0))) + '</b></td>'; }
+        return '<td>' + (typeof x === 'number' ? fr(x, x % 1 ? 2 : 0) : x) + '</td>';
+      }).join('') + '</tr>'; }).join('') + '</table></div>';
+  }
   // Regroupement des types d'exercices par matière, pour les boutons de choix.
-  var GROUPES = [['Gestion', ['variation', 'remises', 'marge', 'prixvente', 'elasticite', 'scoring']], ['Stocks', ['wilson', 'alerte', 'cmp', 'rotation', 'demarque']],
+  var GROUPES = [['Gestion', ['variation', 'remises', 'marge', 'prixvente', 'elasticite', 'scoring']], ['Stocks', ['wilson', 'alerte', 'cadencier', 'cmp', 'fichestock', 'rotation', 'demarque']],
     ['Management', ['paie', 'horaire']], ['ADOC', ['transformation']]];
 
   function nombre(v) { return parseFloat(String(v).replace(/\s/g, '').replace(',', '.').replace('%', '').replace('€', '')); }
+  // Dates jj/mm (« 3/12 » vaut « 03/12 ») ; « — », « - », « aucune » ou « non » pour une case vide.
+  function texte(v) {
+    v = String(v).trim().toLowerCase();
+    var d = v.match(/^(\d{1,2})\s*[\/.\-]\s*(\d{1,2})/);
+    if (d) return ('0' + d[1]).slice(-2) + '/' + ('0' + d[2]).slice(-2);
+    return /^(—|–|-|aucune?|non|pas de commande|0)$/.test(v) ? '—' : v;
+  }
+  // Tableau à remplir : chaque case attendue devient un champ, corrigé individuellement.
+  function dansGrille(ex, i) { return ex.lignes.some(function (l) { return l.some(function (x) { return x && typeof x === 'object' && x.i === i; }); }); }
+  function grille(ex) {
+    return '<div class="table-wrap"><table class="calc-table tableau-saisie"><tr>' + ex.tetes.map(function (h) { return '<th scope="col">' + h + '</th>'; }).join('') + '</tr>' +
+      ex.lignes.map(function (l) { return '<tr>' + l.map(function (x, j) {
+        if (x && typeof x === 'object') {
+          var c = ex.champs[x.i];
+          return '<td><input ' + (c[2] === 'date' ? 'inputmode="text" placeholder="jj/mm"' : 'inputmode="decimal" placeholder="?"') + ' data-i="' + x.i + '" aria-label="' + esc(c[0]) + '"></td>';
+        }
+        var v = typeof x === 'number' ? fr(x, x % 1 ? 2 : 0) : x;
+        return j === 0 ? '<th scope="row">' + v + '</th>' : '<td>' + v + '</td>';
+      }).join('') + '</tr>'; }).join('') + '</table></div>';
+  }
   function proche(x, v) { return isFinite(x) && Math.abs(x - v) <= Math.max(0.011, Math.abs(v) * 0.005); }
 
   function pageCalculs(app, type) {
@@ -231,7 +320,8 @@ var Outils = (function () {
         }).join('') +
         '<h2 class="defi-q">' + esc(EXOS[k].titre) + '</h2>' +
         '<div class="situation">' + ex.situation + '</div>' +
-        '<form class="calc-form" autocomplete="off">' + ex.champs.map(function (c, i) {
+        '<form class="calc-form' + (ex.lignes ? ' calc-grille' : '') + '" autocomplete="off">' + (ex.lignes ? grille(ex) : '') + ex.champs.map(function (c, i) {
+          if (ex.lignes && dansGrille(ex, i)) return '';
           return '<label><span>' + esc(c[0]) + '</span><span class="calc-saisie"><input inputmode="decimal" data-i="' + i + '" placeholder="?">' + (c[2] ? '<em>' + c[2] + '</em>' : '') + '</span></label>';
         }).join('') +
         (ex.choix ? '<label><span>' + esc(ex.choix[0]) + '</span><select data-choix><option value="">— choisir —</option>' + ex.choix[2].map(function (o) { return '<option>' + esc(o) + '</option>'; }).join('') + '</select></label>' : '') +
@@ -249,7 +339,8 @@ var Outils = (function () {
       essais++;
       var tout = true;
       Array.prototype.forEach.call(form.querySelectorAll('input[data-i]'), function (inp) {
-        var ok = proche(nombre(inp.value), ex.champs[+inp.dataset.i][1]);
+        var attendu = ex.champs[+inp.dataset.i][1];
+        var ok = typeof attendu === 'string' ? texte(inp.value) === texte(attendu) : proche(nombre(inp.value), attendu);
         inp.classList.toggle('ok', ok); inp.classList.toggle('ko', !ok);
         if (!ok) tout = false;
       });
